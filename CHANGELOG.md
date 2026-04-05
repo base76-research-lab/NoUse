@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.3] - 2026-04-05
+
+### Fixed
+- Added top-level `Path` import — fixes `NameError` in `deepdive`, `nightrun`, `scan-disk`, and `doctor` commands.
+- `deepdive`, `nightrun`, `enrich-nodes` now detect a running daemon and gracefully refuse instead of crashing with KuzuDB lock error.
+- `deepdive --dry-run` opens the graph in read-only mode when daemon is running.
+
 ## [0.2.2] - 2026-04-05
 
 ### Added

@@ -3,6 +3,7 @@ import json
 import subprocess
 import sys
 import time
+from pathlib import Path
 from statistics import mean
 
 import typer
@@ -690,8 +691,24 @@ def snabbchat(
 @app.command()
 def web(port: int = typer.Option(8765, "--port", "-p")) -> None:
     """Starta den interaktiva realtids-dashboardappen (Startar även B76 Hjärnan!)."""
+    import socket
     import subprocess
     from nouse.web.server import start_server
+
+    # Kolla om daemonen redan kör web-UI på porten
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        already_running = s.connect_ex(("127.0.0.1", port)) == 0
+
+    if already_running:
+        url = f"http://127.0.0.1:{port}"
+        console.print(f"[bold yellow]⚡ Daemonen kör redan web-UI på port {port}[/bold yellow]")
+        console.print(f"[bold cyan]Öppnar: {url}[/bold cyan]")
+        try:
+            subprocess.Popen(["xdg-open", url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except Exception:
+            pass
+        raise typer.Exit(0)
+
     console.print(f"[bold magenta]▶ Web-UI Master Control startad[/bold magenta]")
     console.print(f"[dim]Dashboarden är nu hjärnan! Den kör metakognition, nyfikenhetsloopen och web-gränssnittet asynkront.[/dim]")
     console.print(f"[bold cyan]Länk: http://127.0.0.1:{port}[/bold cyan]")
@@ -4198,9 +4215,14 @@ def nightrun_cmd(
 
         from nouse.field.surface import FieldSurface
         from nouse.daemon.state import load_state
+        from nouse.client import daemon_running as _nr_daemon_running
         db_path = Path.home() / ".local" / "share" / "nouse" / "field.kuzu"
         if not db_path.exists():
             console.print("[red]Ingen FieldSurface hittad. Kör 'nouse run' minst en gång.[/red]")
+            raise typer.Exit(1)
+        if _nr_daemon_running():
+            console.print("[red]Daemon kör — nightrun bör triggas via daemon-API.[/red]")
+            console.print("Kör: [bold]nouse nightrun now[/bold] (som redan försöktes ovan)")
             raise typer.Exit(1)
         field  = FieldSurface(db_path=str(db_path))
         limbic = load_state()
@@ -4286,6 +4308,11 @@ def enrich_nodes_cmd(
         console.print("[red]Ingen FieldSurface hittad. Kör 'nouse run' minst en gång.[/red]")
         raise typer.Exit(1)
 
+    from nouse.client import daemon_running as _en_daemon_running
+    if _en_daemon_running():
+        console.print("[red]Daemon kör — kan inte öppna grafen direkt.[/red]")
+        console.print("Använd: [bold]nouse enrich-nodes --via-daemon[/bold] eller stoppa daemon först.")
+        raise typer.Exit(1)
     field  = FieldSurface(db_path=str(db_path))
     result = asyncio.run(
         enrich_nodes(field, max_nodes=max_nodes, max_minutes=max_minutes, dry_run=dry_run)
@@ -4339,19 +4366,17 @@ def deepdive_cmd(
         console.print("[red]Ingen FieldSurface hittad. Kör 'nouse run' minst en gång.[/red]")
         raise typer.Exit(1)
 
-    # Daemon-first för alla skrivoperationer
-    if not dry_run:
-        try:
-            from nouse.client import B76Client
-            client = B76Client()
-            client.get_status()
+    # Daemon-first: om daemon kör, dirigera dit istället för att öppna DB direkt
+    from nouse.client import daemon_running
+    if daemon_running():
+        if not dry_run:
             console.print("[yellow]Daemon kör — deepdive via API körs i NightRun.[/yellow]")
             console.print("Trigga manuellt: [bold]nouse nightrun now[/bold]")
             raise typer.Exit(0)
-        except Exception:
-            pass
-
-    field = FieldSurface(db_path=str(db_path))
+        # dry_run/read-only: öppna i read_only-läge
+        field = FieldSurface(db_path=str(db_path), read_only=True)
+    else:
+        field = FieldSurface(db_path=str(db_path))
 
     # ── ReviewQueue-tömning ───────────────────────────────────────────────────
     if review_queue:

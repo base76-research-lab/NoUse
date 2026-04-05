@@ -1,6 +1,6 @@
 [project]
 name = "nouse"
-version = "0.2.2"
+version = "0.2.3"
 description = "Epistemic grounding substrate for LLMs — knows what it knows, what it doesn't, and why"
 readme = "README.md"
 requires-python = ">=3.11"
