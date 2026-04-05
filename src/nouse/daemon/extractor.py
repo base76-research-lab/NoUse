@@ -43,10 +43,10 @@ except ValueError:
 try:
     EXTRACT_TIMEOUT_SEC = max(
         1.0,
-        float((os.getenv("NOUSE_EXTRACT_TIMEOUT_SEC") or os.getenv("NOUSE_LLM_TIMEOUT_SEC") or "8").strip()),
+        float((os.getenv("NOUSE_EXTRACT_TIMEOUT_SEC") or os.getenv("NOUSE_LLM_TIMEOUT_SEC") or "19").strip()),
     )
 except ValueError:
-    EXTRACT_TIMEOUT_SEC = 8.0
+    EXTRACT_TIMEOUT_SEC = 19.0
 
 try:
     SYNTH_TIMEOUT_SEC = max(
@@ -59,7 +59,7 @@ except ValueError:
 _BOOL_TRUE = {"1", "true", "yes", "on"}
 AUTO_DISCOVER_MODELS = ((os.getenv("NOUSE_MODEL_AUTODISCOVER") or "1").strip().lower() in _BOOL_TRUE)
 ENABLE_HEURISTIC_FALLBACK = (
-    (os.getenv("NOUSE_EXTRACT_HEURISTIC_FALLBACK", "0") or "").strip().lower() in _BOOL_TRUE
+    (os.getenv("NOUSE_EXTRACT_HEURISTIC_FALLBACK", "1") or "").strip().lower() in _BOOL_TRUE
 )
 
 RELATION_TYPES = [

@@ -159,9 +159,24 @@ def identify_knowledge_gaps(
     return gaps[:max_gaps]
 
 
-# ── Python-fallback ──────────────────────────────────────────────────────────
+# ── Python-fallback (numpy/scipy) ────────────────────────────────────────────
 
 def _py_distance_matrix(embeddings: list[list[float]]) -> list[list[float]]:
+    try:
+        import numpy as np
+        from scipy.spatial.distance import cdist
+        # Filtrera inhomogena embeddings — behåll bara dominant dimension
+        if embeddings:
+            dims = [len(e) for e in embeddings]
+            modal_dim = max(set(dims), key=dims.count)
+            embeddings = [e for e in embeddings if len(e) == modal_dim]
+        if len(embeddings) < 2:
+            return [[0.0]]
+        arr = np.array(embeddings, dtype=np.float32)
+        return cdist(arr, arr, metric="euclidean").tolist()
+    except ImportError:
+        pass
+    # Ren Python-nödlösning om scipy saknas
     n = len(embeddings)
     dist = [[0.0] * n for _ in range(n)]
     for i in range(n):
@@ -173,15 +188,31 @@ def _py_distance_matrix(embeddings: list[list[float]]) -> list[list[float]]:
 
 
 def _py_betti(dist_matrix: list[list[float]], max_epsilon: float) -> tuple[int, int]:
-    n = len(dist_matrix)
-    if n < 2:
-        return (n, 0)
-
-    # Samla kanter sorterade
-    edges = sorted(
-        [(dist_matrix[i][j], i, j) for i in range(n) for j in range(i + 1, n)],
-        key=lambda e: e[0],
-    )
+    try:
+        import numpy as np
+        dm = np.asarray(dist_matrix, dtype=np.float32)
+        n = len(dm)
+        if n < 2:
+            return (n, 0)
+        rows, cols = np.triu_indices(n, 1)
+        dists = dm[rows, cols]
+        order = np.argsort(dists, kind="mergesort")
+        sorted_u = rows[order]
+        sorted_v = cols[order]
+        sorted_d = dists[order]
+        cutoff = int(np.searchsorted(sorted_d, max_epsilon, side="right"))
+        sorted_u = sorted_u[:cutoff].tolist()
+        sorted_v = sorted_v[:cutoff].tolist()
+    except ImportError:
+        # Ren Python-nödlösning
+        n = len(dist_matrix)
+        if n < 2:
+            return (n, 0)
+        edges = sorted(
+            [(dist_matrix[i][j], i, j) for i in range(n) for j in range(i + 1, n)],
+        )
+        sorted_u = [e[1] for e in edges if e[0] <= max_epsilon]
+        sorted_v = [e[2] for e in edges if e[0] <= max_epsilon]
 
     parent = list(range(n))
     rank   = [0] * n
@@ -194,9 +225,7 @@ def _py_betti(dist_matrix: list[list[float]], max_epsilon: float) -> tuple[int, 
             x = parent[x]
         return x
 
-    for dist, u, v in edges:
-        if dist > max_epsilon:
-            break
+    for u, v in zip(sorted_u, sorted_v):
         pu, pv = find(u), find(v)
         if pu == pv:
             h1 += 1

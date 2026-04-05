@@ -82,7 +82,7 @@ _GRAPH_EMBED_ENABLED = _env_bool("NOUSE_GRAPH_EMBED_ENABLED", True)
 _GRAPH_EMBED_MODEL = (
     os.getenv("NOUSE_GRAPH_EMBED_MODEL")
     or os.getenv("NOUSE_EMBED_MODEL")
-    or "nomic-embed-text:latest"
+    or "nomic-embed-text-v2-moe:latest"
 ).strip()
 _GRAPH_EMBED_BATCH = _env_int("NOUSE_GRAPH_EMBED_BATCH", 24, 1)
 _BISOC_SEMANTIC_WEIGHT = _env_float("NOUSE_BISOC_SEMANTIC_WEIGHT", 0.35, 0.0, 0.8)
@@ -875,19 +875,36 @@ class FieldSurface:
 
     # ── Multi-hop path finder (NetworkX) ─────────────────────────────────────
 
+    def _domain_node_index(self) -> dict:
+        """Cachat domain→noder-index. Ogiltigförklaras vid add_concept via _invalidate_domain_cache."""
+        idx = getattr(self, "_domain_node_cache", None)
+        if idx is None:
+            idx: dict[str, list[str]] = {}
+            for n, d in self._G.nodes(data=True):
+                dom = d.get("domain") or ""
+                if dom:
+                    idx.setdefault(dom, []).append(n)
+            self._domain_node_cache = idx
+        return idx
+
+    def _invalidate_domain_cache(self) -> None:
+        self._domain_node_cache = None
+
     def find_path(self, domain_a, domain_b, max_hops=8):
-        starts = [n for n, d in self._G.nodes(data=True) if d.get("domain") == domain_a]
-        goals = {n for n, d in self._G.nodes(data=True) if d.get("domain") == domain_b}
+        idx = self._domain_node_index()
+        starts = idx.get(domain_a, [])
+        goals = set(idx.get(domain_b, []))
         if not starts or not goals:
             return None
         queue = deque()
         visited = set()
-        for s in starts:
+        for s in starts[:20]:  # max 20 startnoder per domän
             queue.append((s, []))
             visited.add(s)
         while queue:
             node, path = queue.popleft()
-            if len(path) >= max_hops: continue
+            if len(path) >= max_hops:
+                continue
             for _, tgt, data in self._G.out_edges(node, data=True):
                 rel_type = data.get("type", "")
                 new_path = path + [(node, rel_type, tgt)]
@@ -1052,18 +1069,49 @@ class FieldSurface:
         if related: parts.append(f"related: {', '.join(related[:8])}")
         return "\n".join(parts)
 
+    def _bulk_load_embeddings(self, names: list[str]) -> dict[str, list[float]]:
+        """Hämtar embeddings för en lista namn i en enda SQL-query."""
+        out: dict[str, list[float]] = {}
+        if not names or not self._concept_embedding_available:
+            return out
+        uncached = [n for n in names if n not in self._embedding_cache]
+        if uncached:
+            placeholders = ",".join("?" * len(uncached))
+            rows = self._sql.execute(
+                f"SELECT name, vector_json FROM concept_embedding WHERE name IN ({placeholders})",
+                uncached,
+            ).fetchall()
+            for row in rows:
+                raw = str(row["vector_json"] or "").strip()
+                if not raw:
+                    continue
+                try:
+                    parsed = json.loads(raw)
+                    if isinstance(parsed, list) and parsed:
+                        vec = [float(x) for x in parsed]
+                        self._embedding_cache[row["name"]] = vec
+                except Exception:
+                    pass
+        for name in names:
+            vec = self._embedding_cache.get(name)
+            if vec:
+                out[name] = vec
+        return out
+
     def _ensure_concept_embeddings(self, concepts):
         out = {}
         if not concepts: return out
-        missing = []
-        for row in concepts:
-            name = str(row.get("name") or "").strip()
-            if not name: continue
-            vec = self._load_concept_embedding(name)
-            if vec:
-                out[name] = vec
-            else:
-                missing.append({"name": name, "domain": str(row.get("domain") or "okänd")})
+        names = [str(row.get("name") or "").strip() for row in concepts]
+        names = [n for n in names if n]
+        # Bulk-hämta från SQLite + in-memory cache i en query
+        cached = self._bulk_load_embeddings(names)
+        out.update(cached)
+        missing = [
+            {"name": str(row.get("name") or "").strip(),
+             "domain": str(row.get("domain") or "okänd")}
+            for row in concepts
+            if str(row.get("name") or "").strip() not in out
+        ]
         if not missing: return out
         embedder = self._get_embedder()
         if embedder is None: return out
@@ -1087,7 +1135,8 @@ class FieldSurface:
 
     # ── TDA ──────────────────────────────────────────────────────────────────
 
-    def domain_tda_profile(self, domain, max_epsilon=2.0, include_centroid=False):
+    def domain_tda_profile(self, domain, max_epsilon=2.0, include_centroid=False,
+                           max_tda_concepts=300):
         try:
             from nouse.tda.bridge import compute_distance_matrix, compute_betti
         except ImportError:
@@ -1099,6 +1148,11 @@ class FieldSurface:
                    "embedding_mode": "none", "embedding_coverage": 0.0}
             if include_centroid: out["centroid"] = None
             return out
+        # Subsampla stora domäner för att hålla TDA-beräkningstiden rimlig.
+        # Topologin förändras minimalt vid representativt urval.
+        if max_tda_concepts and n > max_tda_concepts:
+            import random
+            concepts = random.sample(concepts, max_tda_concepts)
         concept_rows = [{"name": str(c.get("name") or "").strip(), "domain": domain}
                         for c in concepts if str(c.get("name") or "").strip()]
         semantic_map = self._ensure_concept_embeddings(concept_rows)

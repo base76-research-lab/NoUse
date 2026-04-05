@@ -371,6 +371,7 @@ async def _enrich_node(
 
     new_nodes: list[str] = []
     learned = 0
+    rejected = 0
 
     for raw in raw_relations:
         src = str(raw.get("src", concept) or concept).strip()
@@ -395,8 +396,9 @@ async def _enrich_node(
         )
         score = assessment.score
 
-        if score < 0.40:
+        if score < 0.20:
             _log.debug("Avvisad (score=%.3f): %s -[%s]-> %s", score, src, rel, tgt)
+            rejected += 1
             continue
 
         try:
@@ -446,7 +448,15 @@ async def _enrich_node(
             concept=concept, domain=domain,
             learned=learned, new_nodes=new_nodes[:5],
         )
-        _log.info("Nod '%s' berikad: %d nya relationer", concept, learned)
+        _log.info(
+            "Nod '%s' berikad: extracted=%d committed=%d rejected=%d",
+            concept, len(raw_relations), learned, rejected,
+        )
+    elif rejected > 0:
+        _log.info(
+            "Nod '%s': extracted=%d committed=0 rejected=%d (alla under gate)",
+            concept, len(raw_relations), rejected,
+        )
 
     return new_nodes
 

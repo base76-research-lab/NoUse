@@ -479,6 +479,7 @@ async def brain_loop(
     wake_event: asyncio.Event | None = None,
     memory: MemoryStore | None = None,
 ) -> None:
+    global BRAIN_TRANSPORTER
     sources = _build_sources()
     limbic_state = load_state()
     memory_store = memory or MemoryStore()
@@ -804,16 +805,23 @@ async def brain_loop(
                 },
             )
 
-            # ── 4a: BFS-nervbanor ──────────────────────────────────────────────
-            domains = field.domains()
+            # ── 4a: BFS-nervbanor (begränsad till top-domäner) ────────────────
+            _all_domains = field.domains()
+            # Begränsa till max 15 domäner för att undvika O(D²) explosion
+            import random as _random
+            domains = _all_domains[:15] if len(_all_domains) > 15 else _all_domains
             found = []
+            _bfs_pairs = 0
             for i, da in enumerate(domains):
                 if stop_event and stop_event.is_set():
                     break
                 for db in domains[i + 1 :]:
                     if stop_event and stop_event.is_set():
                         break
-                    path = field.find_path(da, db, max_hops=8)
+                    _bfs_pairs += 1
+                    if _bfs_pairs % 10 == 0:
+                        await asyncio.sleep(0)  # yield till event loop var 10:e par
+                    path = field.find_path(da, db, max_hops=4)  # max_hops 8→4
                     if path and len(path) >= MIN_HOPS:
                         nov = field.path_novelty(path)
                         if nov >= NOVELTY_THRESHOLD:
@@ -832,7 +840,7 @@ async def brain_loop(
 
             # ── 4b: TDA bisociationskandidater (Koestler Step B) ──────────────
             try:
-                candidates = field.bisociation_candidates(tau_threshold=0.55)
+                candidates = field.bisociation_candidates(tau_threshold=0.55, max_domains=15)
                 if candidates:
                     log.info(f"  TDA: {len(candidates)} bisociationskandidater")
                     for c in candidates[:3]:
@@ -844,6 +852,37 @@ async def brain_loop(
             except Exception as e:
                 candidates = []
                 log.warning(f"TDA bisociation_candidates: {e}")
+
+            # ── 4c: Autonom bridge discovery för toppkandidater ───────────────
+            if candidates and not (stop_event and stop_event.is_set()):
+                try:
+                    import asyncio as _asyncio
+                    from nouse.field.bridge_finder import run_cross_domain_discovery
+                    top_domains: list[str] = list(dict.fromkeys(
+                        d
+                        for c in candidates[:5]
+                        for d in (c["domain_a"], c["domain_b"])
+                    ))
+                    _coord = LearningCoordinator(field, limbic_state)
+                    _bridge_session = await _asyncio.wait_for(
+                        run_cross_domain_discovery(
+                            field,
+                            _coord,
+                            domains=top_domains,
+                            max_pairs=5,
+                        ),
+                        timeout=120.0,
+                    )
+                    if _bridge_session.bridges_found:
+                        log.info(
+                            f"  BISOC-BRIDGE: {_bridge_session.bridges_found} bryggor funna, "
+                            f"{_bridge_session.bridges_written} skrivna "
+                            f"({_bridge_session.pairs_evaluated} par utvärderade)"
+                        )
+                except _asyncio.TimeoutError:
+                    log.warning("Bridge discovery (bisociation): timeout efter 120s — hoppar över")
+                except Exception as _be:
+                    log.warning(f"Bridge discovery (bisociation): {_be}")
 
             # ── 5: Limbic Layer ────────────────────────────────────────────────
             limbic_state = run_limbic_cycle(

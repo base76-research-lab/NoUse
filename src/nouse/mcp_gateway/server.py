@@ -194,5 +194,30 @@ def run_stdio() -> None:
     asyncio.run(mcp.run_stdio_async())
 
 
+def run_http(host: str = "127.0.0.1", port: int = 8766) -> None:
+    """Run b76-kernel as streamable-HTTP MCP server (for claude.ai web integration).
+
+    Expose with Cloudflare Tunnel:
+        cloudflared tunnel --url http://localhost:8766
+    Then register https://<tunnel>.trycloudflare.com/mcp in claude.ai Settings → Integrations.
+    """
+    import argparse
+
+    from mcp.server.transport_security import TransportSecuritySettings
+
+    parser = argparse.ArgumentParser(description="Run b76-kernel as HTTP MCP server.")
+    parser.add_argument("--host", default=host)
+    parser.add_argument("--port", type=int, default=port)
+    args = parser.parse_args()
+
+    mcp.settings.host = args.host
+    mcp.settings.port = args.port
+    # Disable DNS-rebinding protection so Cloudflare Tunnel host headers pass through
+    mcp.settings.transport_security = TransportSecuritySettings(
+        enable_dns_rebinding_protection=False,
+    )
+    mcp.run(transport="streamable-http")
+
+
 if __name__ == "__main__":
     run_stdio()

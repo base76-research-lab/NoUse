@@ -56,7 +56,7 @@ BRIDGE_MIN_AXIOM_OVERLAP = int(os.getenv("NOUSE_BRIDGE_MIN_AXIOM_OVERLAP", "1"))
 BRIDGE_WRITE_CHAIN      = bool(int(os.getenv("NOUSE_BRIDGE_WRITE_CHAIN", "1")))
 BRIDGE_SAMPLE_PER_DOMAIN = int(os.getenv("NOUSE_BRIDGE_SAMPLE_PER_DOMAIN", "5"))
 BRIDGE_LLM_TIMEOUT      = float(os.getenv("NOUSE_BRIDGE_LLM_TIMEOUT", "60.0"))
-BRIDGE_MIN_EVIDENCE     = float(os.getenv("NOUSE_BRIDGE_MIN_EVIDENCE", "0.45"))
+BRIDGE_MIN_EVIDENCE     = float(os.getenv("NOUSE_BRIDGE_MIN_EVIDENCE", "0.20"))
 
 
 # ── Datastrukturer ────────────────────────────────────────────────────────────
@@ -208,10 +208,31 @@ def find_graph_path(
     Söker en väg source → target i grafen med BFS.
     Returnerar listan av noder om väg finns, annars None.
     Används för att avgöra: behöver vi en ny brygga?
+
+    Använder NetworkX in-memory graf om tillgänglig (snabb),
+    annars SQLite-baserad BFS som fallback.
     """
     if source == target:
         return [source]
 
+    # Snabb väg: NetworkX in-memory BFS (undviker SQLite-queries)
+    G = getattr(field_surface, "_G", None)
+    if G is not None:
+        try:
+            import networkx as nx
+            if source in G and target in G:
+                try:
+                    path = nx.shortest_path(G, source, target, cutoff=max_depth)
+                    return list(path)
+                except nx.NetworkXNoPath:
+                    return None
+                except nx.NodeNotFound:
+                    return None
+            return None
+        except Exception:
+            pass
+
+    # Fallback: SQLite-baserad BFS (långsam på stora grafer)
     visited: set[str] = {source}
     queue: collections.deque[list[str]] = collections.deque([[source]])
 
@@ -331,8 +352,20 @@ async def _discover_bridge_via_llm(
 
     base_url = os.getenv("NOUSE_TEACHER_BASE_URL", "https://models.inference.ai.azure.com")
     token = os.getenv("GITHUB_TOKEN", "")
-    from nouse.llm.autodiscover import get_default_models
-    model = get_default_models().get("teacher", "gpt-4o")
+    # Hämta teacher-modell från model_policy.json eller env-fallback
+    model = os.getenv("NOUSE_TEACHER_MODEL", "")
+    if not model:
+        try:
+            import json as _json2
+            from pathlib import Path
+            _policy_path = Path.home() / ".local" / "share" / "nouse" / "model_policy.json"
+            _policy = _json2.loads(_policy_path.read_text())
+            model = (_policy.get("workloads", {}).get("teacher", {})
+                     .get("candidates", [""])[0]) or ""
+        except Exception:
+            pass
+    if not model:
+        model = "gpt-4o"
 
     shared = list(sig_a.structural_pattern & sig_b.structural_pattern)
 
@@ -352,6 +385,20 @@ async def _discover_bridge_via_llm(
         shared_patterns=", ".join(shared[:8]) or "direkta mönster saknas — sök djupare",
     )
 
+    # Ollama cloud-modeller stödjer inte response_format via /v1
+    _is_ollama = "localhost:11434" in base_url or "127.0.0.1:11434" in base_url
+    _payload: dict = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": _BRIDGE_SYSTEM},
+            {"role": "user",   "content": prompt},
+        ],
+        "temperature": 0.4,
+        "max_tokens": 1500,
+    }
+    if not _is_ollama:
+        _payload["response_format"] = {"type": "json_object"}
+
     try:
         async with httpx.AsyncClient(timeout=BRIDGE_LLM_TIMEOUT) as client:
             resp = await client.post(
@@ -360,19 +407,25 @@ async def _discover_bridge_via_llm(
                     "Authorization": f"Bearer {token}",
                     "Content-Type": "application/json",
                 },
-                json={
-                    "model": model,
-                    "messages": [
-                        {"role": "system", "content": _BRIDGE_SYSTEM},
-                        {"role": "user",   "content": prompt},
-                    ],
-                    "temperature": 0.4,
-                    "max_tokens": 1500,
-                    "response_format": {"type": "json_object"},
-                },
+                json=_payload,
             )
             resp.raise_for_status()
-            raw = resp.json()["choices"][0]["message"]["content"].strip()
+            raw = resp.json()["choices"][0]["message"]["content"] or ""
+            raw = raw.strip()
+            # Extrahera JSON om modellen wrappat det i markdown code blocks
+            if not raw.startswith("{"):
+                import re as _re
+                m = _re.search(r"```(?:json)?\s*(\{.*?\})\s*```", raw, _re.DOTALL)
+                if m:
+                    raw = m.group(1)
+                else:
+                    # Försök hitta första { ... } block
+                    m2 = _re.search(r"\{.*\}", raw, _re.DOTALL)
+                    if m2:
+                        raw = m2.group(0)
+            if not raw:
+                _log.debug("LLM bridge: tomt svar från modellen")
+                return {"chain": [], "confidence": 0.0}
             return _json.loads(raw)
     except Exception as e:
         _log.warning("LLM bridge discovery misslyckades: %s", e)
@@ -421,15 +474,15 @@ async def _write_bridge_chain(
         assessment = assess_relation(
             relation={"src": src, "type": rel, "tgt": tgt, "why": hop_why},
             task="bridge_discovery",
-            confirming_relations=[],
-            contradicting_relations=[],
+            confirming_relations=0,
+            contradicting_relations=0,
         )
         score = assessment.score
 
         if score < BRIDGE_MIN_EVIDENCE:
             _log.debug("Hopp avvisat (score=%.3f): %s -[%s]-> %s", score, src, rel, tgt)
-            # Om ett hopp faller under tröskel — avbryt hela kedjan
-            break
+            # Hoppa över svagt hopp men fortsätt kedjan
+            continue
 
         try:
             field_surface.add_concept(src, domain="general", source="bridge_finder")
