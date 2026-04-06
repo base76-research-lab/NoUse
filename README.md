@@ -168,7 +168,7 @@ response = openai.chat(messages=[
 ])
 ```
 
-## Use With OpenAI, Anthropic, Ollama or Groq
+## Use With OpenAI, Anthropic, Ollama Or Groq
 
 ### OpenAI
 
