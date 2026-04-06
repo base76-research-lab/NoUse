@@ -23,9 +23,7 @@ from nouse.field.surface import FieldSurface
 from nouse.limbic.signals import LimbicState
 from nouse.learning_coordinator import LearningCoordinator
 
-# Brian2Bridge lever i NN_plastisitet — importera därifrån
-sys.path.insert(0, "/home/bjorn/projects/NN_plastisitet/src")
-from nouse_plasticity.brian2_bridge.bridge import Brian2Bridge
+from nouse.brian2_bridge import Brian2Bridge
 
 
 # ── Hjälpfunktioner ───────────────────────────────────────────────────────────
