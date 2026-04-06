@@ -357,6 +357,16 @@ Contributions welcome — especially domain-specific question banks.
 
 ---
 
+## Research
+
+The theoretical foundation for Nouse is described in:
+
+- Wikström, B. (2026). **The Larynx Problem: Why Large Language Models Are Not Artificial Intelligence.** [Zenodo](https://zenodo.org/records/19413234) · [PhilPapers](https://philpapers.org/rec/WIKTLP)
+
+The paper argues that LLMs model the output channel of intelligence (language), not intelligence itself — and that epistemic grounding through structured, plastic knowledge graphs is a necessary complement.
+
+---
+
 ## Install & run daemon
 
 ```bash
