@@ -19,6 +19,13 @@ app = typer.Typer(
     invoke_without_command=True,
 )
 
+# --- CLI: select-model ---
+@app.command("select-model")
+def select_model():
+    """Välj och spara aktiv LLM-modell (interaktivt)."""
+    import runpy
+    runpy.run_module("nouse.cli.commands.select_model", run_name="__main__")
+
 console = Console()
 
 
@@ -212,6 +219,7 @@ def _print_front_door() -> None:
     t.add_row("nouse setup", "Konfigurera lagringsprofil (small/medium/large)")
     t.add_row("nouse llm", "Hantera LLM-providers — auto-detect & konfigurera")
     t.add_row("nouse models", "Modell-failover policy per tasktyp")
+    t.add_row("nouse select-model", "Välj och spara aktiv LLM-modell (interaktivt)")
     t.add_row("nouse session", "Sessionslager (lifecycle + runs + energi)")
     t.add_row("nouse usage", "Usage/cost-telemetri per run/modell/session")
     console.print(t)
