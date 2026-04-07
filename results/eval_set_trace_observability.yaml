@@ -1,0 +1,30 @@
+cases:
+  - id: trace_obs_001
+    prompt: >
+      What metrics are collected during a trace run?
+      The system emits span events for each tool invocation.
+      If a span exceeds the timeout threshold, it is marked as degraded.
+    expect:
+      min_questions: 1
+      min_claims: 1
+      min_assumptions: 1
+
+  - id: trace_obs_002
+    prompt: >
+      The trace pipeline records start time, end time, and token counts for every LLM call.
+      Assuming the daemon is running, spans are flushed to disk every 30 seconds.
+      Metrics are aggregated per session and per model.
+    expect:
+      min_questions: 0
+      min_claims: 2
+      min_assumptions: 1
+
+  - id: trace_obs_003
+    prompt: >
+      How does the output trace link spans to the originating prompt?
+      Each span carries a trace_id derived from the session identifier.
+      If the session identifier is absent, a new trace_id is generated automatically.
+    expect:
+      min_questions: 1
+      min_claims: 1
+      min_assumptions: 1

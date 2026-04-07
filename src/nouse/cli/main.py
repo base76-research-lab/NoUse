@@ -103,6 +103,7 @@ def _print_front_door() -> None:
         Panel(
             f"[bold cyan]νοῦς  v{version}[/bold cyan]\n"
             "Epistemic grounding substrate for LLMs",
+            title="Nouse Front Door",
             border_style="cyan",
         )
     )
