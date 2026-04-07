@@ -84,15 +84,32 @@ async def escalate_query(
 
     _log.info("Escalating '%s' (conf=%.2f < %.2f)", query[:60], conf, threshold)
 
-    # Nivå 2: web-sök
+    # Nivå 2: LLM bootstrap — seed graph from model weights if domain is unknown
+    llm_learned = False
+    if learn and not brain._read_only and not graph_result.has_knowledge:
+        n = brain.domain_bootstrap(query)
+        llm_learned = n > 0
+        if llm_learned:
+            graph_result = brain.query(query)
+            if graph_result.confidence >= threshold and graph_result.has_knowledge:
+                return EscalationResult(
+                    query=query,
+                    context_block=graph_result.context_block(),
+                    sources=[],
+                    escalated=True,
+                    confidence_before=conf,
+                    learned=True,
+                )
+
+    # Nivå 3: web-sök
     snippets, sources = await _web_search(query, max_results=max_results)
     web_block = _format_web_block(snippets, sources)
 
     graph_block = graph_result.context_block()
     combined = "\n\n".join(filter(None, [graph_block, web_block]))
 
-    # Nivå 3: lär in ny fakta asynkront (non-blocking)
-    learned = False
+    # Nivå 4: lär in ny fakta asynkront (non-blocking)
+    learned = llm_learned
     if learn and snippets and not brain._read_only:
         try:
             brain.learn(query, "\n".join(snippets), source="escalator_web")
@@ -109,6 +126,43 @@ async def escalate_query(
         snippets=snippets,
         learned=learned,
     )
+
+
+async def _bootstrap_from_llm(query: str, brain) -> bool:  # kept for backward compat
+    """
+    Deprecated: use brain.domain_bootstrap() directly.
+    Nivå 2: Seed graph from LLM weights when domain is unknown.
+
+    Uses the model router attached to brain (if available) to ask the LLM
+    about the query topic, then stores the response as hypothesis-tier
+    knowledge via brain.learn().
+
+    Returns True if knowledge was successfully seeded.
+    """
+    model_router = getattr(brain, "_model_router", None)
+    if model_router is None:
+        return False
+
+    prompt = (
+        f"Explain the concept or topic: '{query}'. "
+        f"Describe key relations, subdomains, and connections to other concepts. "
+        f"State facts as concrete relations: 'X is Y', 'X causes Z', 'X relates to Y'."
+    )
+    system = (
+        "You are a knowledge distiller. Extract structured, factual knowledge. "
+        "Be specific and concrete. Max 300 words."
+    )
+
+    try:
+        response = await model_router.complete(prompt, system=system, max_tokens=400)
+        if not response:
+            return False
+        brain.learn(prompt, response, source="escalator_llm_bootstrap")
+        _log.info("LLM bootstrap: seeded knowledge for '%s'", query[:60])
+        return True
+    except Exception as e:
+        _log.debug("LLM bootstrap failed for '%s': %s", query[:60], e)
+        return False
 
 
 # ── Web search backends ───────────────────────────────────────────────────────

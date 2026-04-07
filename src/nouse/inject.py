@@ -265,24 +265,145 @@ class NouseBrain:
         except Exception:
             return []
 
-    def learn(self, prompt: str, response: str, source: str = "conversation") -> None:
+    def learn(self, prompt: str, response: str, source: str = "conversation",
+              domain_hint: str = "") -> None:
         """Extract and store knowledge from a prompt/response pair."""
         import asyncio
+        import logging
         from nouse.daemon.extractor import extract_relations
+        _log = logging.getLogger("nouse.brain.learn")
+        metadata = {"source": source, "domain_hint": domain_hint or source}
+        text = (prompt + "\n" + response).strip()
+
+        async def _run() -> None:
+            try:
+                relations = await extract_relations(text, metadata)
+                for rel in relations:
+                    src = rel.get("src", "")
+                    tgt = rel.get("tgt", "")
+                    rel_type = rel.get("type", "relates_to")
+                    why = rel.get("why", "")
+                    ev = float(rel.get("evidence_score", rel.get("ev", 0.6)))
+                    d_src = rel.get("domain_src", "external")
+                    d_tgt = rel.get("domain_tgt", "external")
+                    if src and tgt and len(src) > 1 and len(tgt) > 1:
+                        self._field.add_relation(
+                            src, rel_type, tgt,
+                            why=why, evidence_score=ev,
+                            source_tag=source,
+                            domain_src=d_src, domain_tgt=d_tgt,
+                        )
+                if relations:
+                    _log.debug("learn(): %d relations from '%s'", len(relations), source)
+            except Exception as e:
+                _log.debug("learn() extraction failed (%s): %s", source, e)
+
         try:
             loop = asyncio.get_event_loop()
             if loop.is_running():
                 import concurrent.futures
                 with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
-                    ex.submit(asyncio.run, extract_relations(
-                        prompt + "\n" + response, self._field, source_tag=source
-                    )).result(timeout=30)
+                    ex.submit(asyncio.run, _run()).result(timeout=45)
             else:
-                loop.run_until_complete(extract_relations(
-                    prompt + "\n" + response, self._field, source_tag=source
-                ))
-        except Exception:
-            pass
+                loop.run_until_complete(_run())
+        except Exception as e:
+            logging.getLogger("nouse.brain.learn").debug("learn() runner failed: %s", e)
+
+    def domain_bootstrap(
+        self,
+        topic: str,
+        *,
+        model: str | None = None,
+        evidence_score: float = 0.65,
+    ) -> int:
+        """
+        Seed the graph with LLM knowledge for an unknown topic.
+
+        Asks the configured model to describe the topic as structured relations,
+        then stores them as hypothesis-tier nodes. Returns number of relations added.
+
+        Uses the same extraction pipeline as ghost_q but fires reactively on a
+        query miss rather than nightly.
+        """
+        import asyncio
+        import logging
+        _log = logging.getLogger("nouse.brain.bootstrap")
+
+        BOOTSTRAP_SYSTEM = (
+            "You are a knowledge distiller. Extract structured factual knowledge. "
+            "State facts as concrete relations: 'X is Y', 'X causes Z', 'X relates to Y'. "
+            "Cover key concepts, subdomains, and their connections. Be specific. Max 350 words."
+        )
+        prompt = (
+            f"Explain the topic '{topic}': its main concepts, key relations, "
+            f"and how they connect to each other. Focus on verifiable facts."
+        )
+
+        async def _run() -> int:
+            from nouse.daemon.extractor import extract_relations
+            try:
+                model_router = getattr(self, "_model_router", None)
+                if model_router is not None:
+                    response = await model_router.complete(
+                        prompt, system=BOOTSTRAP_SYSTEM, max_tokens=450
+                    )
+                else:
+                    # Fallback: use Ollama directly with configured model
+                    import os, httpx
+                    _model = model or os.getenv("NOUSE_OLLAMA_MODEL", "deepseek-r1:1.5b")
+                    ollama_base = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+                    payload = {
+                        "model": _model,
+                        "messages": [
+                            {"role": "system", "content": BOOTSTRAP_SYSTEM},
+                            {"role": "user", "content": prompt},
+                        ],
+                        "stream": False,
+                    }
+                    async with httpx.AsyncClient(timeout=30.0) as client:
+                        r = await client.post(f"{ollama_base}/api/chat", json=payload)
+                        r.raise_for_status()
+                        response = r.json().get("message", {}).get("content", "")
+
+                if not response:
+                    return 0
+
+                relations = await extract_relations(
+                    f"Topic: {topic}\n\n{response}",
+                    {"source": "domain_bootstrap", "domain_hint": topic},
+                )
+                count = 0
+                for rel in relations:
+                    src = rel.get("src", "")
+                    tgt = rel.get("tgt", "")
+                    rel_type = rel.get("type", "relates_to")
+                    why = rel.get("why", "bootstrapped from model weights")
+                    ev = float(rel.get("evidence_score", rel.get("ev", evidence_score)))
+                    if src and tgt and len(src) > 1 and len(tgt) > 1:
+                        self._field.add_relation(
+                            src, rel_type, tgt,
+                            why=why, evidence_score=ev,
+                            source_tag="domain_bootstrap",
+                        )
+                        count += 1
+                _log.info("domain_bootstrap('%s'): %d relations seeded", topic, count)
+                return count
+            except Exception as e:
+                _log.warning("domain_bootstrap('%s') failed: %s", topic, e)
+                return 0
+
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                import concurrent.futures
+                with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
+                    return ex.submit(asyncio.run, _run()).result(timeout=60)
+            return loop.run_until_complete(_run())
+        except Exception as e:
+            logging.getLogger("nouse.brain.bootstrap").warning(
+                "domain_bootstrap runner failed: %s", e
+            )
+            return 0
 
     def add(
         self,
