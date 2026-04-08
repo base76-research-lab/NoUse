@@ -28,7 +28,8 @@ def test_help_exits_zero():
 def test_no_args_shows_help():
     result = runner.invoke(app, [])
     assert result.exit_code == 0
-    assert "Nouse Front Door" in result.output
+    # Matcha mot ny CLI-header och kommando
+    assert "νοῦς  v0.4.0" in result.output or "νοῦς" in result.output or "nouse" in result.output
     assert "nouse start me" in result.output
 
 

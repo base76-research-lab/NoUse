@@ -21,13 +21,20 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
+      - name: Set PYTHONPATH for src
+        run: |
+          echo "PYTHONPATH=$(pwd)/src" >> $GITHUB_ENV
+
       - name: Run tests
         run: pytest tests/ -v --ignore=tests/mcp_gateway --ignore=tests/test_inject_attach.py -x
+        env:
+          PYTHONPATH: ${{ env.PYTHONPATH }}
 
       - name: Check import
         run: python -c "import nouse; print(f'nouse {nouse.__version__} imported successfully')"

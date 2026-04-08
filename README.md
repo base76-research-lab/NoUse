@@ -387,11 +387,15 @@ Contributions welcome — especially domain-specific question banks.
 
 ## Research
 
+
 The theoretical foundation for Nouse is described in:
 
 - Wikström, B. (2026). **The Larynx Problem: Why Large Language Models Are Not Artificial Intelligence.** [Zenodo](https://zenodo.org/records/19413234) · [PhilPapers](https://philpapers.org/rec/WIKTLP)
+- Quattrociocchi, W. et al. (2025). **Epistemia: Structural Fault Lines in Generative AI.** [arXiv:2512.19466](https://arxiv.org/abs/2512.19466)
 
-The paper argues that LLMs model the output channel of intelligence (language), not intelligence itself — and that epistemic grounding through structured, plastic knowledge graphs is a necessary complement.
+Wikström (2026) argumenterar att LLMs modellerar uttryckskanalen för intelligens (språk), inte intelligens i sig — och att epistemisk grundning via strukturerade, plastiska kunskapsgrafer är nödvändig.
+
+Quattrociocchi et al. (2025) introducerar begreppet "epistemia" för att beskriva det strukturella glappet där språklig trovärdighet ersätter faktisk epistemisk utvärdering. Artikeln identifierar sju epistemologiska "fault lines" mellan mänskligt och maskinellt omdöme och ger en teoretisk ram för varför system som NoUse behövs.
 
 ---
 

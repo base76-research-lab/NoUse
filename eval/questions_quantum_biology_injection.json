@@ -1,0 +1,1202 @@
+[
+  {
+    "id": "qbi001",
+    "domain": "quantum biology (injection)",
+    "question": "What mechanism connects CCSD(T) to enzym tunneling?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "CCSD(T)",
+      "enzym tunneling"
+    ],
+    "expected_relations": [
+      [
+        "CCSD(T)",
+        "modulerar",
+        "enzym tunneling"
+      ]
+    ],
+    "why_hint": "studier",
+    "strength": 4.0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qbi002",
+    "domain": "quantum biology (injection)",
+    "question": "What are the implications of Engels et al. (2014) for disruption of magnetic compass orientation in robins?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "Engels et al. (2014)",
+      "disruption of magnetic compass orientation in robins"
+    ],
+    "expected_relations": [
+      [
+        "Engels et al. (2014)",
+        "beskriver",
+        "disruption of magnetic compass orientation in robins"
+      ]
+    ],
+    "why_hint": "visar att RF störning orsakar avvikelse (orig_type=dokumenterar)",
+    "strength": 4.0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qbi003",
+    "domain": "quantum biology (injection)",
+    "question": "What is Kavokin (2009), and how does it relate to potential effect of RF on singlet yield?",
+    "question_type": "vad_ar",
+    "expected_concepts": [
+      "Kavokin (2009)",
+      "potential effect of RF on singlet yield"
+    ],
+    "expected_relations": [
+      [
+        "Kavokin (2009)",
+        "beskriver",
+        "potential effect of RF on singlet yield"
+      ]
+    ],
+    "why_hint": "visar att RF kan påverka singlet-yield (orig_type=dokumenterar)",
+    "strength": 4.0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qbi004",
+    "domain": "quantum biology (injection)",
+    "question": "How does Klinman-laboratoriet relate to anomal KIE?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "Klinman-laboratoriet",
+      "anomal KIE"
+    ],
+    "expected_relations": [
+      [
+        "Klinman-laboratoriet",
+        "beskriver",
+        "anomal KIE"
+      ]
+    ],
+    "why_hint": "vid 30°C (orig_type=upptäcker)",
+    "strength": 4.0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qbi005",
+    "domain": "quantum biology (injection)",
+    "question": "What mechanism connects Luca Turin to Horsfield-Duer refinement?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "Luca Turin",
+      "Horsfield-Duer refinement"
+    ],
+    "expected_relations": [
+      [
+        "Luca Turin",
+        "modulerar",
+        "Horsfield-Duer refinement"
+      ]
+    ],
+    "why_hint": "2017 model",
+    "strength": 4.0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qbi006",
+    "domain": "quantum biology (injection)",
+    "question": "What are the implications of Luca Turin for vibrational theory of olfaction?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "Luca Turin",
+      "vibrational theory of olfaction"
+    ],
+    "expected_relations": [
+      [
+        "Luca Turin",
+        "beskriver",
+        "vibrational theory of olfaction"
+      ]
+    ],
+    "why_hint": "1996 paper (orig_type=proponerar)",
+    "strength": 4.0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qbi007",
+    "domain": "quantum biology (injection)",
+    "question": "What is Ritz et al. (2004), and how does it relate to disruption of magnetic orientation in European robins?",
+    "question_type": "vad_ar",
+    "expected_concepts": [
+      "Ritz et al. (2004)",
+      "disruption of magnetic orientation in European robins"
+    ],
+    "expected_relations": [
+      [
+        "Ritz et al. (2004)",
+        "beskriver",
+        "disruption of magnetic orientation in European robins"
+      ]
+    ],
+    "why_hint": "visar att RF störning orsakar avvikelse (orig_type=dokumenterar)",
+    "strength": 4.0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qbi008",
+    "domain": "quantum biology (injection)",
+    "question": "How does Schwarze et al. (2016) relate to replication of disruption effect in double-blinded conditions?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "Schwarze et al. (2016)",
+      "replication of disruption effect in double-blinded conditions"
+    ],
+    "expected_relations": [
+      [
+        "Schwarze et al. (2016)",
+        "beskriver",
+        "replication of disruption effect in double-blinded conditions"
+      ]
+    ],
+    "why_hint": "bekräftar att RF störning orsakar avvikelse (orig_type=dokumenterar)",
+    "strength": 4.0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qbi009",
+    "domain": "quantum biology (injection)",
+    "question": "What mechanism connects spin-boson model to energy transfer efficiency?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "spin-boson model",
+      "energy transfer efficiency"
+    ],
+    "expected_relations": [
+      [
+        "spin-boson model",
+        "stärker",
+        "energy transfer efficiency"
+      ]
+    ],
+    "why_hint": "10%",
+    "strength": 4.0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qbi010",
+    "domain": "quantum biology (injection)",
+    "question": "What are the implications of spin-boson model for energy transfer efficiency?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "spin-boson model",
+      "energy transfer efficiency"
+    ],
+    "expected_relations": [
+      [
+        "spin-boson model",
+        "beskriver",
+        "energy transfer efficiency"
+      ]
+    ],
+    "why_hint": "10%",
+    "strength": 4.0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qbi011",
+    "domain": "quantum biology (injection)",
+    "question": "What is B3LYP/6-311++G(d,p), and how does it relate to potential energy surface?",
+    "question_type": "vad_ar",
+    "expected_concepts": [
+      "B3LYP/6-311++G(d,p)",
+      "potential energy surface"
+    ],
+    "expected_relations": [
+      [
+        "B3LYP/6-311++G(d,p)",
+        "modulerar",
+        "potential energy surface"
+      ]
+    ],
+    "why_hint": "beräkning",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi012",
+    "domain": "quantum biology (injection)",
+    "question": "How does CASSCF or DMRG methods relate to tight-binding models?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "CASSCF or DMRG methods",
+      "tight-binding models"
+    ],
+    "expected_relations": [
+      [
+        "CASSCF or DMRG methods",
+        "modulerar",
+        "tight-binding models"
+      ]
+    ],
+    "why_hint": "beräkning",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi013",
+    "domain": "quantum biology (injection)",
+    "question": "What mechanism connects Cao et al. to HEOM calculations?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "Cao et al.",
+      "HEOM calculations"
+    ],
+    "expected_relations": [
+      [
+        "Cao et al.",
+        "modulerar",
+        "HEOM calculations"
+      ]
+    ],
+    "why_hint": "quantum yield",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi014",
+    "domain": "quantum biology (injection)",
+    "question": "What are the implications of Cao et al. for HEOM results?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "Cao et al.",
+      "HEOM results"
+    ],
+    "expected_relations": [
+      [
+        "Cao et al.",
+        "modulerar",
+        "HEOM results"
+      ]
+    ],
+    "why_hint": "quantum yield",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi015",
+    "domain": "quantum biology (injection)",
+    "question": "What is Cao et al., and how does it relate to SLO-1?",
+    "question_type": "vad_ar",
+    "expected_concepts": [
+      "Cao et al.",
+      "SLO-1"
+    ],
+    "expected_relations": [
+      [
+        "Cao et al.",
+        "modulerar",
+        "SLO-1"
+      ]
+    ],
+    "why_hint": "tunneling contribution",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi016",
+    "domain": "quantum biology (injection)",
+    "question": "How does Cryptochrome 4 relate to FAD cofactor?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "Cryptochrome 4",
+      "FAD cofactor"
+    ],
+    "expected_relations": [
+      [
+        "Cryptochrome 4",
+        "modulerar",
+        "FAD cofactor"
+      ]
+    ],
+    "why_hint": "samverkar med FAD kofaktor",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi017",
+    "domain": "quantum biology (injection)",
+    "question": "What mechanism connects Cryptochrome 4 to FAD cofactor?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "Cryptochrome 4",
+      "FAD cofactor"
+    ],
+    "expected_relations": [
+      [
+        "Cryptochrome 4",
+        "producerar",
+        "FAD cofactor"
+      ]
+    ],
+    "why_hint": "samverkar med FAD kofaktor",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi018",
+    "domain": "quantum biology (injection)",
+    "question": "What are the implications of DFT calculations for IR spectra overlap?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "DFT calculations",
+      "IR spectra overlap"
+    ],
+    "expected_relations": [
+      [
+        "DFT calculations",
+        "konsoliderar",
+        "IR spectra overlap"
+      ]
+    ],
+    "why_hint": "IR-spektra överlappar",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi019",
+    "domain": "quantum biology (injection)",
+    "question": "What is DNA polymerase, and how does it relate to mutation?",
+    "question_type": "vad_ar",
+    "expected_concepts": [
+      "DNA polymerase",
+      "mutation"
+    ],
+    "expected_relations": [
+      [
+        "DNA polymerase",
+        "reglerar",
+        "mutation"
+      ]
+    ],
+    "why_hint": "incorporation time",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi020",
+    "domain": "quantum biology (injection)",
+    "question": "How does EA-VTST/MT relate to enzym tunneling?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "EA-VTST/MT",
+      "enzym tunneling"
+    ],
+    "expected_relations": [
+      [
+        "EA-VTST/MT",
+        "modulerar",
+        "enzym tunneling"
+      ]
+    ],
+    "why_hint": "studier",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi021",
+    "domain": "quantum biology (injection)",
+    "question": "What mechanism connects EA-VTST/MT to tunneling correction factor?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "EA-VTST/MT",
+      "tunneling correction factor"
+    ],
+    "expected_relations": [
+      [
+        "EA-VTST/MT",
+        "orsakar",
+        "tunneling correction factor"
+      ]
+    ],
+    "why_hint": "beräkning",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi022",
+    "domain": "quantum biology (injection)",
+    "question": "What are the implications of FAD cofactor for radical pair?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "FAD cofactor",
+      "radical pair"
+    ],
+    "expected_relations": [
+      [
+        "FAD cofactor",
+        "konsoliderar",
+        "radical pair"
+      ]
+    ],
+    "why_hint": "samverkar med radikala par",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi023",
+    "domain": "quantum biology (injection)",
+    "question": "What is FMO complex, and how does it relate to vibrational mode?",
+    "question_type": "vad_ar",
+    "expected_concepts": [
+      "FMO complex",
+      "vibrational mode"
+    ],
+    "expected_relations": [
+      [
+        "FMO complex",
+        "modulerar",
+        "vibrational mode"
+      ]
+    ],
+    "why_hint": "energiöverföring",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi024",
+    "domain": "quantum biology (injection)",
+    "question": "How does FMO komplex relate to BChl molekyler?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "FMO komplex",
+      "BChl molekyler"
+    ],
+    "expected_relations": [
+      [
+        "FMO komplex",
+        "producerar",
+        "BChl molekyler"
+      ]
+    ],
+    "why_hint": "innehåller BChl",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi025",
+    "domain": "quantum biology (injection)",
+    "question": "What mechanism connects FMO komplex to bakteriochlorofyll?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "FMO komplex",
+      "bakteriochlorofyll"
+    ],
+    "expected_relations": [
+      [
+        "FMO komplex",
+        "modulerar",
+        "bakteriochlorofyll"
+      ]
+    ],
+    "why_hint": "komplex består av",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi026",
+    "domain": "quantum biology (injection)",
+    "question": "What are the implications of FMO komplex for energiavkylning?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "FMO komplex",
+      "energiavkylning"
+    ],
+    "expected_relations": [
+      [
+        "FMO komplex",
+        "modulerar",
+        "energiavkylning"
+      ]
+    ],
+    "why_hint": "energiavkylningstider",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi027",
+    "domain": "quantum biology (injection)",
+    "question": "What is FMO komplex, and how does it relate to excitoniska energigapar?",
+    "question_type": "vad_ar",
+    "expected_concepts": [
+      "FMO komplex",
+      "excitoniska energigapar"
+    ],
+    "expected_relations": [
+      [
+        "FMO komplex",
+        "modulerar",
+        "excitoniska energigapar"
+      ]
+    ],
+    "why_hint": "innehåller energigapar",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi028",
+    "domain": "quantum biology (injection)",
+    "question": "How does FMO komplex relate to reaktionscentrum?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "FMO komplex",
+      "reaktionscentrum"
+    ],
+    "expected_relations": [
+      [
+        "FMO komplex",
+        "modulerar",
+        "reaktionscentrum"
+      ]
+    ],
+    "why_hint": "komplex medierar",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi029",
+    "domain": "quantum biology (injection)",
+    "question": "What mechanism connects FMO komplex to renhet?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "FMO komplex",
+      "renhet"
+    ],
+    "expected_relations": [
+      [
+        "FMO komplex",
+        "modulerar",
+        "renhet"
+      ]
+    ],
+    "why_hint": "renhetstider",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi030",
+    "domain": "quantum biology (injection)",
+    "question": "What are the implications of IETS mechanism for electron-phonon coupling constants?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "IETS mechanism",
+      "electron-phonon coupling constants"
+    ],
+    "expected_relations": [
+      [
+        "IETS mechanism",
+        "konsoliderar",
+        "electron-phonon coupling constants"
+      ]
+    ],
+    "why_hint": "elektron-fononkopplingskonstanter",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi031",
+    "domain": "quantum biology (injection)",
+    "question": "What is IETS mechanism, and how does it relate to quantum olfaction?",
+    "question_type": "vad_ar",
+    "expected_concepts": [
+      "IETS mechanism",
+      "quantum olfaction"
+    ],
+    "expected_relations": [
+      [
+        "IETS mechanism",
+        "modulerar",
+        "quantum olfaction"
+      ]
+    ],
+    "why_hint": "studeras",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi032",
+    "domain": "quantum biology (injection)",
+    "question": "How does Moser-Dutton ruler relate to Complexes I, II, III, and IV?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "Moser-Dutton ruler",
+      "Complexes I, II, III, and IV"
+    ],
+    "expected_relations": [
+      [
+        "Moser-Dutton ruler",
+        "beskriver",
+        "Complexes I, II, III, and IV"
+      ]
+    ],
+    "why_hint": "relates electron transfer and distance",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi033",
+    "domain": "quantum biology (injection)",
+    "question": "What mechanism connects OR protein topology to no obvious donor and acceptor redox-active groups?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "OR protein topology",
+      "no obvious donor and acceptor redox-active groups"
+    ],
+    "expected_relations": [
+      [
+        "OR protein topology",
+        "konsoliderar",
+        "no obvious donor and acceptor redox-active groups"
+      ]
+    ],
+    "why_hint": "inga tydliga donatorer och acceptorer",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi034",
+    "domain": "quantum biology (injection)",
+    "question": "What are the implications of QM/MM for enzym tunneling?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "QM/MM",
+      "enzym tunneling"
+    ],
+    "expected_relations": [
+      [
+        "QM/MM",
+        "modulerar",
+        "enzym tunneling"
+      ]
+    ],
+    "why_hint": "studier",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi035",
+    "domain": "quantum biology (injection)",
+    "question": "What is SLO-1, and how does it relate to PCET-mekanismen?",
+    "question_type": "vad_ar",
+    "expected_concepts": [
+      "SLO-1",
+      "PCET-mekanismen"
+    ],
+    "expected_relations": [
+      [
+        "SLO-1",
+        "modulerar",
+        "PCET-mekanismen"
+      ]
+    ],
+    "why_hint": "oxiderar linoleic acid",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi036",
+    "domain": "quantum biology (injection)",
+    "question": "How does SLO-1 relate to elektron?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "SLO-1",
+      "elektron"
+    ],
+    "expected_relations": [
+      [
+        "SLO-1",
+        "producerar",
+        "elektron"
+      ]
+    ],
+    "why_hint": "via PCET",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi037",
+    "domain": "quantum biology (injection)",
+    "question": "What mechanism connects SLO-1 to full tunneling-modeller?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "SLO-1",
+      "full tunneling-modeller"
+    ],
+    "expected_relations": [
+      [
+        "SLO-1",
+        "är_del_av",
+        "full tunneling-modeller"
+      ]
+    ],
+    "why_hint": "för hydrogenöverföring",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi038",
+    "domain": "quantum biology (injection)",
+    "question": "What are the implications of WKB approximation for tunneling probability?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "WKB approximation",
+      "tunneling probability"
+    ],
+    "expected_relations": [
+      [
+        "WKB approximation",
+        "modulerar",
+        "tunneling probability"
+      ]
+    ],
+    "why_hint": "estimates",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi039",
+    "domain": "quantum biology (injection)",
+    "question": "What is WKB tunneling probability, and how does it relate to tautomeric population?",
+    "question_type": "vad_ar",
+    "expected_concepts": [
+      "WKB tunneling probability",
+      "tautomeric population"
+    ],
+    "expected_relations": [
+      [
+        "WKB tunneling probability",
+        "modulerar",
+        "tautomeric population"
+      ]
+    ],
+    "why_hint": "contributes to",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi040",
+    "domain": "quantum biology (injection)",
+    "question": "How does aktivt centrum relate to elektron?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "aktivt centrum",
+      "elektron"
+    ],
+    "expected_relations": [
+      [
+        "aktivt centrum",
+        "beskriver",
+        "elektron"
+      ]
+    ],
+    "why_hint": "via Fe(III)-OH (orig_type=accepterar)",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi041",
+    "domain": "quantum biology (injection)",
+    "question": "What mechanism connects tight-binding models to CASSCF or DMRG methods?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "tight-binding models",
+      "CASSCF or DMRG methods"
+    ],
+    "expected_relations": [
+      [
+        "tight-binding models",
+        "försvagar",
+        "CASSCF or DMRG methods"
+      ]
+    ],
+    "why_hint": "beräkning",
+    "strength": 6.0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "qbi042",
+    "domain": "quantum biology (injection)",
+    "question": "What are the implications of 7,8-dihydrofolat for Dihydrofolat reduktas?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "7,8-dihydrofolat",
+      "Dihydrofolat reduktas"
+    ],
+    "expected_relations": [
+      [
+        "7,8-dihydrofolat",
+        "modulerar",
+        "Dihydrofolat reduktas"
+      ]
+    ],
+    "why_hint": "är substrat",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi043",
+    "domain": "quantum biology (injection)",
+    "question": "What is A-T base pair, and how does it relate to proton tunneling?",
+    "question_type": "vad_ar",
+    "expected_concepts": [
+      "A-T base pair",
+      "proton tunneling"
+    ],
+    "expected_relations": [
+      [
+        "A-T base pair",
+        "modulerar",
+        "proton tunneling"
+      ]
+    ],
+    "why_hint": "tunneling rates",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi044",
+    "domain": "quantum biology (injection)",
+    "question": "How does AADH relate to Alcaligenes faecalis?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "AADH",
+      "Alcaligenes faecalis"
+    ],
+    "expected_relations": [
+      [
+        "AADH",
+        "modulerar",
+        "Alcaligenes faecalis"
+      ]
+    ],
+    "why_hint": "ursprung",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi045",
+    "domain": "quantum biology (injection)",
+    "question": "What mechanism connects AADH to Asp128?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "AADH",
+      "Asp128"
+    ],
+    "expected_relations": [
+      [
+        "AADH",
+        "modulerar",
+        "Asp128"
+      ]
+    ],
+    "why_hint": "tunneling event",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi046",
+    "domain": "quantum biology (injection)",
+    "question": "What are the implications of AADH for Hay-Scrutton modellen?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "AADH",
+      "Hay-Scrutton modellen"
+    ],
+    "expected_relations": [
+      [
+        "AADH",
+        "modulerar",
+        "Hay-Scrutton modellen"
+      ]
+    ],
+    "why_hint": "beräkning",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi047",
+    "domain": "quantum biology (injection)",
+    "question": "What is AADH, and how does it relate to basran et al.?",
+    "question_type": "vad_ar",
+    "expected_concepts": [
+      "AADH",
+      "basran et al."
+    ],
+    "expected_relations": [
+      [
+        "AADH",
+        "modulerar",
+        "basran et al."
+      ]
+    ],
+    "why_hint": "studie",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi048",
+    "domain": "quantum biology (injection)",
+    "question": "How does AADH relate to deuterium?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "AADH",
+      "deuterium"
+    ],
+    "expected_relations": [
+      [
+        "AADH",
+        "modulerar",
+        "deuterium"
+      ]
+    ],
+    "why_hint": "reaktionshastighet",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi049",
+    "domain": "quantum biology (injection)",
+    "question": "What mechanism connects AADH to protium?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "AADH",
+      "protium"
+    ],
+    "expected_relations": [
+      [
+        "AADH",
+        "modulerar",
+        "protium"
+      ]
+    ],
+    "why_hint": "reaktionshastighet",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi050",
+    "domain": "quantum biology (injection)",
+    "question": "What are the implications of AADH for tryptophan?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "AADH",
+      "tryptophan"
+    ],
+    "expected_relations": [
+      [
+        "AADH",
+        "modulerar",
+        "tryptophan"
+      ]
+    ],
+    "why_hint": "kofaktor",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi051",
+    "domain": "quantum biology (injection)",
+    "question": "What is AADH, and how does it relate to tryptophylquinone?",
+    "question_type": "vad_ar",
+    "expected_concepts": [
+      "AADH",
+      "tryptophylquinone"
+    ],
+    "expected_relations": [
+      [
+        "AADH",
+        "modulerar",
+        "tryptophylquinone"
+      ]
+    ],
+    "why_hint": "kofaktor",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi052",
+    "domain": "quantum biology (injection)",
+    "question": "How does AMBER relate to enzym tunneling?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "AMBER",
+      "enzym tunneling"
+    ],
+    "expected_relations": [
+      [
+        "AMBER",
+        "modulerar",
+        "enzym tunneling"
+      ]
+    ],
+    "why_hint": "studier",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi053",
+    "domain": "quantum biology (injection)",
+    "question": "What mechanism connects Bacillus stearothermophilus to Alkohol dehydrogenase?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "Bacillus stearothermophilus",
+      "Alkohol dehydrogenase"
+    ],
+    "expected_relations": [
+      [
+        "Bacillus stearothermophilus",
+        "modulerar",
+        "Alkohol dehydrogenase"
+      ]
+    ],
+    "why_hint": "producerar enzym",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi054",
+    "domain": "quantum biology (injection)",
+    "question": "What are the implications of Benzylalkohol for Alkohol dehydrogenase?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "Benzylalkohol",
+      "Alkohol dehydrogenase"
+    ],
+    "expected_relations": [
+      [
+        "Benzylalkohol",
+        "modulerar",
+        "Alkohol dehydrogenase"
+      ]
+    ],
+    "why_hint": "är substrat",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi055",
+    "domain": "quantum biology (injection)",
+    "question": "What is Beratan och Onuchic, and how does it relate to bonding topology?",
+    "question_type": "vad_ar",
+    "expected_concepts": [
+      "Beratan och Onuchic",
+      "bonding topology"
+    ],
+    "expected_relations": [
+      [
+        "Beratan och Onuchic",
+        "konsoliderar",
+        "bonding topology"
+      ]
+    ],
+    "why_hint": "predicts rate variations",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi056",
+    "domain": "quantum biology (injection)",
+    "question": "How does Beratan och Onuchic relate to pathway model?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "Beratan och Onuchic",
+      "pathway model"
+    ],
+    "expected_relations": [
+      [
+        "Beratan och Onuchic",
+        "konsoliderar",
+        "pathway model"
+      ]
+    ],
+    "why_hint": "predicts rate variations",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi057",
+    "domain": "quantum biology (injection)",
+    "question": "What mechanism connects Beratan-Skourtis-Onuchic pathway model to electron tunneling coupling?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "Beratan-Skourtis-Onuchic pathway model",
+      "electron tunneling coupling"
+    ],
+    "expected_relations": [
+      [
+        "Beratan-Skourtis-Onuchic pathway model",
+        "modulerar",
+        "electron tunneling coupling"
+      ]
+    ],
+    "why_hint": "dekomponerar",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi058",
+    "domain": "quantum biology (injection)",
+    "question": "What are the implications of Biological electron transfer chains for redox cofactors?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "Biological electron transfer chains",
+      "redox cofactors"
+    ],
+    "expected_relations": [
+      [
+        "Biological electron transfer chains",
+        "modulerar",
+        "redox cofactors"
+      ]
+    ],
+    "why_hint": "konsoliderar",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi059",
+    "domain": "quantum biology (injection)",
+    "question": "What is Biological electron transfer chains, and how does it relate to respiratory and photosynthetic electron flow?",
+    "question_type": "vad_ar",
+    "expected_concepts": [
+      "Biological electron transfer chains",
+      "respiratory and photosynthetic electron flow"
+    ],
+    "expected_relations": [
+      [
+        "Biological electron transfer chains",
+        "synkroniserar",
+        "respiratory and photosynthetic electron flow"
+      ]
+    ],
+    "why_hint": "samordnar",
+    "strength": 7.5,
+    "difficulty": "easy"
+  },
+  {
+    "id": "qbi060",
+    "domain": "quantum biology (injection)",
+    "question": "How does Biological electron transfer chains relate to thermodynamic driving force?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "Biological electron transfer chains",
+      "thermodynamic driving force"
+    ],
+    "expected_relations": [
+      [
+        "Biological electron transfer chains",
+        "orsakar",
+        "thermodynamic driving force"
+      ]
+    ],
+    "why_hint": "skapar",
+    "strength": 7.5,
+    "difficulty": "easy"
+  }
+]

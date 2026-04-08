@@ -1,0 +1,266 @@
+[
+  {
+    "id": "qb023",
+    "domain": "quantum biology",
+    "question": "What are the implications of quantum decoherence timescales for the viability of proton tunneling as a source of DNA mutation rates in vivo?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "quantum decoherence",
+      "mutation rate",
+      "proton tunneling",
+      "thermal fluctuations"
+    ],
+    "expected_relations": [
+      [
+        "quantum decoherence",
+        "försvagar",
+        "mutation rate"
+      ]
+    ],
+    "why_hint": "Rapid decoherence from the warm cellular environment may suppress coherent tunneling, but incoherent tunneling can still contribute to tautomer populations",
+    "strength": 5.0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qb015",
+    "domain": "quantum biology",
+    "question": "By what mechanism do hyperfine interactions between electron and nuclear spins determine the directional sensitivity of the avian magnetic compass?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "hyperfine interactions",
+      "compass sensitivity",
+      "nuclear spins",
+      "anisotropy"
+    ],
+    "expected_relations": [
+      [
+        "hyperfine interactions",
+        "reglerar",
+        "compass sensitivity"
+      ]
+    ],
+    "why_hint": "Anisotropic hyperfine tensors make singlet-triplet interconversion dependent on radical pair orientation relative to the external magnetic field",
+    "strength": 7.0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qb009",
+    "domain": "quantum biology",
+    "question": "What are the implications of environmental decoherence for the strength of chromophore coupling in the LHCII complex?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "decoherence",
+      "chromophore coupling",
+      "LHCII",
+      "exciton delocalization"
+    ],
+    "expected_relations": [
+      [
+        "decoherence",
+        "försvagar",
+        "chromophore coupling"
+      ]
+    ],
+    "why_hint": "Decoherence from protein fluctuations localizes excitons, reducing effective inter-chromophore coupling but may optimize transfer via dephasing-assisted transport",
+    "strength": 6.0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qb027",
+    "domain": "quantum biology",
+    "question": "What are the implications of reorganization energy tuning by the protein matrix for optimizing electron tunneling efficiency in cytochrome c oxidase?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "reorganization energy",
+      "tunneling efficiency",
+      "cytochrome c oxidase",
+      "protein matrix"
+    ],
+    "expected_relations": [
+      [
+        "reorganization energy",
+        "reglerar",
+        "tunneling efficiency"
+      ]
+    ],
+    "why_hint": "Proteins tune reorganization energy to match driving force, keeping electron transfer near the Marcus optimal rate and avoiding the inverted region",
+    "strength": 6.5,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qb030",
+    "domain": "quantum biology",
+    "question": "By what mechanism do non-Markovian memory effects in biological environments extend quantum coherence lifetimes beyond Markovian predictions?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "non-Markovian dynamics",
+      "biological systems",
+      "memory effects",
+      "coherence lifetime"
+    ],
+    "expected_relations": [
+      [
+        "non-Markovian dynamics",
+        "stärker",
+        "quantum coherence"
+      ]
+    ],
+    "why_hint": "Structured environments with finite correlation times allow information backflow from bath to system, partially reversing decoherence and prolonging coherence",
+    "strength": 5.5,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qb022",
+    "domain": "quantum biology",
+    "question": "How does the asymmetry of the double-well potential energy surface in G-C versus A-T base pairs relate to their relative tautomeric stability?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "double well potential",
+      "base pair stability",
+      "G-C base pairs",
+      "A-T base pairs",
+      "asymmetry"
+    ],
+    "expected_relations": [
+      [
+        "double well potential",
+        "reglerar",
+        "base pair stability"
+      ]
+    ],
+    "why_hint": "G-C pairs have three hydrogen bonds creating a more asymmetric double-well, making tautomeric tunneling less favorable than in A-T pairs with two bonds",
+    "strength": 5.5,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qb035",
+    "domain": "quantum biology",
+    "question": "What are the implications of long-range quantum entanglement for the possibility of non-local biological signaling mechanisms?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "quantum entanglement",
+      "biological signaling",
+      "non-locality",
+      "decoherence timescales"
+    ],
+    "expected_relations": [
+      [
+        "quantum entanglement",
+        "modulerar",
+        "biological signaling"
+      ]
+    ],
+    "why_hint": "Thermal decoherence in warm wet biology likely prevents functional entanglement over macroscopic distances, limiting non-local signaling to speculation",
+    "strength": 3.0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qb010",
+    "domain": "quantum biology",
+    "question": "How does the persistence of quantum coherence at room temperature in biological systems relate to the protein environment's spectral density?",
+    "question_type": "relation",
+    "expected_concepts": [
+      "room temperature coherence",
+      "spectral density",
+      "protein environment",
+      "vibronic coupling"
+    ],
+    "expected_relations": [
+      [
+        "room temperature",
+        "modulerar",
+        "coherence persistence"
+      ]
+    ],
+    "why_hint": "Structured spectral densities with underdamped vibrational modes can sustain coherence by resonantly coupling electronic and nuclear degrees of freedom",
+    "strength": 5.0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qb014",
+    "domain": "quantum biology",
+    "question": "What are the implications of flavin adenine dinucleotide's electronic structure for the spin dynamics of the cryptochrome radical pair?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "flavin adenine dinucleotide",
+      "spin dynamics",
+      "cryptochrome",
+      "hyperfine tensor"
+    ],
+    "expected_relations": [
+      [
+        "flavin adenine dinucleotide",
+        "modulerar",
+        "spin dynamics"
+      ]
+    ],
+    "why_hint": "FAD's isoalloxazine ring distributes unpaired spin density across nitrogen atoms, creating anisotropic hyperfine tensors essential for compass directionality",
+    "strength": 6.5,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qb003",
+    "domain": "quantum biology",
+    "question": "What mechanism links protein conformational dynamics to modulation of hydrogen tunneling probability in enzymes like alcohol dehydrogenase?",
+    "question_type": "mekanisk",
+    "expected_concepts": [
+      "protein dynamics",
+      "tunneling probability",
+      "donor-acceptor distance"
+    ],
+    "expected_relations": [
+      [
+        "protein dynamics",
+        "modulerar",
+        "tunneling probability"
+      ]
+    ],
+    "why_hint": "Protein motions compress donor-acceptor distance, narrowing the barrier width and exponentially increasing tunneling probability",
+    "strength": 6.5,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qb004",
+    "domain": "quantum biology",
+    "question": "What are the implications of promoting vibrations for the transition state barrier in enzymes such as dihydrofolate reductase?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "promoting vibrations",
+      "transition state",
+      "DHFR",
+      "barrier modulation"
+    ],
+    "expected_relations": [
+      [
+        "promoting vibrations",
+        "försvagar",
+        "transition state"
+      ]
+    ],
+    "why_hint": "Promoting vibrations transiently reduce the donor-acceptor distance, effectively lowering the tunneling barrier width at the transition state",
+    "strength": 6.0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "qb031",
+    "domain": "quantum biology",
+    "question": "What are the implications of a structured spectral density with discrete peaks for coherence protection in the FMO complex?",
+    "question_type": "implikation",
+    "expected_concepts": [
+      "structured spectral density",
+      "coherence protection",
+      "FMO complex",
+      "vibronic resonance"
+    ],
+    "expected_relations": [
+      [
+        "structured spectral density",
+        "stärker",
+        "coherence protection"
+      ]
+    ],
+    "why_hint": "Discrete spectral density peaks matching exciton energy gaps create vibronic resonances that sustain long-lived coherence through correlated system-bath dynamics",
+    "strength": 5.5,
+    "difficulty": "hard"
+  }
+]

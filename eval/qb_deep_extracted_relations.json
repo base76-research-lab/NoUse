@@ -1,0 +1,5431 @@
+[
+  {
+    "id": "enzyme-tunneling-slo1-kie",
+    "source": "Enzyme Quantum Tunneling: SLO-1 Kinetic Isotope Effects",
+    "relations": [
+      {
+        "src": "SLO-1",
+        "tgt": "PCET-mekanismen",
+        "type": "modulerar",
+        "why": "oxiderar linoleic acid",
+        "domain_src": "biokemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Klinman-laboratoriet",
+        "tgt": "anomal KIE",
+        "type": "beskriver",
+        "why": "vid 30°C (orig_type=upptäcker)",
+        "domain_src": "universitet",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "SLO-1",
+        "tgt": "elektron",
+        "type": "producerar",
+        "why": "via PCET",
+        "domain_src": "biokemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "aktivt centrum",
+        "tgt": "elektron",
+        "type": "beskriver",
+        "why": "via Fe(III)-OH (orig_type=accepterar)",
+        "domain_src": "biokemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "DAD",
+        "tgt": "X-ray-kristallografi",
+        "type": "beskriver",
+        "why": "på 2.8–3.0 Å (orig_type=bestäms)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "I553A-mutanten",
+        "tgt": "temperatureberoende KIE",
+        "type": "beskriver",
+        "why": "vid låg temperatur (orig_type=visar)",
+        "domain_src": "biokemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "protein-vibrationer",
+        "tgt": "DAD under 2.7 Å",
+        "type": "beskriver",
+        "why": "vid ~150 cm⁻¹ (orig_type=gör)",
+        "domain_src": "biokemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "protein-landskapet",
+        "tgt": "tunnelningsavståndsfördelningen",
+        "type": "modulerar",
+        "why": "exponentiellt",
+        "domain_src": "biokemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "SLO-1",
+        "tgt": "full tunneling-modeller",
+        "type": "är_del_av",
+        "why": "för hydrogenöverföring",
+        "domain_src": "biokemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Marcus-förmodellen",
+        "tgt": "tunnelning-sannolikheten",
+        "type": "beskriver",
+        "why": "exponentiellt på DAD (orig_type=formaliserar)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "protein-landskapet",
+        "tgt": "tunnelningsavståndsfördelningen",
+        "type": "reglerar",
+        "why": "via konformationella variationer",
+        "domain_src": "biokemi",
+        "domain_tgt": "fysik"
+      }
+    ]
+  },
+  {
+    "id": "enzyme-tunneling-aadh-madh",
+    "source": "Enzyme Quantum Tunneling: AADH and MADH Proton Transfer",
+    "relations": [
+      {
+        "src": "AADH",
+        "tgt": "TTQ",
+        "type": "modulerar",
+        "why": "elektron acceptor",
+        "domain_src": "biokemi",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "AADH",
+        "tgt": "Asp128",
+        "type": "modulerar",
+        "why": "tunneling event",
+        "domain_src": "biokemi",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "MADH",
+        "tgt": "TTQ",
+        "type": "modulerar",
+        "why": "kofaktor",
+        "domain_src": "biokemi",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "AADH",
+        "tgt": "protium",
+        "type": "modulerar",
+        "why": "reaktionshastighet",
+        "domain_src": "biokemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "AADH",
+        "tgt": "deuterium",
+        "type": "modulerar",
+        "why": "reaktionshastighet",
+        "domain_src": "biokemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "MADH",
+        "tgt": "protium",
+        "type": "modulerar",
+        "why": "reaktionshastighet",
+        "domain_src": "biokemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "MADH",
+        "tgt": "deuterium",
+        "type": "modulerar",
+        "why": "reaktionshastighet",
+        "domain_src": "biokemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "AADH",
+        "tgt": "Hay-Scrutton modellen",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "biokemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "MADH",
+        "tgt": "Hay-Scrutton modellen",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "biokemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "AADH",
+        "tgt": "basran et al.",
+        "type": "modulerar",
+        "why": "studie",
+        "domain_src": "biokemi",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "MADH",
+        "tgt": "basran et al.",
+        "type": "modulerar",
+        "why": "studie",
+        "domain_src": "biokemi",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "MADH",
+        "tgt": "Hay et al.",
+        "type": "modulerar",
+        "why": "studie",
+        "domain_src": "biokemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "AADH",
+        "tgt": "Alcaligenes faecalis",
+        "type": "modulerar",
+        "why": "ursprung",
+        "domain_src": "biokemi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "MADH",
+        "tgt": "Alcaligenes faecalis",
+        "type": "modulerar",
+        "why": "ursprung",
+        "domain_src": "biokemi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "AADH",
+        "tgt": "tryptophan",
+        "type": "modulerar",
+        "why": "kofaktor",
+        "domain_src": "biokemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "MADH",
+        "tgt": "tryptophan",
+        "type": "modulerar",
+        "why": "kofaktor",
+        "domain_src": "biokemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "AADH",
+        "tgt": "tryptophylquinone",
+        "type": "modulerar",
+        "why": "kofaktor",
+        "domain_src": "biokemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "MADH",
+        "tgt": "tryptophylquinone",
+        "type": "modulerar",
+        "why": "kofaktor",
+        "domain_src": "biokemi",
+        "domain_tgt": "kemi"
+      }
+    ]
+  },
+  {
+    "id": "enzyme-tunneling-adh-dhfr",
+    "source": "Enzyme Quantum Tunneling: ADH and DHFR Hydride Transfer",
+    "relations": [
+      {
+        "src": "Alkohol dehydrogenase",
+        "tgt": "NAD⁺",
+        "type": "modulerar",
+        "why": "katalyserar omsättning",
+        "domain_src": "biokemi",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "Benzylalkohol",
+        "tgt": "Alkohol dehydrogenase",
+        "type": "modulerar",
+        "why": "är substrat",
+        "domain_src": "kemikalie",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "Zn²⁺",
+        "tgt": "Alkohol dehydrogenase",
+        "type": "modulerar",
+        "why": "koordinerar substrat",
+        "domain_src": "kemikalie",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "NAD⁺",
+        "tgt": "Alkohol dehydrogenase",
+        "type": "modulerar",
+        "why": "är kofaktor",
+        "domain_src": "biokemi",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "Bacillus stearothermophilus",
+        "tgt": "Alkohol dehydrogenase",
+        "type": "modulerar",
+        "why": "producerar enzym",
+        "domain_src": "biologi",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "Dihydrofolat reduktas",
+        "tgt": "NADPH",
+        "type": "modulerar",
+        "why": "katalyserar reduktion",
+        "domain_src": "biokemi",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "7,8-dihydrofolat",
+        "tgt": "Dihydrofolat reduktas",
+        "type": "modulerar",
+        "why": "är substrat",
+        "domain_src": "kemikalie",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "E. coli",
+        "tgt": "Dihydrofolat reduktas",
+        "type": "modulerar",
+        "why": "producerar enzym",
+        "domain_src": "biologi",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "NADPH",
+        "tgt": "Dihydrofolat reduktas",
+        "type": "modulerar",
+        "why": "är kofaktor",
+        "domain_src": "biokemi",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "Met20 loop",
+        "tgt": "Dihydrofolat reduktas",
+        "type": "modulerar",
+        "why": "del i enzymet",
+        "domain_src": "biokemi",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "Protein dynamisk övergång",
+        "tgt": "Alkohol dehydrogenase",
+        "type": "modulerar",
+        "why": "påverkar enzymets aktivitet",
+        "domain_src": "biokemi",
+        "domain_tgt": "biokemi"
+      }
+    ]
+  },
+  {
+    "id": "enzyme-tunneling-qmmm-instantons",
+    "source": "Enzyme Quantum Tunneling: QM/MM and Instanton Calculations",
+    "relations": [
+      {
+        "src": "QM/MM",
+        "tgt": "enzym tunneling",
+        "type": "modulerar",
+        "why": "studier",
+        "domain_src": "kemi",
+        "domain_tgt": "fenomen"
+      },
+      {
+        "src": "protein",
+        "tgt": "enzym tunneling",
+        "type": "modulerar",
+        "why": "studier",
+        "domain_src": "biologi",
+        "domain_tgt": "fenomen"
+      },
+      {
+        "src": "DFT",
+        "tgt": "enzym tunneling",
+        "type": "modulerar",
+        "why": "studier",
+        "domain_src": "kemi",
+        "domain_tgt": "fenomen"
+      },
+      {
+        "src": "CCSD(T)",
+        "tgt": "enzym tunneling",
+        "type": "modulerar",
+        "why": "studier",
+        "domain_src": "kemi",
+        "domain_tgt": "fenomen"
+      },
+      {
+        "src": "AMBER",
+        "tgt": "enzym tunneling",
+        "type": "modulerar",
+        "why": "studier",
+        "domain_src": "kemi",
+        "domain_tgt": "fenomen"
+      },
+      {
+        "src": "CHARMM",
+        "tgt": "enzym tunneling",
+        "type": "modulerar",
+        "why": "studier",
+        "domain_src": "kemi",
+        "domain_tgt": "fenomen"
+      },
+      {
+        "src": "EA-VTST/MT",
+        "tgt": "enzym tunneling",
+        "type": "modulerar",
+        "why": "studier",
+        "domain_src": "kemi",
+        "domain_tgt": "fenomen"
+      },
+      {
+        "src": "EA-VTST/MT",
+        "tgt": "tunneling correction factor",
+        "type": "orsakar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "RPMD",
+        "tgt": "enzym tunneling",
+        "type": "modulerar",
+        "why": "studier",
+        "domain_src": "kemi",
+        "domain_tgt": "fenomen"
+      },
+      {
+        "src": "DHFR",
+        "tgt": "enzym tunneling",
+        "type": "modulerar",
+        "why": "studier",
+        "domain_src": "biologi",
+        "domain_tgt": "fenomen"
+      },
+      {
+        "src": "instanton method",
+        "tgt": "enzym tunneling",
+        "type": "modulerar",
+        "why": "studier",
+        "domain_src": "kemi",
+        "domain_tgt": "fenomen"
+      },
+      {
+        "src": "MAP",
+        "tgt": "enzym tunneling",
+        "type": "modulerar",
+        "why": "studier",
+        "domain_src": "kemi",
+        "domain_tgt": "fenomen"
+      },
+      {
+        "src": "MAP",
+        "tgt": "instanton method",
+        "type": "konsoliderar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "MAP",
+        "tgt": "instanton method",
+        "type": "synkroniserar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "MAP",
+        "tgt": "instanton method",
+        "type": "reglerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "MAP",
+        "tgt": "instanton method",
+        "type": "oscillerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "MAP",
+        "tgt": "instanton method",
+        "type": "är_del_av",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "MAP",
+        "tgt": "instanton method",
+        "type": "stärker",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "MAP",
+        "tgt": "instanton method",
+        "type": "försvagar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "MAP",
+        "tgt": "instanton method",
+        "type": "producerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "MAP",
+        "tgt": "instanton method",
+        "type": "beskriver",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      }
+    ]
+  },
+  {
+    "id": "enzyme-tunneling-promoting-vibrations",
+    "source": "Enzyme Quantum Tunneling: Promoting Vibrations and Dynamics",
+    "relations": []
+  },
+  {
+    "id": "photosynthesis-fmo-structure",
+    "source": "Photosynthetic Coherence: FMO Complex Structure and Energetics",
+    "relations": [
+      {
+        "src": "FMO komplex",
+        "tgt": "bakteriochlorofyll",
+        "type": "modulerar",
+        "why": "komplex består av",
+        "domain_src": "biologi",
+        "domain_tgt": "kemisk"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "protein",
+        "type": "modulerar",
+        "why": "komplex består av",
+        "domain_src": "biologi",
+        "domain_tgt": "kemisk"
+      },
+      {
+        "src": "bakteriochlorofyll",
+        "tgt": "energi",
+        "type": "producerar",
+        "why": "energi från solen",
+        "domain_src": "kemisk",
+        "domain_tgt": "fysikalisk"
+      },
+      {
+        "src": "protein",
+        "tgt": "bakteriochlorofyll",
+        "type": "reglerar",
+        "why": "protein miljö påverkar",
+        "domain_src": "kemisk",
+        "domain_tgt": "kemisk"
+      },
+      {
+        "src": "protein",
+        "tgt": "bakteriochlorofyll",
+        "type": "konsoliderar",
+        "why": "protein miljö stabiliserar",
+        "domain_src": "kemisk",
+        "domain_tgt": "kemisk"
+      },
+      {
+        "src": "bakteriochlorofyll",
+        "tgt": "energi",
+        "type": "synkroniserar",
+        "why": "energi från solen",
+        "domain_src": "kemisk",
+        "domain_tgt": "fysikalisk"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "reaktionscentrum",
+        "type": "modulerar",
+        "why": "komplex medierar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "reaktionscentrum",
+        "tgt": "energi",
+        "type": "modulerar",
+        "why": "energi från solen",
+        "domain_src": "biologi",
+        "domain_tgt": "fysikalisk"
+      },
+      {
+        "src": "bakteriochlorofyll",
+        "tgt": "energi",
+        "type": "modulerar",
+        "why": "energi från solen",
+        "domain_src": "kemisk",
+        "domain_tgt": "fysikalisk"
+      },
+      {
+        "src": "protein",
+        "tgt": "bakteriochlorofyll",
+        "type": "modulerar",
+        "why": "protein miljö påverkar",
+        "domain_src": "kemisk",
+        "domain_tgt": "kemisk"
+      },
+      {
+        "src": "bakteriochlorofyll",
+        "tgt": "energi",
+        "type": "modulerar",
+        "why": "energi från solen",
+        "domain_src": "kemisk",
+        "domain_tgt": "fysikalisk"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "reaktionscentrum",
+        "type": "modulerar",
+        "why": "komplex medierar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "reaktionscentrum",
+        "tgt": "energi",
+        "type": "modulerar",
+        "why": "energi från solen",
+        "domain_src": "biologi",
+        "domain_tgt": "fysikalisk"
+      },
+      {
+        "src": "protein",
+        "tgt": "bakteriochlorofyll",
+        "type": "modulerar",
+        "why": "protein miljö påverkar",
+        "domain_src": "kemisk",
+        "domain_tgt": "kemisk"
+      },
+      {
+        "src": "bakteriochlorofyll",
+        "tgt": "energi",
+        "type": "modulerar",
+        "why": "energi från solen",
+        "domain_src": "kemisk",
+        "domain_tgt": "fysikalisk"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "reaktionscentrum",
+        "type": "modulerar",
+        "why": "komplex medierar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "reaktionscentrum",
+        "tgt": "energi",
+        "type": "modulerar",
+        "why": "energi från solen",
+        "domain_src": "biologi",
+        "domain_tgt": "fysikalisk"
+      },
+      {
+        "src": "protein",
+        "tgt": "bakteriochlorofyll",
+        "type": "modulerar",
+        "why": "protein miljö påverkar",
+        "domain_src": "kemisk",
+        "domain_tgt": "kemisk"
+      }
+    ]
+  },
+  {
+    "id": "photosynthesis-fleming-2007",
+    "source": "Photosynthetic Coherence: Fleming 2007 and 2DES Methodology",
+    "relations": [
+      {
+        "src": "FMO komplex",
+        "tgt": "elektroniska kohäenser",
+        "type": "modulerar",
+        "why": "katalyserar fältet",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "2DES experiment",
+        "tgt": "elektroniska kohäenser",
+        "type": "modulerar",
+        "why": "avslöjar kohäenser",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "elektroniska kohäenser",
+        "type": "producerar",
+        "why": "skapar kohäenser",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "protein scaffold",
+        "tgt": "elektroniska kohäenser",
+        "type": "stärker",
+        "why": "skyddar kohäenser",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vibrerande kohäenser",
+        "tgt": "elektroniska kohäenser",
+        "type": "modulerar",
+        "why": "skapar kohäenser",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "BChl molekyler",
+        "tgt": "vibrerande kohäenser",
+        "type": "producerar",
+        "why": "skapar kohäenser",
+        "domain_src": "kemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "BChl molekyler",
+        "type": "producerar",
+        "why": "innehåller BChl",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "elektroniska kohäenser",
+        "tgt": "excitoniska energigapar",
+        "type": "modulerar",
+        "why": "skapar energigapar",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "excitoniska energigapar",
+        "tgt": "vibrerande kohäenser",
+        "type": "modulerar",
+        "why": "skapar kohäenser",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "excitoniska energigapar",
+        "type": "modulerar",
+        "why": "innehåller energigapar",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "BChl molekyler",
+        "tgt": "vibrerande kohäenser",
+        "type": "modulerar",
+        "why": "innehåller kohäenser",
+        "domain_src": "kemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "protein scaffold",
+        "tgt": "BChl molekyler",
+        "type": "stärker",
+        "why": "skyddar molekyler",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "elektroniska kohäenser",
+        "tgt": "vibrerande kohäenser",
+        "type": "modulerar",
+        "why": "skapar kohäenser",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vibrerande kohäenser",
+        "tgt": "excitoniska energigapar",
+        "type": "modulerar",
+        "why": "skapar energigapar",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "BChl molekyler",
+        "tgt": "elektroniska kohäenser",
+        "type": "modulerar",
+        "why": "innehåller kohäenser",
+        "domain_src": "kemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "vibrerande kohäenser",
+        "type": "modulerar",
+        "why": "innehåller kohäenser",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "protein scaffold",
+        "tgt": "elektroniska kohäenser",
+        "type": "stärker",
+        "why": "skyddar kohäenser",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vibrerande kohäenser",
+        "tgt": "BChl molekyler",
+        "type": "modulerar",
+        "why": "skapar molekyler",
+        "domain_src": "fysik",
+        "domain_tgt": "kemi"
+      }
+    ]
+  },
+  {
+    "id": "photosynthesis-vibronic-coupling",
+    "source": "Photosynthetic Coherence: Vibronic Coupling and Debate Resolution",
+    "relations": [
+      {
+        "src": "vibronic coupling mechanism",
+        "tgt": "Born-Oppenheimer approximation",
+        "type": "modulerar",
+        "why": "entanglement",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vibronic coupling mechanism",
+        "tgt": "mixed vibronic coherences",
+        "type": "konsoliderar",
+        "why": "enhanced lifetimes",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vibronic coupling mechanism",
+        "tgt": "vibronic eigenstates",
+        "type": "konsoliderar",
+        "why": "entanglement",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vibronic coupling mechanism",
+        "tgt": "effective coherence lifetimes",
+        "type": "konsoliderar",
+        "why": "decay rates",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "spin-boson model",
+        "tgt": "structured spectral density",
+        "type": "modulerar",
+        "why": "energy transfer efficiency",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "phonon antenna mechanism",
+        "tgt": "environmental noise",
+        "type": "modulerar",
+        "why": "resonant enhancement",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vibronic coupling mechanism",
+        "tgt": "ground-state vibrational coherences",
+        "type": "konsoliderar",
+        "why": "oscillatory signals",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vibronic coupling mechanism",
+        "tgt": "excited-state vibronic coherences",
+        "type": "konsoliderar",
+        "why": "oscillatory signals",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vibronic coupling mechanism",
+        "tgt": "pure electronic coherences",
+        "type": "konsoliderar",
+        "why": "decay rates",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "spin-boson model",
+        "tgt": "energy transfer efficiency",
+        "type": "stärker",
+        "why": "10%",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "phonon antenna mechanism",
+        "tgt": "transport",
+        "type": "stärker",
+        "why": "resonant enhancement",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vibronic coupling mechanism",
+        "tgt": "pure electronic coherences",
+        "type": "försvagar",
+        "why": "decay rates",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vibronic coupling mechanism",
+        "tgt": "mixed vibronic coherences",
+        "type": "producerar",
+        "why": "entanglement",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "spin-boson model",
+        "tgt": "structured spectral density",
+        "type": "producerar",
+        "why": "energy transfer efficiency",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "phonon antenna mechanism",
+        "tgt": "environmental noise",
+        "type": "producerar",
+        "why": "resonant enhancement",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vibronic coupling mechanism",
+        "tgt": "effective coherence lifetimes",
+        "type": "beskriver",
+        "why": "decay rates",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "spin-boson model",
+        "tgt": "energy transfer efficiency",
+        "type": "beskriver",
+        "why": "10%",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "phonon antenna mechanism",
+        "tgt": "transport",
+        "type": "beskriver",
+        "why": "resonant enhancement",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      }
+    ]
+  },
+  {
+    "id": "photosynthesis-lhcii-pe545",
+    "source": "Photosynthetic Coherence: LHCII and PE545 Systems",
+    "relations": [
+      {
+        "src": "LHCII",
+        "tgt": "trimers",
+        "type": "modulerar",
+        "why": "förekommer i membran",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "LHCII",
+        "tgt": "energi",
+        "type": "producerar",
+        "why": "fångar ljus",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Chl a",
+        "tgt": "pigment",
+        "type": "är_del_av",
+        "why": "en typ av klorofyll",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Chl b",
+        "tgt": "pigment",
+        "type": "är_del_av",
+        "why": "en typ av klorofyll",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "LHCII",
+        "tgt": "energi",
+        "type": "konsoliderar",
+        "why": "överför energi",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Chl a",
+        "tgt": "Chl b",
+        "type": "synkroniserar",
+        "why": "excitonisk kopppling",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Chl b",
+        "tgt": "Chl a",
+        "type": "synkroniserar",
+        "why": "excitonisk kopppling",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "PE545",
+        "tgt": "energi",
+        "type": "producerar",
+        "why": "fångar ljus",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "PE545",
+        "tgt": "trimers",
+        "type": "modulerar",
+        "why": "förekommer i membran",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "PE545",
+        "tgt": "bilin chromoforer",
+        "type": "synkroniserar",
+        "why": "excitonisk kopppling",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "PE545",
+        "tgt": "PEB",
+        "type": "synkroniserar",
+        "why": "excitonisk kopppling",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "PE545",
+        "tgt": "DBV",
+        "type": "synkroniserar",
+        "why": "excitonisk kopppling",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "PE545",
+        "tgt": "PE545 chromoforer",
+        "type": "synkroniserar",
+        "why": "excitonisk kopppling",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "PE545",
+        "tgt": "energiöverföring",
+        "type": "reglerar",
+        "why": "kräver HEOM",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "PE545",
+        "tgt": "energiöverföring",
+        "type": "reglerar",
+        "why": "kräver polaron-transformerade masterliknande ekvationer",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      }
+    ]
+  },
+  {
+    "id": "photosynthesis-cao-silbey-theory",
+    "source": "Photosynthetic Coherence: Cao-Silbey-Fleming Theory and HEOM",
+    "relations": []
+  },
+  {
+    "id": "magnetoreception-cry4-robin",
+    "source": "Radical Pair Magnetoreception: CRY4 in European Robin",
+    "relations": [
+      {
+        "src": "Cryptochrome 4",
+        "tgt": "radical pair",
+        "type": "modulerar",
+        "why": "bildar radikala par",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Cryptochrome 4",
+        "tgt": "radical pair",
+        "type": "producerar",
+        "why": "bildar radikala par",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Cryptochrome 4",
+        "tgt": "tryptophan tetrad",
+        "type": "konsoliderar",
+        "why": "samverkar med tryptofan tetrad",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Cryptochrome 4",
+        "tgt": "FAD cofactor",
+        "type": "modulerar",
+        "why": "samverkar med FAD kofaktor",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Cryptochrome 4",
+        "tgt": "FAD cofactor",
+        "type": "producerar",
+        "why": "samverkar med FAD kofaktor",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Cryptochrome 4",
+        "tgt": "migratory season",
+        "type": "reglerar",
+        "why": "uttrycks under flyttningstid",
+        "domain_src": "biologi",
+        "domain_tgt": "ekologi"
+      },
+      {
+        "src": "Cryptochrome 4",
+        "tgt": "retina",
+        "type": "modulerar",
+        "why": "finns i näthinnan",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Cryptochrome 4",
+        "tgt": "retina",
+        "type": "producerar",
+        "why": "finns i näthinnan",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Cryptochrome 4",
+        "tgt": "double cone photoreceptors",
+        "type": "konsoliderar",
+        "why": "finns i dubbla koniska fotoreceptorer",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Cryptochrome 4",
+        "tgt": "long-wavelength single cone photoreceptors",
+        "type": "modulerar",
+        "why": "finns i långvågiga ensamma koniska fotoreceptorer",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Cryptochrome 4",
+        "tgt": "long-wavelength single cone photoreceptors",
+        "type": "producerar",
+        "why": "finns i långvågiga ensamma koniska fotoreceptorer",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "tryptophan tetrad",
+        "tgt": "radical pair",
+        "type": "konsoliderar",
+        "why": "samverkar med radikala par",
+        "domain_src": "kemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FAD cofactor",
+        "tgt": "radical pair",
+        "type": "konsoliderar",
+        "why": "samverkar med radikala par",
+        "domain_src": "kemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "migratory season",
+        "tgt": "Cryptochrome 4 expression",
+        "type": "orsakar",
+        "why": "uttrycks under flyttningstid",
+        "domain_src": "ekologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "retina",
+        "tgt": "European robin",
+        "type": "är_del_av",
+        "why": "finns i européisk rödhake",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "double cone photoreceptors",
+        "tgt": "Cryptochrome 4",
+        "type": "är_del_av",
+        "why": "finns i dubbla koniska fotoreceptorer",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "long-wavelength single cone photoreceptors",
+        "tgt": "Cryptochrome 4",
+        "type": "är_del_av",
+        "why": "finns i långvågiga ensamma koniska fotoreceptorer",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      }
+    ]
+  },
+  {
+    "id": "magnetoreception-rph-model",
+    "source": "Radical Pair Magnetoreception: RPH Model Development",
+    "relations": [
+      {
+        "src": "radical pair hypothesis",
+        "tgt": "Earth's magnetic field",
+        "type": "modulerar",
+        "why": "modulerar singlet-triplet interconversion rate",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Earth's magnetic field",
+        "tgt": "singlet-triplet interconversion rate",
+        "type": "modulerar",
+        "why": "modulerar singlet-triplet interconversion rate",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "blue-light absorption",
+        "tgt": "singlet-born radical pair",
+        "type": "producerar",
+        "why": "producerar singlet-born radical pair",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "singlet-born radical pair",
+        "tgt": "coherent singlet-triplet oscillation",
+        "type": "beskriver",
+        "why": "undergår coherent singlet-triplet oscillation (orig_type=undergår)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "coherent singlet-triplet oscillation",
+        "tgt": "difference in local hyperfine fields",
+        "type": "beskriver",
+        "why": "drivas coherent singlet-triplet oscillation (orig_type=drivas)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "difference in local hyperfine fields",
+        "tgt": "singlet-triplet interconversion rate",
+        "type": "modulerar",
+        "why": "modulerar singlet-triplet interconversion rate",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Hore-Mouritsen model",
+        "tgt": "magnetic compass requirements",
+        "type": "beskriver",
+        "why": "specifikar magnetic compass requirements (orig_type=specifikar)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "magnetic compass requirements",
+        "tgt": "radical pair lifetime >1 μs",
+        "type": "beskriver",
+        "why": "innefattar magnetic compass requirements (orig_type=innefattar)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "magnetic compass requirements",
+        "tgt": "anisotropic hyperfine couplings",
+        "type": "beskriver",
+        "why": "innefattar magnetic compass requirements (orig_type=innefattar)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "magnetic compass requirements",
+        "tgt": "negligible exchange and dipolar interactions",
+        "type": "beskriver",
+        "why": "innefattar magnetic compass requirements (orig_type=innefattar)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "magnetic compass requirements",
+        "tgt": "spin-selective recombination channel",
+        "type": "beskriver",
+        "why": "innefattar magnetic compass requirements (orig_type=innefattar)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "singlet yield Φ_S",
+        "tgt": "angle θ between magnetic field and radical pair axis",
+        "type": "beskriver",
+        "why": "beroende singlet yield Φ_S (orig_type=beroende)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "spin dynamics simulations",
+        "tgt": "Earth-strength fields produce detectable changes in singlet yield",
+        "type": "beskriver",
+        "why": "demonstrerar Earth-strength fields produce detectable changes in singlet yield (orig_type=demonstrerar)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "spin dynamics simulations",
+        "tgt": "radical pair lifetime exceeds 1 μs",
+        "type": "beskriver",
+        "why": "demonstrerar spin dynamics simulations (orig_type=demonstrerar)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "compass",
+        "tgt": "inclination compass",
+        "type": "beskriver",
+        "why": "är inclination compass (orig_type=är)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "inclination compass",
+        "tgt": "sensitive to angle between field vector and gravity",
+        "type": "beskriver",
+        "why": "är inclination compass (orig_type=är)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "inclination compass",
+        "tgt": "not polarity sensitive",
+        "type": "beskriver",
+        "why": "är inclination compass (orig_type=är)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      }
+    ]
+  },
+  {
+    "id": "magnetoreception-rf-disruption",
+    "source": "Radical Pair Magnetoreception: Radiofrequency Disruption",
+    "relations": [
+      {
+        "src": "Radiofrequency magnetic fields",
+        "tgt": "radical pair mechanism",
+        "type": "modulerar",
+        "why": "inducerar singlet-triplet transitions",
+        "domain_src": "fysik",
+        "domain_tgt": "mekanik"
+      },
+      {
+        "src": "Radiofrequency magnetic fields",
+        "tgt": "disruption of compass signal",
+        "type": "orsakar",
+        "why": "inducerar singlet-triplet transitions",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Ritz et al. (2004)",
+        "tgt": "disruption of magnetic orientation in European robins",
+        "type": "beskriver",
+        "why": "visar att RF störning orsakar avvikelse (orig_type=dokumenterar)",
+        "domain_src": "forskning",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Engels et al. (2014)",
+        "tgt": "disruption of magnetic compass orientation in robins",
+        "type": "beskriver",
+        "why": "visar att RF störning orsakar avvikelse (orig_type=dokumenterar)",
+        "domain_src": "forskning",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Kavokin (2009)",
+        "tgt": "potential effect of RF on singlet yield",
+        "type": "beskriver",
+        "why": "visar att RF kan påverka singlet-yield (orig_type=dokumenterar)",
+        "domain_src": "forskning",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Schwarze et al. (2016)",
+        "tgt": "replication of disruption effect in double-blinded conditions",
+        "type": "beskriver",
+        "why": "bekräftar att RF störning orsakar avvikelse (orig_type=dokumenterar)",
+        "domain_src": "forskning",
+        "domain_tgt": "forskning"
+      },
+      {
+        "src": "Radiofrequency magnetic fields",
+        "tgt": "singlet-triplet transitions",
+        "type": "stärker",
+        "why": "inducerar singlet-triplet transitions",
+        "domain_src": "fysik",
+        "domain_tgt": "mekanik"
+      },
+      {
+        "src": "Radical pair mechanism",
+        "tgt": "biologisk system",
+        "type": "är_del_av",
+        "why": "är en del av biologisk system",
+        "domain_src": "mekanik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Radiofrequency magnetic fields",
+        "tgt": "singlet-triplet transitions",
+        "type": "producerar",
+        "why": "inducerar singlet-triplet transitions",
+        "domain_src": "fysik",
+        "domain_tgt": "mekanik"
+      },
+      {
+        "src": "Kavokin (2009)",
+        "tgt": "potential effect of RF on singlet yield",
+        "type": "beskriver",
+        "why": "visar att RF kan påverka singlet-yield (orig_type=dokumenterar)",
+        "domain_src": "forskning",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Engels et al. (2014)",
+        "tgt": "disruption of magnetic compass orientation in robins",
+        "type": "beskriver",
+        "why": "visar att RF störning orsakar avvikelse (orig_type=dokumenterar)",
+        "domain_src": "forskning",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Schwarze et al. (2016)",
+        "tgt": "replication of disruption effect in double-blinded conditions",
+        "type": "beskriver",
+        "why": "bekräftar att RF störning orsakar avvikelse (orig_type=dokumenterar)",
+        "domain_src": "forskning",
+        "domain_tgt": "forskning"
+      },
+      {
+        "src": "Radiofrequency magnetic fields",
+        "tgt": "disruption of magnetic orientation in European robins",
+        "type": "orsakar",
+        "why": "inducerar singlet-triplet transitions",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Radical pair mechanism",
+        "tgt": "biologisk system",
+        "type": "är_del_av",
+        "why": "är en del av biologisk system",
+        "domain_src": "mekanik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Kavokin (2009)",
+        "tgt": "potential effect of RF on singlet yield",
+        "type": "beskriver",
+        "why": "visar att RF kan påverka singlet-yield (orig_type=dokumenterar)",
+        "domain_src": "forskning",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Engels et al. (2014)",
+        "tgt": "disruption of magnetic compass orientation in robins",
+        "type": "beskriver",
+        "why": "visar att RF störning orsakar avvikelse (orig_type=dokumenterar)",
+        "domain_src": "forskning",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Schwarze et al. (2016)",
+        "tgt": "replication of disruption effect in double-blinded conditions",
+        "type": "beskriver",
+        "why": "bekräftar att RF störning orsakar avvikelse (orig_type=dokumenterar)",
+        "domain_src": "forskning",
+        "domain_tgt": "forskning"
+      },
+      {
+        "src": "Radiofrequency magnetic fields",
+        "tgt": "singlet-triplet transitions",
+        "type": "producerar",
+        "why": "inducerar singlet-triplet transitions",
+        "domain_src": "fysik",
+        "domain_tgt": "mekanik"
+      }
+    ]
+  },
+  {
+    "id": "magnetoreception-spin-dynamics",
+    "source": "Radical Pair Magnetoreception: Spin Dynamics and Parameters",
+    "relations": [
+      {
+        "src": "spin dynamics",
+        "tgt": "hyperfine coupling",
+        "type": "modulerar",
+        "why": "interplay",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "spin dynamics",
+        "tgt": "Zeeman interaction",
+        "type": "modulerar",
+        "why": "governed",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "spin dynamics",
+        "tgt": "exchange coupling",
+        "type": "modulerar",
+        "why": "governed",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "spin dynamics",
+        "tgt": "dipolar interaction",
+        "type": "modulerar",
+        "why": "governed",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FAD⁻• radical",
+        "tgt": "hyperfine couplings",
+        "type": "modulerar",
+        "why": "dominant",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "FAD⁻• radical",
+        "tgt": "N5",
+        "type": "modulerar",
+        "why": "dominant",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "FAD⁻• radical",
+        "tgt": "N10",
+        "type": "modulerar",
+        "why": "dominant",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "FAD⁻• radical",
+        "tgt": "H5",
+        "type": "modulerar",
+        "why": "dominant",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "FAD⁻• radical",
+        "tgt": "adenine nitrogen atoms",
+        "type": "modulerar",
+        "why": "dominant",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Trp⁺• radical",
+        "tgt": "hyperfine coupling",
+        "type": "modulerar",
+        "why": "significant",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Trp⁺• radical",
+        "tgt": "indole Hε1 nitrogen",
+        "type": "modulerar",
+        "why": "significant",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Trp⁺• radical",
+        "tgt": "Hβ protons",
+        "type": "modulerar",
+        "why": "significant",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Trp⁺• radical",
+        "tgt": "ring nitrogen N1",
+        "type": "modulerar",
+        "why": "significant",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "spin relaxation",
+        "tgt": "molecular tumbling",
+        "type": "orsakar",
+        "why": "arises",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "spin relaxation",
+        "tgt": "librational motions",
+        "type": "orsakar",
+        "why": "arises",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "spin relaxation",
+        "tgt": "fluctuations in hyperfine tensors",
+        "type": "orsakar",
+        "why": "arises",
+        "domain_src": "fysik",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "exchange interaction",
+        "tgt": "radical separation",
+        "type": "modulerar",
+        "why": "decays",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "dipolar interaction",
+        "tgt": "radical pair orientations",
+        "type": "modulerar",
+        "why": "averages",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "radical pair",
+        "tgt": "compass",
+        "type": "konsoliderar",
+        "why": "function",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      }
+    ]
+  },
+  {
+    "id": "magnetoreception-behavioral-evidence",
+    "source": "Radical Pair Magnetoreception: Behavioral and Neural Evidence",
+    "relations": [
+      {
+        "src": "Wiltschko and Wiltschko",
+        "tgt": "geomagnetic field",
+        "type": "modulerar",
+        "why": "magnetisk kompass",
+        "domain_src": "forskning",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Wiltschko and Wiltschko",
+        "tgt": "European robins",
+        "type": "modulerar",
+        "why": "magnetisk orientering",
+        "domain_src": "forskning",
+        "domain_tgt": "djur"
+      },
+      {
+        "src": "Wiltschko and Wiltschko",
+        "tgt": "circular orientation cages",
+        "type": "modulerar",
+        "why": "magnetisk kompass",
+        "domain_src": "forskning",
+        "domain_tgt": "experiment"
+      },
+      {
+        "src": "Wiltschko and Wiltschko",
+        "tgt": "short-wavelength light",
+        "type": "modulerar",
+        "why": "magnetisk kompass",
+        "domain_src": "forskning",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Wiltschko and Wiltschko",
+        "tgt": "blue light",
+        "type": "modulerar",
+        "why": "magnetisk kompass",
+        "domain_src": "forskning",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Wiltschko and Wiltschko",
+        "tgt": "green light",
+        "type": "modulerar",
+        "why": "magnetisk kompass",
+        "domain_src": "forskning",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Wiltschko and Wiltschko",
+        "tgt": "red light",
+        "type": "modulerar",
+        "why": "magnetisk kompass",
+        "domain_src": "forskning",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Zapka et al.",
+        "tgt": "Cluster N",
+        "type": "modulerar",
+        "why": "magnetisk kompass",
+        "domain_src": "forskning",
+        "domain_tgt": "neurobiologi"
+      },
+      {
+        "src": "Zapka et al.",
+        "tgt": "visual magnetic input",
+        "type": "modulerar",
+        "why": "magnetisk kompass",
+        "domain_src": "forskning",
+        "domain_tgt": "neurobiologi"
+      },
+      {
+        "src": "Zapka et al.",
+        "tgt": "star compass",
+        "type": "modulerar",
+        "why": "magnetisk orientering",
+        "domain_src": "forskning",
+        "domain_tgt": "kompass"
+      },
+      {
+        "src": "Zapka et al.",
+        "tgt": "sun compass",
+        "type": "modulerar",
+        "why": "magnetisk orientering",
+        "domain_src": "forskning",
+        "domain_tgt": "kompass"
+      },
+      {
+        "src": "Pinzon-Rodriguez et al.",
+        "tgt": "CRY1",
+        "type": "modulerar",
+        "why": "magnetisk kompass",
+        "domain_src": "forskning",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "Pinzon-Rodriguez et al.",
+        "tgt": "CRY4",
+        "type": "modulerar",
+        "why": "magnetisk kompass",
+        "domain_src": "forskning",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "Heyers et al.",
+        "tgt": "thalamofugal visual pathway",
+        "type": "modulerar",
+        "why": "magnetisk kompass",
+        "domain_src": "forskning",
+        "domain_tgt": "neurobiologi"
+      },
+      {
+        "src": "Heyers et al.",
+        "tgt": "optic tectum",
+        "type": "modulerar",
+        "why": "magnetisk kompass",
+        "domain_src": "forskning",
+        "domain_tgt": "neurobiologi"
+      },
+      {
+        "src": "Heyers et al.",
+        "tgt": "magnetic field inclination angle",
+        "type": "modulerar",
+        "why": "magnetisk kompass",
+        "domain_src": "forskning",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Heyers et al.",
+        "tgt": "direction-selective magnetically sensitive neurons",
+        "type": "modulerar",
+        "why": "magnetisk kompass",
+        "domain_src": "forskning",
+        "domain_tgt": "neurobiologi"
+      }
+    ]
+  },
+  {
+    "id": "olfaction-turin-theory",
+    "source": "Quantum Olfaction: Turin's Vibrational Theory",
+    "relations": [
+      {
+        "src": "Luca Turin",
+        "tgt": "vibrational theory of olfaction",
+        "type": "beskriver",
+        "why": "1996 paper (orig_type=proponerar)",
+        "domain_src": "fysik",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Luca Turin",
+        "tgt": "inelastic electron tunneling spectroscopy",
+        "type": "konsoliderar",
+        "why": "IETS mechanism",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Luca Turin",
+        "tgt": "G-protein-coupled olfactory receptor",
+        "type": "modulerar",
+        "why": "odorant receptor",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Luca Turin",
+        "tgt": "donor site",
+        "type": "modulerar",
+        "why": "odorant binding pocket",
+        "domain_src": "fysik",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Luca Turin",
+        "tgt": "acceptor site",
+        "type": "modulerar",
+        "why": "odorant binding pocket",
+        "domain_src": "fysik",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Luca Turin",
+        "tgt": "odorant binding pocket",
+        "type": "modulerar",
+        "why": "receptor",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Luca Turin",
+        "tgt": "electron",
+        "type": "modulerar",
+        "why": "tunneling",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Luca Turin",
+        "tgt": "vibrational mode",
+        "type": "modulerar",
+        "why": "energy gap",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Luca Turin",
+        "tgt": "phonon-assisted tunneling",
+        "type": "modulerar",
+        "why": "mechanism",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Luca Turin",
+        "tgt": "isotopologues",
+        "type": "modulerar",
+        "why": "smell different",
+        "domain_src": "fysik",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Luca Turin",
+        "tgt": "deuteration",
+        "type": "modulerar",
+        "why": "shifts C-H stretching frequencies",
+        "domain_src": "fysik",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Luca Turin",
+        "tgt": "IETS mechanism",
+        "type": "modulerar",
+        "why": "detectable by",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Luca Turin",
+        "tgt": "Fermi golden rule",
+        "type": "modulerar",
+        "why": "tunneling rate",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Luca Turin",
+        "tgt": "tunneling junction",
+        "type": "modulerar",
+        "why": "receptor",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Luca Turin",
+        "tgt": "Horsfield-Duer refinement",
+        "type": "modulerar",
+        "why": "2017 model",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Luca Turin",
+        "tgt": "donor-acceptor coupling",
+        "type": "modulerar",
+        "why": "required for discrimination",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      }
+    ]
+  },
+  {
+    "id": "olfaction-brookes-model",
+    "source": "Quantum Olfaction: Brookes PRL Model",
+    "relations": [
+      {
+        "src": "Brookes model",
+        "tgt": "IETS mechanism",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Brookes model",
+        "tgt": "odorant-receptor system",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Brookes model",
+        "tgt": "three-state system",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Brookes model",
+        "tgt": "total Hamiltonian",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Brookes model",
+        "tgt": "donor-acceptor gap",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Brookes model",
+        "tgt": "odorant frequency",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Brookes model",
+        "tgt": "electron-phonon coupling",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Brookes model",
+        "tgt": "tunneling matrix element",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Brookes model",
+        "tgt": "spectral resolution",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Brookes model",
+        "tgt": "electron-phonon coupling strength",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Brookes model",
+        "tgt": "environmental broadening",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Brookes model",
+        "tgt": "dissipative environment",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Brookes model",
+        "tgt": "Ohmic bath",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Brookes model",
+        "tgt": "density of states",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Brookes model",
+        "tgt": "inelastic tunneling",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Brookes model",
+        "tgt": "environment-assisted quantum transport",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Solov'yov et al.",
+        "tgt": "Brookes model",
+        "type": "modulerar",
+        "why": "utvidgar",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Solov'yov et al.",
+        "tgt": "full vibrational spectrum",
+        "type": "modulerar",
+        "why": "beskriver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      }
+    ]
+  },
+  {
+    "id": "olfaction-deuterium-experiments",
+    "source": "Quantum Olfaction: Deuterium Isotopologue Experiments",
+    "relations": [
+      {
+        "src": "Drosophila melanogaster",
+        "tgt": "isotopologues",
+        "type": "beskriver",
+        "why": "vibrational frequencies (orig_type=kan distinguish)",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Drosophila melanogaster",
+        "tgt": "acetophenone",
+        "type": "beskriver",
+        "why": "vibrational frequencies (orig_type=kan distinguish)",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Drosophila melanogaster",
+        "tgt": "deuterated acetophenone",
+        "type": "beskriver",
+        "why": "vibrational frequencies (orig_type=kan distinguish)",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Drosophila melanogaster",
+        "tgt": "deuterated acetophenone",
+        "type": "beskriver",
+        "why": "behavior (orig_type=visar aversion)",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Drosophila melanogaster",
+        "tgt": "olfactory signaling pathway",
+        "type": "beskriver",
+        "why": "mutation (orig_type=beroende)",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "människor",
+        "tgt": "deuterated musk",
+        "type": "beskriver",
+        "why": "vibrational frequencies (orig_type=kan distinguish)",
+        "domain_src": "psykologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "människor",
+        "tgt": "protiated musk",
+        "type": "beskriver",
+        "why": "vibrational frequencies (orig_type=kan distinguish)",
+        "domain_src": "psykologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "människor",
+        "tgt": "deuterated musk",
+        "type": "beskriver",
+        "why": "vibrational frequencies (orig_type=upplever skillnad)",
+        "domain_src": "psykologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "människor",
+        "tgt": "deuterated musks",
+        "type": "beskriver",
+        "why": "vibrational frequencies (orig_type=kan inte distinguish)",
+        "domain_src": "psykologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "människor",
+        "tgt": "undeuterated musks",
+        "type": "beskriver",
+        "why": "vibrational frequencies (orig_type=kan inte distinguish)",
+        "domain_src": "psykologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "receptorer",
+        "tgt": "deuterated musks",
+        "type": "beskriver",
+        "why": "calcium imaging (orig_type=svarar identiskt)",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "receptorer",
+        "tgt": "protiated musks",
+        "type": "beskriver",
+        "why": "calcium imaging (orig_type=svarar identiskt)",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Block et al.",
+        "tgt": "Turin's prediction",
+        "type": "beskriver",
+        "why": "vibrational frequencies (orig_type=utfärdar utmaning)",
+        "domain_src": "forskning",
+        "domain_tgt": "teori"
+      },
+      {
+        "src": "Block et al.",
+        "tgt": "contradictory results",
+        "type": "beskriver",
+        "why": "methodological differences (orig_type=utfärdar utmaning)",
+        "domain_src": "forskning",
+        "domain_tgt": "forskning"
+      },
+      {
+        "src": "Turin",
+        "tgt": "C-D stretching region",
+        "type": "beskriver",
+        "why": "vibrational frequencies (orig_type=förutspår skillnad)",
+        "domain_src": "teori",
+        "domain_tgt": "kemi"
+      }
+    ]
+  },
+  {
+    "id": "olfaction-criticisms",
+    "source": "Quantum Olfaction: Criticisms and Counter-evidence",
+    "relations": [
+      {
+        "src": "vibrational theory of olfaction",
+        "tgt": "substantial criticisms",
+        "type": "orsakar",
+        "why": "teoretiska och experimentella kritiker",
+        "domain_src": "biologi",
+        "domain_tgt": "vetenskap"
+      },
+      {
+        "src": "vibrational theory of olfaction",
+        "tgt": "IR spectra overlap",
+        "type": "orsakar",
+        "why": "IR-spektra överlappar",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vibrational theory of olfaction",
+        "tgt": "human psychophysical tests",
+        "type": "orsakar",
+        "why": "mänskliga psykofysiska tester",
+        "domain_src": "biologi",
+        "domain_tgt": "psykologi"
+      },
+      {
+        "src": "vibrational theory of olfaction",
+        "tgt": "counterexamples",
+        "type": "orsakar",
+        "why": "motexempel",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "vibrational theory of olfaction",
+        "tgt": "IETS mechanism",
+        "type": "orsakar",
+        "why": "IETS-mekanismen",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vibrational theory of olfaction",
+        "tgt": "OR protein topology",
+        "type": "orsakar",
+        "why": "OR-proteintopologi",
+        "domain_src": "biologi",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "vibrational theory of olfaction",
+        "tgt": "shape theory",
+        "type": "orsakar",
+        "why": "formteori",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "vibrational theory of olfaction",
+        "tgt": "parsimony principle",
+        "type": "orsakar",
+        "why": "parsimoniprincipen",
+        "domain_src": "biologi",
+        "domain_tgt": "filosofi"
+      },
+      {
+        "src": "DFT calculations",
+        "tgt": "IR spectra overlap",
+        "type": "konsoliderar",
+        "why": "IR-spektra överlappar",
+        "domain_src": "komplicerar",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "human psychophysical tests",
+        "tgt": "vibrational theory's core prediction",
+        "type": "konsoliderar",
+        "why": "vibrations teoriens kärnprediktion",
+        "domain_src": "komplicerar",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "IETS mechanism",
+        "tgt": "electron-phonon coupling constants",
+        "type": "konsoliderar",
+        "why": "elektron-fononkopplingskonstanter",
+        "domain_src": "komplicerar",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "OR protein topology",
+        "tgt": "no obvious donor and acceptor redox-active groups",
+        "type": "konsoliderar",
+        "why": "inga tydliga donatorer och acceptorer",
+        "domain_src": "komplicerar",
+        "domain_tgt": "biokemi"
+      },
+      {
+        "src": "shape theory",
+        "tgt": "parsimony principle",
+        "type": "konsoliderar",
+        "why": "parsimoniprincipen",
+        "domain_src": "komplicerar",
+        "domain_tgt": "filosofi"
+      },
+      {
+        "src": "vibrational theory of olfaction",
+        "tgt": "biologi",
+        "type": "är_del_av",
+        "why": "vibrations teori",
+        "domain_src": "är_del_av",
+        "domain_tgt": "vetenskap"
+      },
+      {
+        "src": "vibrational theory of olfaction",
+        "tgt": "kemi",
+        "type": "är_del_av",
+        "why": "vibrations teori",
+        "domain_src": "är_del_av",
+        "domain_tgt": "vetenskap"
+      },
+      {
+        "src": "vibrational theory of olfaction",
+        "tgt": "fysik",
+        "type": "är_del_av",
+        "why": "vibrations teori",
+        "domain_src": "är_del_av",
+        "domain_tgt": "vetenskap"
+      },
+      {
+        "src": "vibrational theory of olfaction",
+        "tgt": "psykologi",
+        "type": "är_del_av",
+        "why": "vibrations teori",
+        "domain_src": "är_del_av",
+        "domain_tgt": "vetenskap"
+      },
+      {
+        "src": "vibrational theory of olfaction",
+        "tgt": "filosofi",
+        "type": "är_del_av",
+        "why": "vibrations teori",
+        "domain_src": "är_del_av",
+        "domain_tgt": "vetenskap"
+      }
+    ]
+  },
+  {
+    "id": "olfaction-computational-drosophila",
+    "source": "Quantum Olfaction: Computational Studies and Drosophila",
+    "relations": [
+      {
+        "src": "IETS mechanism",
+        "tgt": "quantum olfaction",
+        "type": "modulerar",
+        "why": "studeras",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "quantum olfaction",
+        "tgt": "receptor environments",
+        "type": "modulerar",
+        "why": "studeras",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "receptor environments",
+        "tgt": "realistic environments",
+        "type": "konsoliderar",
+        "why": "studeras",
+        "domain_src": "fysik",
+        "domain_tgt": "geografi"
+      },
+      {
+        "src": "vanillin",
+        "tgt": "odorant molecules",
+        "type": "är_del_av",
+        "why": "studeras",
+        "domain_src": "kemiska",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "vanillin",
+        "tgt": "eugenol",
+        "type": "synkroniserar",
+        "why": "studeras",
+        "domain_src": "kemiska",
+        "domain_tgt": "kemiska"
+      },
+      {
+        "src": "vanillin",
+        "tgt": "guaiacol",
+        "type": "synkroniserar",
+        "why": "studeras",
+        "domain_src": "kemiska",
+        "domain_tgt": "kemiska"
+      },
+      {
+        "src": "Drosophila melanogaster",
+        "tgt": "olfactory system",
+        "type": "modulerar",
+        "why": "studeras",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "olfactory system",
+        "tgt": "odorant receptor genes",
+        "type": "modulerar",
+        "why": "studeras",
+        "domain_src": "biologi",
+        "domain_tgt": "genetik"
+      },
+      {
+        "src": "odorant receptor genes",
+        "tgt": "heteromeric complex",
+        "type": "modulerar",
+        "why": "studeras",
+        "domain_src": "genetik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Drosophila melanogaster",
+        "tgt": "vibrational olfaction",
+        "type": "modulerar",
+        "why": "studeras",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "C-H bonds",
+        "tgt": "C-D bonds",
+        "type": "modulerar",
+        "why": "studeras",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "acetophenone",
+        "tgt": "citronellal",
+        "type": "modulerar",
+        "why": "studeras",
+        "domain_src": "kemiska",
+        "domain_tgt": "kemiska"
+      },
+      {
+        "src": "honeybees",
+        "tgt": "vibrational detection",
+        "type": "modulerar",
+        "why": "studeras",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "vibrational mechanism",
+        "tgt": "shape recognition",
+        "type": "modulerar",
+        "why": "studeras",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "receptor environments",
+        "tgt": "electron transfer",
+        "type": "reglerar",
+        "why": "studeras",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "odorant vibration",
+        "tgt": "resonance condition",
+        "type": "modulerar",
+        "why": "studeras",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "odorant vibration",
+        "tgt": "electron transfer",
+        "type": "modulerar",
+        "why": "studeras",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "odorant vibration",
+        "tgt": "electron transfer",
+        "type": "modulerar",
+        "why": "studeras",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      }
+    ]
+  },
+  {
+    "id": "dna-lowdin-hypothesis",
+    "source": "DNA Proton Tunneling: Löwdin Hypothesis",
+    "relations": [
+      {
+        "src": "Per-Olov Löwdin",
+        "tgt": "tautomeric shifts",
+        "type": "beskriver",
+        "why": "proposed concept (orig_type=proposer)",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "tautomeric shifts",
+        "tgt": "replication errors",
+        "type": "orsakar",
+        "why": "source of",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "tautomeric shifts",
+        "tgt": "spontaneous mutations",
+        "type": "modulerar",
+        "why": "introduces",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "hydrogen-bonded base pairs",
+        "tgt": "tautomeric shifts",
+        "type": "modulerar",
+        "why": "within",
+        "domain_src": "kemi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "N-H···N and N-H···O hydrogen bonds",
+        "tgt": "tautomeric shifts",
+        "type": "modulerar",
+        "why": "participate in",
+        "domain_src": "kemi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "tautomeric shifts",
+        "tgt": "replication errors",
+        "type": "konsoliderar",
+        "why": "contributes to",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "G-C base pair",
+        "tgt": "tautomeric shifts",
+        "type": "modulerar",
+        "why": "converts to",
+        "domain_src": "kemi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "G-C base pair",
+        "tgt": "G*-C*",
+        "type": "modulerar",
+        "why": "converts to",
+        "domain_src": "kemi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "G*-C*",
+        "tgt": "thymine",
+        "type": "modulerar",
+        "why": "pairs with",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "G*-C*",
+        "tgt": "adenine",
+        "type": "modulerar",
+        "why": "pairs with",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "tautomeric form",
+        "tgt": "canonical form",
+        "type": "modulerar",
+        "why": "lies above",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "tautomeric form",
+        "tgt": "canonical form",
+        "type": "modulerar",
+        "why": "separated by barrier",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "quantum tunneling",
+        "tgt": "tautomeric population",
+        "type": "stärker",
+        "why": "enhances",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "WKB approximation",
+        "tgt": "tunneling probability",
+        "type": "modulerar",
+        "why": "estimates",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "WKB tunneling probability",
+        "tgt": "tautomeric population",
+        "type": "modulerar",
+        "why": "contributes to",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      }
+    ]
+  },
+  {
+    "id": "dna-gc-computational",
+    "source": "DNA Proton Tunneling: G-C Computational Studies",
+    "relations": [
+      {
+        "src": "G-C base pair",
+        "tgt": "proton transfer",
+        "type": "modulerar",
+        "why": "studie",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "G-C base pair",
+        "tgt": "Schrödinger ekvationen",
+        "type": "modulerar",
+        "why": "studie",
+        "domain_src": "biologi",
+        "domain_tgt": "matematik"
+      },
+      {
+        "src": "DFT",
+        "tgt": "potential energy surface",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "B3LYP/6-311++G(d,p)",
+        "tgt": "potential energy surface",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "2D PES",
+        "tgt": "barriärhöjd",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "transition state",
+        "tgt": "C₂ symmetri",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "matematik"
+      },
+      {
+        "src": "zwitterionic state",
+        "tgt": "G⁻-C⁺",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "zwitterionic state",
+        "tgt": "G⁺-C⁻",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "concerted pathway",
+        "tgt": "tunneling splitting",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "stepwise pathway",
+        "tgt": "tunneling splitting",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "concerted pathway",
+        "tgt": "effective mass",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "stepwise pathway",
+        "tgt": "effective mass",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "double-well potential",
+        "tgt": "asymmetri",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "matematik"
+      },
+      {
+        "src": "canonical well",
+        "tgt": "ground-state wavefunction",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "tautomeric configuration",
+        "tgt": "probability",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "quantum tunneling",
+        "tgt": "mutation rates",
+        "type": "försvagar",
+        "why": "studie",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "thermally activated tunneling",
+        "tgt": "mutation rates",
+        "type": "stärker",
+        "why": "studie",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      }
+    ]
+  },
+  {
+    "id": "dna-slocombe-surrey",
+    "source": "DNA Proton Tunneling: Slocombe et al. Surrey Rate Calculations",
+    "relations": [
+      {
+        "src": "proton tunneling",
+        "tgt": "mutation",
+        "type": "orsakar",
+        "why": "tunneling rates",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "G-C base pair",
+        "tgt": "DNA",
+        "type": "är_del_av",
+        "why": "base pair structure",
+        "domain_src": "kemi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "A-T base pair",
+        "tgt": "DNA",
+        "type": "är_del_av",
+        "why": "base pair structure",
+        "domain_src": "kemi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "DNA polymerase",
+        "tgt": "mutation",
+        "type": "reglerar",
+        "why": "incorporation time",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "proton tunneling",
+        "tgt": "mutation probability",
+        "type": "stärker",
+        "why": "tunneling rates",
+        "domain_src": "fysik",
+        "domain_tgt": "matematik"
+      },
+      {
+        "src": "mutation probability",
+        "tgt": "mutation rate",
+        "type": "beskriver",
+        "why": "overall probability",
+        "domain_src": "matematik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "proton tunneling",
+        "tgt": "mutation rate",
+        "type": "försvagar",
+        "why": "contribution to rate",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "base tautomerization",
+        "tgt": "mutation",
+        "type": "orsakar",
+        "why": "active site mechanism",
+        "domain_src": "kemi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "deamination",
+        "tgt": "mutation",
+        "type": "orsakar",
+        "why": "mechanism",
+        "domain_src": "kemi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "G-C base pair",
+        "tgt": "proton tunneling",
+        "type": "modulerar",
+        "why": "tunneling rates",
+        "domain_src": "kemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "A-T base pair",
+        "tgt": "proton tunneling",
+        "type": "modulerar",
+        "why": "tunneling rates",
+        "domain_src": "kemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "DNA",
+        "tgt": "cell",
+        "type": "är_del_av",
+        "why": "structure",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "cell",
+        "tgt": "organism",
+        "type": "är_del_av",
+        "why": "structure",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "organism",
+        "tgt": "species",
+        "type": "är_del_av",
+        "why": "structure",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "species",
+        "tgt": "ecosystem",
+        "type": "är_del_av",
+        "why": "structure",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "ecosystem",
+        "tgt": "environment",
+        "type": "är_del_av",
+        "why": "structure",
+        "domain_src": "biologi",
+        "domain_tgt": "miljö"
+      },
+      {
+        "src": "environment",
+        "tgt": "planet",
+        "type": "är_del_av",
+        "why": "structure",
+        "domain_src": "miljö",
+        "domain_tgt": "geologi"
+      },
+      {
+        "src": "planet",
+        "tgt": "universe",
+        "type": "är_del_av",
+        "why": "structure",
+        "domain_src": "geologi",
+        "domain_tgt": "kosmologi"
+      }
+    ]
+  },
+  {
+    "id": "dna-environment-solvation",
+    "source": "DNA Proton Tunneling: Environmental and Solvation Effects",
+    "relations": [
+      {
+        "src": "DNA",
+        "tgt": "proton transfer",
+        "type": "modulerar",
+        "why": "modulerar proton transfer",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vatten",
+        "tgt": "DNA",
+        "type": "beskriver",
+        "why": "stabiliserar DNA (orig_type=stabiliserar)",
+        "domain_src": "kemi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "vatten",
+        "tgt": "tautomera former",
+        "type": "beskriver",
+        "why": "stabiliserar tautomera former (orig_type=stabiliserar)",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "DNA",
+        "tgt": "vatten",
+        "type": "beskriver",
+        "why": "beskriver vatten",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "base pairs",
+        "tgt": "proton transfer",
+        "type": "modulerar",
+        "why": "modulerar proton transfer",
+        "domain_src": "kemi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "G-C",
+        "tgt": "vatten",
+        "type": "beskriver",
+        "why": "stabiliserar vatten (orig_type=stabiliserar)",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "G*-C*",
+        "tgt": "vatten",
+        "type": "beskriver",
+        "why": "svagar vatten (orig_type=svagar)",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "DNA",
+        "tgt": "base pairs",
+        "type": "producerar",
+        "why": "producerar base pairs",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "base pairs",
+        "tgt": "DNA",
+        "type": "konsoliderar",
+        "why": "konsoliderar DNA",
+        "domain_src": "kemi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "vatten",
+        "tgt": "G*-C*",
+        "type": "beskriver",
+        "why": "stabiliserar G*-C* (orig_type=stabiliserar)",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "G-C",
+        "tgt": "vatten",
+        "type": "stärker",
+        "why": "stärker vatten",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "G-T",
+        "tgt": "vatten",
+        "type": "beskriver",
+        "why": "svagar vatten (orig_type=svagar)",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "G-T",
+        "tgt": "tautomera former",
+        "type": "producerar",
+        "why": "producerar tautomera former",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "G*-T*",
+        "tgt": "tautomera former",
+        "type": "producerar",
+        "why": "producerar tautomera former",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "G*-T*",
+        "tgt": "vatten",
+        "type": "beskriver",
+        "why": "stabiliserar vatten (orig_type=stabiliserar)",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "G*-T*",
+        "tgt": "vatten",
+        "type": "stärker",
+        "why": "stärker vatten",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "G*-T*",
+        "tgt": "G-T",
+        "type": "beskriver",
+        "why": "svagar G-T (orig_type=svagar)",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "G*-T*",
+        "tgt": "tautomera former",
+        "type": "producerar",
+        "why": "producerar tautomera former",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      }
+    ]
+  },
+  {
+    "id": "dna-alkhalili-mcfadden",
+    "source": "DNA Proton Tunneling: Al-Khalili-McFadden Framework",
+    "relations": [
+      {
+        "src": "Al-Khalili och McFadden",
+        "tgt": "Löwdins hypotes",
+        "type": "modulerar",
+        "why": "teoretisk ramverk",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Löwdins hypotes",
+        "tgt": "spontana mutationer",
+        "type": "orsakar",
+        "why": "biologiska konsekvenser",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Löwdins hypotes",
+        "tgt": "kvantprotonrörning",
+        "type": "modulerar",
+        "why": "biologiska konsekvenser",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "kvantprotonrörning",
+        "tgt": "mutationshastighet",
+        "type": "konsoliderar",
+        "why": "teoretisk ramverk",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "mutationshastighet",
+        "tgt": "temperaturberoende",
+        "type": "synkroniserar",
+        "why": "teoretisk ramverk",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "temperaturberoende",
+        "tgt": "mutationshastighet",
+        "type": "reglerar",
+        "why": "teoretisk ramverk",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "mutationshastighet",
+        "tgt": "klassisk tautomerisering",
+        "type": "försvagar",
+        "why": "teoretisk ramverk",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "klassisk tautomerisering",
+        "tgt": "mutationshastighet",
+        "type": "försvagar",
+        "why": "teoretisk ramverk",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "kvantprotonrörning",
+        "tgt": "mutationshastighet",
+        "type": "stärker",
+        "why": "teoretisk ramverk",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "mutationshastighet",
+        "tgt": "temperaturberoende",
+        "type": "beskriver",
+        "why": "teoretisk ramverk",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "temperaturberoende",
+        "tgt": "mutationshastighet",
+        "type": "beskriver",
+        "why": "teoretisk ramverk",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "kvantprotonrörning",
+        "tgt": "spontana mutationer",
+        "type": "producerar",
+        "why": "teoretisk ramverk",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "spontana mutationer",
+        "tgt": "Löwdins hypotes",
+        "type": "beskriver",
+        "why": "biologiska konsekvenser",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Löwdins hypotes",
+        "tgt": "kvantprotonrörning",
+        "type": "beskriver",
+        "why": "biologiska konsekvenser",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "kvantprotonrörning",
+        "tgt": "mutationshastighet",
+        "type": "beskriver",
+        "why": "teoretisk ramverk",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "mutationshastighet",
+        "tgt": "temperaturberoende",
+        "type": "beskriver",
+        "why": "teoretisk ramverk",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "temperaturberoende",
+        "tgt": "mutationshastighet",
+        "type": "beskriver",
+        "why": "teoretisk ramverk",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "kvantprotonrörning",
+        "tgt": "spontana mutationer",
+        "type": "beskriver",
+        "why": "teoretisk ramverk",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "spontana mutationer",
+        "tgt": "Löwdins hypotes",
+        "type": "beskriver",
+        "why": "biologiska konsekvenser",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      }
+    ]
+  },
+  {
+    "id": "electron-transfer-moser-dutton",
+    "source": "Electron Transfer: Moser-Dutton Ruler",
+    "relations": [
+      {
+        "src": "Moser-Dutton ruler",
+        "tgt": "elektron tunneling",
+        "type": "beskriver",
+        "why": "relates tunneling rates",
+        "domain_src": "fysik",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Moser-Dutton ruler",
+        "tgt": "protein media",
+        "type": "beskriver",
+        "why": "assumes homogeneous medium",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Moser-Dutton ruler",
+        "tgt": "redox cofactors",
+        "type": "beskriver",
+        "why": "relates distance and rate",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Moser-Dutton ruler",
+        "tgt": "tunneling barrier height",
+        "type": "beskriver",
+        "why": "relates distance and rate",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Moser-Dutton ruler",
+        "tgt": "van der Waals contact",
+        "type": "beskriver",
+        "why": "relates distance and rate",
+        "domain_src": "fysik",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Moser-Dutton ruler",
+        "tgt": "Franck-Condon factor",
+        "type": "beskriver",
+        "why": "relates rate and frequency",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Moser-Dutton ruler",
+        "tgt": "parasitic side reactions",
+        "type": "beskriver",
+        "why": "limits electron transfer",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Moser-Dutton ruler",
+        "tgt": "charge recombination",
+        "type": "beskriver",
+        "why": "limits electron transfer",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Moser-Dutton ruler",
+        "tgt": "oxidative damage",
+        "type": "beskriver",
+        "why": "limits electron transfer",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Moser-Dutton ruler",
+        "tgt": "mitochondrial respiratory chain",
+        "type": "beskriver",
+        "why": "relates electron transfer and distance",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Moser-Dutton ruler",
+        "tgt": "Complexes I, II, III, and IV",
+        "type": "beskriver",
+        "why": "relates electron transfer and distance",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Moser-Dutton ruler",
+        "tgt": "protein structures",
+        "type": "beskriver",
+        "why": "assumes homogeneous medium",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Moser-Dutton ruler",
+        "tgt": "secondary structure",
+        "type": "beskriver",
+        "why": "assumes homogeneous medium",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Beratan och Onuchic",
+        "tgt": "pathway model",
+        "type": "konsoliderar",
+        "why": "predicts rate variations",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Beratan och Onuchic",
+        "tgt": "bonding topology",
+        "type": "konsoliderar",
+        "why": "predicts rate variations",
+        "domain_src": "fysik",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Moser et al.",
+        "tgt": "electron transfer reactions",
+        "type": "modulerar",
+        "why": "derived Moser-Dutton ruler",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Moser et al.",
+        "tgt": "photosynthetic reaction centers",
+        "type": "modulerar",
+        "why": "derived Moser-Dutton ruler",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Moser et al.",
+        "tgt": "cytochrome c oxidase",
+        "type": "modulerar",
+        "why": "derived Moser-Dutton ruler",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Moser et al.",
+        "tgt": "mitochondrial Complex I",
+        "type": "modulerar",
+        "why": "derived Moser-Dutton ruler",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      }
+    ]
+  },
+  {
+    "id": "electron-transfer-pathways",
+    "source": "Electron Transfer: Beratan-Skourtis Pathway Model",
+    "relations": [
+      {
+        "src": "Beratan-Skourtis-Onuchic pathway model",
+        "tgt": "electron tunneling coupling",
+        "type": "modulerar",
+        "why": "dekomponerar",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "electron tunneling coupling",
+        "tgt": "covalent bonds",
+        "type": "beskriver",
+        "why": "från (orig_type=produceras)",
+        "domain_src": "fysik",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "electron tunneling coupling",
+        "tgt": "hydrogen bonds",
+        "type": "beskriver",
+        "why": "från (orig_type=produceras)",
+        "domain_src": "fysik",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "electron tunneling coupling",
+        "tgt": "through-space jumps",
+        "type": "beskriver",
+        "why": "från (orig_type=produceras)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "covalent bonds",
+        "tgt": "hydrogen bonds",
+        "type": "konsoliderar",
+        "why": "tillsammans",
+        "domain_src": "kemi",
+        "domain_tgt": "quantum biology"
+      },
+      {
+        "src": "covalent bonds",
+        "tgt": "through-space jumps",
+        "type": "konsoliderar",
+        "why": "tillsammans",
+        "domain_src": "fysik",
+        "domain_tgt": "quantum biology"
+      },
+      {
+        "src": "hydrogen bonds",
+        "tgt": "through-space jumps",
+        "type": "konsoliderar",
+        "why": "tillsammans",
+        "domain_src": "fysik",
+        "domain_tgt": "quantum biology"
+      },
+      {
+        "src": "β-sheet proteins",
+        "tgt": "faster electron transfer",
+        "type": "modulerar",
+        "why": "stödjer",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "α-helical proteins",
+        "tgt": "slower electron transfer",
+        "type": "modulerar",
+        "why": "stödjer",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "β-sheets",
+        "tgt": "fewer covalent bonds",
+        "type": "modulerar",
+        "why": "har",
+        "domain_src": "kemi",
+        "domain_tgt": "quantum biology"
+      },
+      {
+        "src": "α-helices",
+        "tgt": "more covalent bonds",
+        "type": "modulerar",
+        "why": "har",
+        "domain_src": "kemi",
+        "domain_tgt": "quantum biology"
+      },
+      {
+        "src": "multiple interfering pathways",
+        "tgt": "constructive interference",
+        "type": "modulerar",
+        "why": "kan",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "multiple interfering pathways",
+        "tgt": "destructive interference",
+        "type": "modulerar",
+        "why": "kan",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "β-strand pathways",
+        "tgt": "faster electron transfer",
+        "type": "modulerar",
+        "why": "stödjer",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "α-helical segments",
+        "tgt": "slower electron transfer",
+        "type": "modulerar",
+        "why": "stödjer",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "superexchange mechanism",
+        "tgt": "coherent electron tunneling",
+        "type": "modulerar",
+        "why": "dominerar",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "hopping mechanism",
+        "tgt": "sequential tunneling",
+        "type": "modulerar",
+        "why": "dominerar",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      }
+    ]
+  },
+  {
+    "id": "electron-transfer-gray-winkler",
+    "source": "Electron Transfer: Gray-Winkler Ruthenium Studies",
+    "relations": [
+      {
+        "src": "Harry Gray",
+        "tgt": "electron tunneling",
+        "type": "beskriver",
+        "why": "studied (orig_type=pionerade)",
+        "domain_src": "person",
+        "domain_tgt": "forskning"
+      },
+      {
+        "src": "Jay Winkler",
+        "tgt": "electron tunneling",
+        "type": "beskriver",
+        "why": "studied (orig_type=pionerade)",
+        "domain_src": "person",
+        "domain_tgt": "forskning"
+      },
+      {
+        "src": "ruthenium-modified protein technique",
+        "tgt": "precise measurement",
+        "type": "beskriver",
+        "why": "enables (orig_type=tillåter)",
+        "domain_src": "metod",
+        "domain_tgt": "mätning"
+      },
+      {
+        "src": "electron tunneling",
+        "tgt": "ruthenium complex",
+        "type": "beskriver",
+        "why": "through (orig_type=moduleras)",
+        "domain_src": "fenomen",
+        "domain_tgt": "kemisk"
+      },
+      {
+        "src": "ruthenium complex",
+        "tgt": "photoinducible donor-acceptor system",
+        "type": "producerar",
+        "why": "creates",
+        "domain_src": "kemisk",
+        "domain_tgt": "fysikalisk"
+      },
+      {
+        "src": "photoinducible donor-acceptor system",
+        "tgt": "laser excitation",
+        "type": "synkroniserar",
+        "why": "with",
+        "domain_src": "fysikalisk",
+        "domain_tgt": "optisk"
+      },
+      {
+        "src": "laser excitation",
+        "tgt": "MLCT excited state",
+        "type": "beskriver",
+        "why": "of (orig_type=genererar)",
+        "domain_src": "optisk",
+        "domain_tgt": "fysikalisk"
+      },
+      {
+        "src": "MLCT excited state",
+        "tgt": "Ru³⁺",
+        "type": "beskriver",
+        "why": "by (orig_type=oxideras)",
+        "domain_src": "fysikalisk",
+        "domain_tgt": "kemisk"
+      },
+      {
+        "src": "Ru³⁺",
+        "tgt": "electron transfer",
+        "type": "producerar",
+        "why": "of",
+        "domain_src": "kemisk",
+        "domain_tgt": "fysikalisk"
+      },
+      {
+        "src": "electron transfer",
+        "tgt": "transient absorption spectroscopy",
+        "type": "beskriver",
+        "why": "by (orig_type=mäts)",
+        "domain_src": "fysikalisk",
+        "domain_tgt": "mätning"
+      },
+      {
+        "src": "Pseudomonas aeruginosa azurin",
+        "tgt": "electron transfer rates",
+        "type": "beskriver",
+        "why": "in (orig_type=moduleras)",
+        "domain_src": "protein",
+        "domain_tgt": "fysikalisk"
+      },
+      {
+        "src": "electron transfer rates",
+        "tgt": "Gray and Winkler",
+        "type": "beskriver",
+        "why": "by (orig_type=mäts)",
+        "domain_src": "fysikalisk",
+        "domain_tgt": "person"
+      },
+      {
+        "src": "Gray and Winkler",
+        "tgt": "electron tunneling",
+        "type": "beskriver",
+        "why": "in (orig_type=studierade)",
+        "domain_src": "person",
+        "domain_tgt": "forskning"
+      },
+      {
+        "src": "cytochrome c",
+        "tgt": "electron tunneling",
+        "type": "beskriver",
+        "why": "in (orig_type=moduleras)",
+        "domain_src": "protein",
+        "domain_tgt": "fysikalisk"
+      },
+      {
+        "src": "heme edge-to-surface pathway",
+        "tgt": "low-barrier superexchange bridge",
+        "type": "producerar",
+        "why": "provides",
+        "domain_src": "kemisk",
+        "domain_tgt": "fysikalisk"
+      },
+      {
+        "src": "protein tunneling barrier",
+        "tgt": "effective barrier height",
+        "type": "beskriver",
+        "why": "of (orig_type=moduleras)",
+        "domain_src": "fysikalisk",
+        "domain_tgt": "kemisk"
+      },
+      {
+        "src": "effective barrier height",
+        "tgt": "distance decay constants",
+        "type": "producerar",
+        "why": "of",
+        "domain_src": "kemisk",
+        "domain_tgt": "fysikalisk"
+      },
+      {
+        "src": "evolution",
+        "tgt": "electron transfer pathways",
+        "type": "beskriver",
+        "why": "has (orig_type=optimerar)",
+        "domain_src": "biologisk",
+        "domain_tgt": "fysikalisk"
+      },
+      {
+        "src": "aromatic residues",
+        "tgt": "low-barrier tunneling routes",
+        "type": "producerar",
+        "why": "of",
+        "domain_src": "kemisk",
+        "domain_tgt": "fysikalisk"
+      }
+    ]
+  },
+  {
+    "id": "electron-transfer-redox-cofactors",
+    "source": "Electron Transfer: Biological Redox Cofactors",
+    "relations": [
+      {
+        "src": "Biological electron transfer chains",
+        "tgt": "redox cofactors",
+        "type": "modulerar",
+        "why": "konsoliderar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Iron-sulfur clusters",
+        "tgt": "redox cofactors",
+        "type": "modulerar",
+        "why": "konsoliderar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Heme groups",
+        "tgt": "electron transfer mediators",
+        "type": "modulerar",
+        "why": "konsoliderar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Flavin cofactors",
+        "tgt": "redox chemistry",
+        "type": "modulerar",
+        "why": "konsoliderar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Quinones",
+        "tgt": "two-electron/two-proton carriers",
+        "type": "modulerar",
+        "why": "konsoliderar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Biological electron transfer chains",
+        "tgt": "thermodynamic driving force",
+        "type": "orsakar",
+        "why": "skapar",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Iron-sulfur clusters",
+        "tgt": "ubiquitous biological redox cofactors",
+        "type": "orsakar",
+        "why": "konsoliderar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Heme groups",
+        "tgt": "electron transfer mediators",
+        "type": "orsakar",
+        "why": "konsoliderar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Flavin cofactors",
+        "tgt": "one- and two-electron redox chemistry",
+        "type": "orsakar",
+        "why": "konsoliderar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Quinones",
+        "tgt": "two-electron/two-proton carriers",
+        "type": "orsakar",
+        "why": "konsoliderar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Mitochondrial Complex I",
+        "tgt": "electron transfer wire",
+        "type": "modulerar",
+        "why": "konsoliderar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Iron-sulfur clusters",
+        "tgt": "electron transfer wire",
+        "type": "är_del_av",
+        "why": "komponerar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Heme groups",
+        "tgt": "electron transfer wire",
+        "type": "är_del_av",
+        "why": "komponerar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Flavin cofactors",
+        "tgt": "electron transfer wire",
+        "type": "är_del_av",
+        "why": "komponerar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Quinones",
+        "tgt": "electron transfer wire",
+        "type": "är_del_av",
+        "why": "komponerar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Mitochondrial Complex I",
+        "tgt": "electron flow",
+        "type": "reglerar",
+        "why": "kontrollerar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Biological electron transfer chains",
+        "tgt": "respiratory and photosynthetic electron flow",
+        "type": "synkroniserar",
+        "why": "samordnar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Iron-sulfur clusters",
+        "tgt": "ubiquitous biological redox cofactors",
+        "type": "synkroniserar",
+        "why": "samordnar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Heme groups",
+        "tgt": "electron transfer mediators",
+        "type": "synkroniserar",
+        "why": "samordnar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Flavin cofactors",
+        "tgt": "one- and two-electron redox chemistry",
+        "type": "synkroniserar",
+        "why": "samordnar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Quinones",
+        "tgt": "two-electron/two-proton carriers",
+        "type": "synkroniserar",
+        "why": "samordnar",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      }
+    ]
+  },
+  {
+    "id": "electron-transfer-superexchange-hopping",
+    "source": "Electron Transfer: Superexchange vs Hopping Mechanisms",
+    "relations": [
+      {
+        "src": "superexchange",
+        "tgt": "hopping",
+        "type": "modulerar",
+        "why": "mekanismer",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "superexchange",
+        "tgt": "bridge states",
+        "type": "orsakar",
+        "why": "tunneling",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "bridge states",
+        "tgt": "bridge",
+        "type": "är_del_av",
+        "why": "komponenter",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "bridge",
+        "tgt": "bridge states",
+        "type": "producerar",
+        "why": "tillstånd",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "bridge states",
+        "tgt": "bridge length",
+        "type": "beskriver",
+        "why": "egenskaper",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "bridge length",
+        "tgt": "superexchange",
+        "type": "reglerar",
+        "why": "mekanismer",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "hopping",
+        "tgt": "bridge sites",
+        "type": "modulerar",
+        "why": "mekanismer",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "hopping",
+        "tgt": "electron",
+        "type": "orsakar",
+        "why": "transport",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "electron",
+        "tgt": "bridge sites",
+        "type": "producerar",
+        "why": "tillstånd",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "bridge sites",
+        "tgt": "oxidation potentials",
+        "type": "beskriver",
+        "why": "egenskaper",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "oxidation potentials",
+        "tgt": "hopping",
+        "type": "reglerar",
+        "why": "mekanismer",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "protein bridges",
+        "tgt": "virtual intermediate states",
+        "type": "producerar",
+        "why": "tillstånd",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "virtual intermediate states",
+        "tgt": "superexchange",
+        "type": "beskriver",
+        "why": "mekanismer",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "azurin",
+        "tgt": "Trp122 radical",
+        "type": "producerar",
+        "why": "tillstånd",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Trp122 radical",
+        "tgt": "hopping pathway",
+        "type": "producerar",
+        "why": "mekanismer",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "hopping pathway",
+        "tgt": "electron transfer",
+        "type": "beskriver",
+        "why": "processer",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Giese et al.",
+        "tgt": "hole hopping",
+        "type": "producerar",
+        "why": "mekanismer",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "hole hopping",
+        "tgt": "charge transport",
+        "type": "beskriver",
+        "why": "processer",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "DNA",
+        "tgt": "hole hopping",
+        "type": "producerar",
+        "why": "mekanismer",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Schuster et al.",
+        "tgt": "holes migration",
+        "type": "producerar",
+        "why": "processer",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      }
+    ]
+  },
+  {
+    "id": "decoherence-fmo-timescales",
+    "source": "Decoherence Protection: FMO Timescales",
+    "relations": [
+      {
+        "src": "FMO komplex",
+        "tgt": "energiavkylning",
+        "type": "modulerar",
+        "why": "energiavkylningstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "renhet",
+        "type": "modulerar",
+        "why": "renhetstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "energiavkylning",
+        "type": "modulerar",
+        "why": "energiavkylningstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "renhet",
+        "type": "modulerar",
+        "why": "renhetstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "energiavkylning",
+        "type": "modulerar",
+        "why": "energiavkylningstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "renhet",
+        "type": "modulerar",
+        "why": "renhetstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "energiavkylning",
+        "type": "modulerar",
+        "why": "energiavkylningstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "renhet",
+        "type": "modulerar",
+        "why": "renhetstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "energiavkylning",
+        "type": "modulerar",
+        "why": "energiavkylningstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "renhet",
+        "type": "modulerar",
+        "why": "renhetstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "energiavkylning",
+        "type": "modulerar",
+        "why": "energiavkylningstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "renhet",
+        "type": "modulerar",
+        "why": "renhetstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "energiavkylning",
+        "type": "modulerar",
+        "why": "energiavkylningstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "renhet",
+        "type": "modulerar",
+        "why": "renhetstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "energiavkylning",
+        "type": "modulerar",
+        "why": "energiavkylningstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "renhet",
+        "type": "modulerar",
+        "why": "renhetstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "energiavkylning",
+        "type": "modulerar",
+        "why": "energiavkylningstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "renhet",
+        "type": "modulerar",
+        "why": "renhetstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "energiavkylning",
+        "type": "modulerar",
+        "why": "energiavkylningstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "FMO komplex",
+        "tgt": "renhet",
+        "type": "modulerar",
+        "why": "renhetstider",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      }
+    ]
+  },
+  {
+    "id": "decoherence-enaqt",
+    "source": "Decoherence Protection: ENAQT Framework",
+    "relations": [
+      {
+        "src": "ENAQT",
+        "tgt": "energiöverföring",
+        "type": "modulerar",
+        "why": "teoretisk ramverk",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "ENAQT",
+        "tgt": "energiöverföringseffektivitet",
+        "type": "konsoliderar",
+        "why": "förbättrar effektivitet",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Mohseni et al.",
+        "tgt": "ENAQT",
+        "type": "producerar",
+        "why": "introducerar",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Mohseni et al.",
+        "tgt": "energiöverföringseffektivitet",
+        "type": "beskriver",
+        "why": "beräknar",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Mohseni et al.",
+        "tgt": "dephasing rate",
+        "type": "reglerar",
+        "why": "beräknar optimalt värde",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Plenio och Huelga",
+        "tgt": "fononantennmekanismen",
+        "type": "beskriver",
+        "why": "visar att (orig_type=formulerar)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Plenio och Huelga",
+        "tgt": "energiöverföringshastighet",
+        "type": "modulerar",
+        "why": "visar att",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Chin et al.",
+        "tgt": "fononantennmekanismen",
+        "type": "beskriver",
+        "why": "visar att (orig_type=demonstrerar)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "Cao och Silbey",
+        "tgt": "ENAQT",
+        "type": "beskriver",
+        "why": "visar att (orig_type=generaliserar)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "energiöverföring",
+        "tgt": "ENAQT",
+        "type": "konsoliderar",
+        "why": "kräver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "fononantennmekanismen",
+        "tgt": "energiöverföringshastighet",
+        "type": "modulerar",
+        "why": "visar att",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "dephasing rate",
+        "tgt": "energiöverföringseffektivitet",
+        "type": "reglerar",
+        "why": "beräknar optimalt värde",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "energiöverföringseffektivitet",
+        "tgt": "ENAQT",
+        "type": "konsoliderar",
+        "why": "förbättrar effektivitet",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "fononantennmekanismen",
+        "tgt": "ENAQT",
+        "type": "producerar",
+        "why": "visar att",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "ENAQT",
+        "tgt": "energiöverföring",
+        "type": "modulerar",
+        "why": "teoretisk ramverk",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "energiöverföring",
+        "tgt": "ENAQT",
+        "type": "konsoliderar",
+        "why": "kräver",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "fononantennmekanismen",
+        "tgt": "energiöverföringshastighet",
+        "type": "modulerar",
+        "why": "visar att",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "energiöverföringseffektivitet",
+        "tgt": "ENAQT",
+        "type": "konsoliderar",
+        "why": "förbättrar effektivitet",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      }
+    ]
+  },
+  {
+    "id": "decoherence-protein-scaffolds",
+    "source": "Decoherence Protection: Protein Scaffolds and Shielding",
+    "relations": [
+      {
+        "src": "protein scaffold",
+        "tgt": "chromophores",
+        "type": "modulerar",
+        "why": "strukturerar miljön",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "protein scaffold",
+        "tgt": "spectral density",
+        "type": "modulerar",
+        "why": "influensar spektral densitet",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "spectral density",
+        "tgt": "excitonic splitting frequencies",
+        "type": "beskriver",
+        "why": "har gap vid excitoniska splittringar (orig_type=har gap)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "protein scaffold",
+        "tgt": "system-bath coupling",
+        "type": "modulerar",
+        "why": "minskar system-bath koppeling",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "spectral density",
+        "tgt": "200 cm⁻¹",
+        "type": "beskriver",
+        "why": "har minimum vid 200 cm⁻¹ (orig_type=har minimum)",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "protein scaffold",
+        "tgt": "spatial bath correlations",
+        "type": "modulerar",
+        "why": "influensar rumsliga badkorrelationer",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "spatial bath correlations",
+        "tgt": "excitonic energy gaps",
+        "type": "modulerar",
+        "why": "bevar excitoniska energigap",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "protein scaffold",
+        "tgt": "chromophore site energies",
+        "type": "modulerar",
+        "why": "influensar kromofor-sitenergier",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "chromophore site energies",
+        "tgt": "spatial bath correlations",
+        "type": "beskriver",
+        "why": "fluktuerar i fas med rumsliga badkorrelationer (orig_type=fluktuerar)",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "spatial bath correlations",
+        "tgt": "excitonic energy gaps",
+        "type": "modulerar",
+        "why": "bevar excitoniska energigap",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "chromophore site energies",
+        "tgt": "individual site energy fluctuations",
+        "type": "beskriver",
+        "why": "fluktuerar individuellt (orig_type=fluktuerar)",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "chromophore site energies",
+        "tgt": "adjacent BChls",
+        "type": "beskriver",
+        "why": "har korrelation med grann BChls (orig_type=har korrelation)",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "chromophore site energies",
+        "tgt": "distant pairs",
+        "type": "beskriver",
+        "why": "har liten korrelation med avlägsna par (orig_type=har korrelation)",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "chromophore site energies",
+        "tgt": "dephasing times",
+        "type": "modulerar",
+        "why": "ökar dephaseringstider",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "chromophore site energies",
+        "tgt": "excitonic energy gaps",
+        "type": "modulerar",
+        "why": "bevar excitoniska energigap",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vibronic coupling",
+        "tgt": "functional quantum dynamics",
+        "type": "modulerar",
+        "why": "säkrar funktionella kvantdynamik",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "partial bath correlations",
+        "tgt": "functional quantum dynamics",
+        "type": "modulerar",
+        "why": "säkrar funktionella kvantdynamik",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "noise-assisted transport",
+        "tgt": "functional quantum dynamics",
+        "type": "modulerar",
+        "why": "säkrar funktionella kvantdynamik",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      }
+    ]
+  },
+  {
+    "id": "decoherence-noise-assisted",
+    "source": "Decoherence Protection: Noise-Assisted Transport",
+    "relations": [
+      {
+        "src": "FMO complex",
+        "tgt": "vibrational mode",
+        "type": "modulerar",
+        "why": "energiöverföring",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "vibrational mode",
+        "tgt": "energiöverföring",
+        "type": "konsoliderar",
+        "why": "effektivitet",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "energiöverföring",
+        "tgt": "effektivitet",
+        "type": "producerar",
+        "why": "resultat",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "effektivitet",
+        "tgt": "energiöverföring",
+        "type": "försvagar",
+        "why": "energiförlust",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "energiöverföring",
+        "tgt": "FMO komplex",
+        "type": "modulerar",
+        "why": "mekanism",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "mekanism",
+        "tgt": "energiöverföring",
+        "type": "synkroniserar",
+        "why": "parametrar",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "parametrar",
+        "tgt": "mekanism",
+        "type": "reglerar",
+        "why": "robusthet",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "mekanism",
+        "tgt": "energiöverföring",
+        "type": "konsoliderar",
+        "why": "effektivitet",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "energiöverföring",
+        "tgt": "effektivitet",
+        "type": "producerar",
+        "why": "resultat",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "effektivitet",
+        "tgt": "energiöverföring",
+        "type": "försvagar",
+        "why": "energiförlust",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "energiöverföring",
+        "tgt": "FMO komplex",
+        "type": "modulerar",
+        "why": "mekanism",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "mekanism",
+        "tgt": "energiöverföring",
+        "type": "synkroniserar",
+        "why": "parametrar",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "parametrar",
+        "tgt": "mekanism",
+        "type": "reglerar",
+        "why": "robusthet",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "mekanism",
+        "tgt": "energiöverföring",
+        "type": "konsoliderar",
+        "why": "effektivitet",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "energiöverföring",
+        "tgt": "effektivitet",
+        "type": "producerar",
+        "why": "resultat",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "effektivitet",
+        "tgt": "energiöverföring",
+        "type": "försvagar",
+        "why": "energiförlust",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "energiöverföring",
+        "tgt": "FMO komplex",
+        "type": "modulerar",
+        "why": "mekanism",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "mekanism",
+        "tgt": "energiöverföring",
+        "type": "synkroniserar",
+        "why": "parametrar",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "parametrar",
+        "tgt": "mekanism",
+        "type": "reglerar",
+        "why": "robusthet",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "mekanism",
+        "tgt": "energiöverföring",
+        "type": "konsoliderar",
+        "why": "effektivitet",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      }
+    ]
+  },
+  {
+    "id": "decoherence-cao-review",
+    "source": "Decoherence Protection: Cao et al. 2020 Review",
+    "relations": [
+      {
+        "src": "Cao et al.",
+        "tgt": "Förster mechanism",
+        "type": "modulerar",
+        "why": "quantum yield",
+        "domain_src": "science",
+        "domain_tgt": "physics"
+      },
+      {
+        "src": "Cao et al.",
+        "tgt": "HEOM calculations",
+        "type": "modulerar",
+        "why": "quantum yield",
+        "domain_src": "science",
+        "domain_tgt": "physics"
+      },
+      {
+        "src": "Cao et al.",
+        "tgt": "coherent pathways",
+        "type": "modulerar",
+        "why": "quantum yield",
+        "domain_src": "science",
+        "domain_tgt": "physics"
+      },
+      {
+        "src": "Cao et al.",
+        "tgt": "FMO",
+        "type": "modulerar",
+        "why": "coherence contribution",
+        "domain_src": "science",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "Cao et al.",
+        "tgt": "SLO-1",
+        "type": "modulerar",
+        "why": "tunneling contribution",
+        "domain_src": "science",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "Cao et al.",
+        "tgt": "radical pair magnetoreception",
+        "type": "modulerar",
+        "why": "quantum spin coherence",
+        "domain_src": "science",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "Cao et al.",
+        "tgt": "enzyme tunneling",
+        "type": "modulerar",
+        "why": "functional significance",
+        "domain_src": "science",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "Cao et al.",
+        "tgt": "photosynthetic energy transfer",
+        "type": "modulerar",
+        "why": "quantum yield",
+        "domain_src": "science",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "Cao et al.",
+        "tgt": "biological fitness",
+        "type": "modulerar",
+        "why": "tunneling contribution",
+        "domain_src": "science",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "Cao et al.",
+        "tgt": "evolution",
+        "type": "modulerar",
+        "why": "quantum advantage",
+        "domain_src": "science",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "Cao et al.",
+        "tgt": "quantum coherence",
+        "type": "modulerar",
+        "why": "observable phenomenon",
+        "domain_src": "science",
+        "domain_tgt": "physics"
+      },
+      {
+        "src": "Cao et al.",
+        "tgt": "quantum coherence",
+        "type": "modulerar",
+        "why": "functional advantage",
+        "domain_src": "science",
+        "domain_tgt": "physics"
+      },
+      {
+        "src": "Cao et al.",
+        "tgt": "Förster theory",
+        "type": "modulerar",
+        "why": "quantum yield",
+        "domain_src": "science",
+        "domain_tgt": "physics"
+      },
+      {
+        "src": "Cao et al.",
+        "tgt": "HEOM results",
+        "type": "modulerar",
+        "why": "quantum yield",
+        "domain_src": "science",
+        "domain_tgt": "physics"
+      },
+      {
+        "src": "Cao et al.",
+        "tgt": "classical analog",
+        "type": "modulerar",
+        "why": "quantum spin coherence",
+        "domain_src": "science",
+        "domain_tgt": "physics"
+      },
+      {
+        "src": "Cao et al.",
+        "tgt": "biological function",
+        "type": "modulerar",
+        "why": "quantum coherence",
+        "domain_src": "science",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "Cao et al.",
+        "tgt": "quantum biology",
+        "type": "modulerar",
+        "why": "criteria for functional significance",
+        "domain_src": "science",
+        "domain_tgt": "science"
+      }
+    ]
+  },
+  {
+    "id": "frontiers-orch-or",
+    "source": "Frontiers: Orch-OR Consciousness Hypothesis",
+    "relations": [
+      {
+        "src": "Orch-OR",
+        "tgt": "medvetande",
+        "type": "orsakar",
+        "why": "kvantberäkningar",
+        "domain_src": "fysik",
+        "domain_tgt": "psykologi"
+      },
+      {
+        "src": "kvantberäkningar",
+        "tgt": "medvetande",
+        "type": "modulerar",
+        "why": "i mikrotubuli",
+        "domain_src": "fysik",
+        "domain_tgt": "psykologi"
+      },
+      {
+        "src": "mikrotubuli",
+        "tgt": "neurontsytoskelett",
+        "type": "är_del_av",
+        "why": "cytoskelett",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "neurontsytoskelett",
+        "tgt": "celler",
+        "type": "är_del_av",
+        "why": "celler",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "kvantberäkningar",
+        "tgt": "gammaoscillationer",
+        "type": "synkroniserar",
+        "why": "40 Hz",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "gammaoscillationer",
+        "tgt": "medvetande",
+        "type": "är_analogt_med",
+        "why": "medvetenhet",
+        "domain_src": "fysik",
+        "domain_tgt": "psykologi"
+      },
+      {
+        "src": "anestetika",
+        "tgt": "medvetande",
+        "type": "försvagar",
+        "why": "hydrofoba pockar",
+        "domain_src": "kemi",
+        "domain_tgt": "psykologi"
+      },
+      {
+        "src": "kvantberäkningar",
+        "tgt": "dekoherens",
+        "type": "orsakar",
+        "why": "varmt och fuktigt",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "dekoherens",
+        "tgt": "kvantberäkningar",
+        "type": "försvagar",
+        "why": "tidsstora skillnader",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "kvantberäkningar",
+        "tgt": "entanglement",
+        "type": "producerar",
+        "why": "tubulin superpositioner",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "entanglement",
+        "tgt": "information",
+        "type": "konsoliderar",
+        "why": "cellulära automater",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "information",
+        "tgt": "neurontsytoskelett",
+        "type": "reglerar",
+        "why": "cellulära automater",
+        "domain_src": "fysik",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "neurontsytoskelett",
+        "tgt": "celler",
+        "type": "reglerar",
+        "why": "celler",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "kvantberäkningar",
+        "tgt": "gammaoscillationer",
+        "type": "oscillerar",
+        "why": "40 Hz",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "gammaoscillationer",
+        "tgt": "medvetande",
+        "type": "stärker",
+        "why": "konsciousnivå",
+        "domain_src": "fysik",
+        "domain_tgt": "psykologi"
+      },
+      {
+        "src": "kvantberäkningar",
+        "tgt": "objektiv reduktion",
+        "type": "beskriver",
+        "why": "Penrose mekanism",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      }
+    ]
+  },
+  {
+    "id": "frontiers-fisher-posner",
+    "source": "Frontiers: Fisher's Posner Molecule Hypothesis",
+    "relations": [
+      {
+        "src": "Posner molecules",
+        "tgt": "entangled phosphates",
+        "type": "modulerar",
+        "why": "fysikalisk process",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "pyrophosphatase",
+        "tgt": "phosphate ions",
+        "type": "producerar",
+        "why": "enzymatisk reaktion",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Posner molecules",
+        "tgt": "³¹P nuclear spin",
+        "type": "stärker",
+        "why": "protektion mot miljön",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "³¹P nuclear spin",
+        "tgt": "singlet state",
+        "type": "oscillerar",
+        "why": "kvantmekanik",
+        "domain_src": "fysik",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Posner molecules",
+        "tgt": "six ³¹P spins",
+        "type": "synkroniserar",
+        "why": "entanglement",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "glutamate vesicles",
+        "tgt": "calcium-dependent neurotransmitter release",
+        "type": "reglerar",
+        "why": "modulering av signalering",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Posner molecules",
+        "tgt": "entangled phosphates",
+        "type": "producerar",
+        "why": "fysikalisk process",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "lithium-6",
+        "tgt": "Posner formation",
+        "type": "försvagar",
+        "why": "isotopberoende effekt",
+        "domain_src": "kemi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "lithium-7",
+        "tgt": "Posner formation",
+        "type": "stärker",
+        "why": "isotopberoende effekt",
+        "domain_src": "kemi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "pyrophosphatase",
+        "tgt": "phosphate ions",
+        "type": "producerar",
+        "why": "enzymatisk reaktion",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "³¹P nuclear spin",
+        "tgt": "singlet state",
+        "type": "oscillerar",
+        "why": "kvantmekanik",
+        "domain_src": "fysik",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "Posner molecules",
+        "tgt": "six ³¹P spins",
+        "type": "synkroniserar",
+        "why": "entanglement",
+        "domain_src": "biologi",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "glutamate vesicles",
+        "tgt": "calcium-dependent neurotransmitter release",
+        "type": "reglerar",
+        "why": "modulering av signalering",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "lithium-6",
+        "tgt": "Posner formation",
+        "type": "försvagar",
+        "why": "isotopberoende effekt",
+        "domain_src": "kemi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "lithium-7",
+        "tgt": "Posner formation",
+        "type": "stärker",
+        "why": "isotopberoende effekt",
+        "domain_src": "kemi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "Posner molecules",
+        "tgt": "entangled phosphates",
+        "type": "modulerar",
+        "why": "fysikalisk process",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "pyrophosphatase",
+        "tgt": "phosphate ions",
+        "type": "producerar",
+        "why": "enzymatisk reaktion",
+        "domain_src": "biologi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "³¹P nuclear spin",
+        "tgt": "singlet state",
+        "type": "oscillerar",
+        "why": "kvantmekanik",
+        "domain_src": "fysik",
+        "domain_tgt": "kemi"
+      }
+    ]
+  },
+  {
+    "id": "frontiers-quantum-criticality",
+    "source": "Frontiers: Quantum Criticality in Biology",
+    "relations": [
+      {
+        "src": "biological electron transfer proteins",
+        "tgt": "electronic phases",
+        "type": "modulerar",
+        "why": "kritisk punkt",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "tight-binding models",
+        "tgt": "DFT-calculated transfer integrals",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "inverse participation ratio",
+        "tgt": "localization properties",
+        "type": "modulerar",
+        "why": "kvantifiering",
+        "domain_src": "matematik",
+        "domain_tgt": "matematik"
+      },
+      {
+        "src": "biological signaling",
+        "tgt": "conformational changes",
+        "type": "modulerar",
+        "why": "signalföring",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "electron transfer rates",
+        "tgt": "structural perturbations",
+        "type": "modulerar",
+        "why": "sensitivitet",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "evolution",
+        "tgt": "quantum criticality",
+        "type": "modulerar",
+        "why": "naturlig utveckling",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "electron transfer rates",
+        "tgt": "dynamic range",
+        "type": "modulerar",
+        "why": "funktion",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "tight-binding models",
+        "tgt": "CASSCF or DMRG methods",
+        "type": "försvagar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      },
+      {
+        "src": "electron transfer proteins",
+        "tgt": "electronic phases",
+        "type": "modulerar",
+        "why": "kritisk punkt",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "scanning tunneling spectroscopy",
+        "tgt": "universality class",
+        "type": "modulerar",
+        "why": "mätning",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "protein monolayers",
+        "tgt": "scanning tunneling spectroscopy",
+        "type": "modulerar",
+        "why": "mätning",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "quantum critical point",
+        "tgt": "conducting and insulating electronic phases",
+        "type": "modulerar",
+        "why": "kritisk punkt",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "fractal subset",
+        "tgt": "electronic wavefunctions",
+        "type": "modulerar",
+        "why": "struktur",
+        "domain_src": "matematik",
+        "domain_tgt": "matematik"
+      },
+      {
+        "src": "multifractal statistics",
+        "tgt": "electronic wavefunctions",
+        "type": "modulerar",
+        "why": "struktur",
+        "domain_src": "matematik",
+        "domain_tgt": "matematik"
+      },
+      {
+        "src": "electron transfer rates",
+        "tgt": "conformational changes",
+        "type": "modulerar",
+        "why": "sensitivitet",
+        "domain_src": "fysik",
+        "domain_tgt": "fysik"
+      },
+      {
+        "src": "biological signaling",
+        "tgt": "electron transfer rates",
+        "type": "modulerar",
+        "why": "signalföring",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "electron transfer proteins",
+        "tgt": "quantum criticality",
+        "type": "modulerar",
+        "why": "kritisk punkt",
+        "domain_src": "biologi",
+        "domain_tgt": "biologi"
+      },
+      {
+        "src": "CASSCF or DMRG methods",
+        "tgt": "tight-binding models",
+        "type": "modulerar",
+        "why": "beräkning",
+        "domain_src": "kemi",
+        "domain_tgt": "kemi"
+      }
+    ]
+  },
+  {
+    "id": "frontiers-entanglement-reaction-centers",
+    "source": "Frontiers: Quantum Entanglement in Photosynthesis",
+    "relations": []
+  },
+  {
+    "id": "frontiers-future-review",
+    "source": "Frontiers: Future Directions and Evidence Hierarchy",
+    "relations": [
+      {
+        "src": "in vivo probes",
+        "tgt": "in vitro spectroscopy",
+        "type": "modulerar",
+        "why": "current evidence",
+        "domain_src": "biology",
+        "domain_tgt": "physics"
+      },
+      {
+        "src": "quantum knockout",
+        "tgt": "fitness consequences",
+        "type": "modulerar",
+        "why": "measuring outcomes",
+        "domain_src": "biology",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "tunneling stability",
+        "tgt": "nucleobase selection",
+        "type": "modulerar",
+        "why": "influencing selection",
+        "domain_src": "chemistry",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "Hamiltonian parameters",
+        "tgt": "coherence lifetimes",
+        "type": "modulerar",
+        "why": "leading to divergent conclusions",
+        "domain_src": "physics",
+        "domain_tgt": "physics"
+      },
+      {
+        "src": "quantum tunneling",
+        "tgt": "smell",
+        "type": "modulerar",
+        "why": "debatable effect",
+        "domain_src": "physics",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "quantum effects",
+        "tgt": "bird navigation",
+        "type": "modulerar",
+        "why": "strong evidence",
+        "domain_src": "physics",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "quantum coherence",
+        "tgt": "vision",
+        "type": "modulerar",
+        "why": "rhodopsin isomerization",
+        "domain_src": "physics",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "enzyme tunneling",
+        "tgt": "biological relevance",
+        "type": "modulerar",
+        "why": "selected by evolution",
+        "domain_src": "biology",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "radical pair magnetoreception",
+        "tgt": "biological relevance",
+        "type": "modulerar",
+        "why": "selected by evolution",
+        "domain_src": "biology",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "in vivo probes",
+        "tgt": "quantum coherence",
+        "type": "orsakar",
+        "why": "detecting radical pair dynamics",
+        "domain_src": "biology",
+        "domain_tgt": "physics"
+      },
+      {
+        "src": "quantum knockout",
+        "tgt": "fitness consequences",
+        "type": "orsakar",
+        "why": "suppressing quantum effects",
+        "domain_src": "biology",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "tunneling stability",
+        "tgt": "nucleobase selection",
+        "type": "orsakar",
+        "why": "influencing selection",
+        "domain_src": "chemistry",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "Hamiltonian parameters",
+        "tgt": "coherence lifetimes",
+        "type": "orsakar",
+        "why": "leading to divergent conclusions",
+        "domain_src": "physics",
+        "domain_tgt": "physics"
+      },
+      {
+        "src": "quantum tunneling",
+        "tgt": "smell",
+        "type": "orsakar",
+        "why": "debatable effect",
+        "domain_src": "physics",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "quantum effects",
+        "tgt": "bird navigation",
+        "type": "orsakar",
+        "why": "strong evidence",
+        "domain_src": "physics",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "quantum coherence",
+        "tgt": "vision",
+        "type": "orsakar",
+        "why": "rhodopsin isomerization",
+        "domain_src": "physics",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "enzyme tunneling",
+        "tgt": "biological relevance",
+        "type": "orsakar",
+        "why": "selected by evolution",
+        "domain_src": "biology",
+        "domain_tgt": "biology"
+      },
+      {
+        "src": "radical pair magnetoreception",
+        "tgt": "biological relevance",
+        "type": "orsakar",
+        "why": "selected by evolution",
+        "domain_src": "biology",
+        "domain_tgt": "biology"
+      }
+    ]
+  }
+]

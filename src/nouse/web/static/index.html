@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -299,11 +299,11 @@
 
 <!-- View mode toggle -->
 <div class="hud" id="hud-viewmode">
-  <button class="view-btn active" id="btn-concept"  onclick="setView('concept')">◉ Konceptvy</button>
-  <button class="view-btn"        id="btn-domain"   onclick="setView('domain')">⬡ Domänvy</button>
-  <button class="view-btn"        id="btn-ripple"   onclick="setView('ripple')">◎ Hopp-ripple</button>
-  <button class="view-btn"        id="btn-path"     onclick="setView('path')">⟿ Sök väg</button>
-  <button class="view-btn"        id="btn-city"     onclick="setView('city')">⛩ Stad</button>
+  <button class="view-btn active" id="btn-concept"  onclick="setView('concept')">◉ Concept View</button>
+  <button class="view-btn"        id="btn-domain"   onclick="setView('domain')">⬡ Domain View</button>
+  <button class="view-btn"        id="btn-ripple"   onclick="setView('ripple')">◎ Ripple</button>
+  <button class="view-btn"        id="btn-path"     onclick="setView('path')">⟿ Path Search</button>
+  <button class="view-btn"        id="btn-city"     onclick="setView('city')">⛩ City</button>
 </div>
 
 <!-- Graph container -->
@@ -316,23 +316,23 @@
 <div class="hud" id="hud-stats">
   <div class="hud-title">◈ NoUse Field</div>
   <div class="stat-row">
-    <span class="stat-label">Noder</span>
+    <span class="stat-label">Nodes</span>
     <span class="stat-value" id="st-concepts">—</span>
   </div>
   <div class="stat-row">
-    <span class="stat-label">Kanter</span>
+    <span class="stat-label">Edges</span>
     <span class="stat-value" id="st-relations">—</span>
   </div>
   <div class="stat-row">
-    <span class="stat-label">Domäner</span>
+    <span class="stat-label">Domains</span>
     <span class="stat-value" id="st-domains">—</span>
   </div>
   <div class="stat-row">
-    <span class="stat-label">Cykel</span>
+    <span class="stat-label">Cycle</span>
     <span class="stat-value" id="st-cycle">—</span>
   </div>
   <div class="stat-row">
-    <span class="stat-label">Synapser/min</span>
+    <span class="stat-label">Synapses/min</span>
     <span class="stat-value" id="st-synapses">0</span>
   </div>
 
@@ -358,23 +358,23 @@
 
 <!-- Domain legend -->
 <div class="hud" id="hud-domains">
-  <div class="hud-title">Domäner</div>
+  <div class="hud-title">Domains</div>
   <div id="domain-list"></div>
 </div>
 
 <!-- Controls -->
 <div class="hud" id="hud-controls">
-  <div class="hud-title">Sök</div>
-  <input id="search-input" class="ctrl-input" type="text" placeholder="Sök nod..." />
-  <button class="ctrl-btn" onclick="focusNode()">Fokusera</button>
+  <div class="hud-title">Search</div>
+  <input id="search-input" class="ctrl-input" type="text" placeholder="Search node..." />
+  <button class="ctrl-btn" onclick="focusNode()">Focus</button>
   <div class="ctrl-sep"></div>
-  <button class="ctrl-btn" onclick="resetCamera()">Återställ vy</button>
-  <button class="ctrl-btn" onclick="togglePhysics()">Fysik av/på</button>
-  <button class="ctrl-btn" onclick="toggleLabels()">Etiketter av/på</button>
+  <button class="ctrl-btn" onclick="resetCamera()">Reset view</button>
+  <button class="ctrl-btn" onclick="togglePhysics()">Physics on/off</button>
+  <button class="ctrl-btn" onclick="toggleLabels()">Labels on/off</button>
   <div class="ctrl-sep"></div>
-  <div style="font-size:10px; color:#5a7aaa; margin-bottom:4px">Filterera domän</div>
+  <div style="font-size:10px; color:#5a7aaa; margin-bottom:4px">Filter domain</div>
   <select id="domain-filter" class="ctrl-input" onchange="filterDomain()">
-    <option value="">Alla domäner</option>
+    <option value="">All domains</option>
   </select>
 </div>
 
