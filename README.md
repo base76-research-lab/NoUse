@@ -1,4 +1,5 @@
 <p align="center">
+Do you Like NoUSe? Show it by giving it a star and sharing 
   <img src="IMG/nouse-header.png" alt="NoUse — Epistemic Knowledge Graph for LLMs" width="100%">
 </p>
 
