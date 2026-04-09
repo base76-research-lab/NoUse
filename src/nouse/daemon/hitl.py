@@ -13,6 +13,17 @@ from typing import Any
 
 
 HITL_INTERRUPTS_PATH = Path.home() / ".local" / "share" / "nouse" / "hitl_interrupts.json"
+_SENSITIVE_QUERY_TOKENS = (
+    "delete",
+    "radera",
+    "remove",
+    "unsafe",
+    "credential",
+    "secret",
+    "rm -rf",
+    "sudo",
+    "drop table",
+)
 
 
 def _utcnow() -> str:
@@ -56,6 +67,13 @@ def _to_task_snapshot(task: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _contains_sensitive_query(query: str) -> bool:
+    text = str(query or "").strip().lower()
+    if not text:
+        return False
+    return any(tok in text for tok in _SENSITIVE_QUERY_TOKENS)
+
+
 def critical_task_reason(
     task: dict[str, Any],
     *,
@@ -76,17 +94,54 @@ def critical_task_reason(
         return f"hög prioritet ({priority:.2f})"
 
     query = str(task.get("query", "")).lower()
-    sensitive_tokens = (
-        "delete",
-        "radera",
-        "remove",
-        "unsafe",
-        "credential",
-        "secret",
-    )
-    if any(tok in query for tok in sensitive_tokens):
+    if _contains_sensitive_query(query):
         return "innehåller känslig operation i query"
     return None
+
+
+def low_risk_auto_approve_reason(
+    task: dict[str, Any],
+    *,
+    reason: str = "",
+    max_priority: float = 0.92,
+    allow_gap_types: set[str] | None = None,
+) -> str | None:
+    """
+    Returnerar en note-sträng om tasken kan auto-godkännas trots HITL-trigger.
+
+    Policy:
+    - endast mission-kritiska reason/gaptyper
+    - endast under prioritetströskeln
+    - aldrig när query innehåller känsliga operationer
+    """
+    if bool(task.get("hitl_approved")):
+        return None
+
+    reason_text = str(reason or "").strip().lower()
+    if not reason_text.startswith("mission-kritisk task"):
+        return None
+
+    gap_type = str(task.get("gap_type", "")).strip().lower()
+    if not gap_type.startswith("mission_"):
+        return None
+
+    if allow_gap_types:
+        normalized = {str(x).strip().lower() for x in allow_gap_types if str(x).strip()}
+        if normalized and gap_type not in normalized:
+            return None
+
+    try:
+        priority = float(task.get("priority", 0.0) or 0.0)
+    except Exception:
+        priority = 0.0
+    safe_max = max(0.0, min(1.0, float(max_priority)))
+    if priority > safe_max:
+        return None
+
+    if _contains_sensitive_query(str(task.get("query", ""))):
+        return None
+
+    return f"auto-approved low-risk mission task ({gap_type}, priority={priority:.2f})"
 
 
 def pending_interrupt_for_task(
