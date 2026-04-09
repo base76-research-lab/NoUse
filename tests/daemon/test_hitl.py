@@ -7,6 +7,7 @@ from nouse.daemon.hitl import (
     create_interrupt,
     critical_task_reason,
     list_interrupts,
+    low_risk_auto_approve_reason,
     pending_interrupt_for_task,
     reject_interrupt,
 )
@@ -68,6 +69,50 @@ def test_critical_task_reason_prefers_mission_and_priority():
         critical_task_reason(
             {"gap_type": "fragmented_domain", "priority": 0.3, "query": "safe"},
             priority_threshold=0.98,
+        )
+        is None
+    )
+
+
+def test_low_risk_auto_approve_reason_accepts_safe_mission_task():
+    note = low_risk_auto_approve_reason(
+        {
+            "gap_type": "mission_focus_domain",
+            "priority": 0.74,
+            "query": "Sammanställ öppna frågor i AI-domänen",
+        },
+        reason="mission-kritisk task (mission_focus_domain)",
+        max_priority=0.92,
+        allow_gap_types={"mission_focus_domain", "mission_bootstrap_domain"},
+    )
+    assert note is not None
+    assert "auto-approved low-risk mission task" in note
+
+
+def test_low_risk_auto_approve_reason_rejects_high_risk_or_sensitive():
+    assert (
+        low_risk_auto_approve_reason(
+            {
+                "gap_type": "mission_focus_domain",
+                "priority": 0.99,
+                "query": "safe query",
+            },
+            reason="mission-kritisk task (mission_focus_domain)",
+            max_priority=0.92,
+            allow_gap_types={"mission_focus_domain"},
+        )
+        is None
+    )
+    assert (
+        low_risk_auto_approve_reason(
+            {
+                "gap_type": "mission_focus_domain",
+                "priority": 0.40,
+                "query": "delete all credentials now",
+            },
+            reason="mission-kritisk task (mission_focus_domain)",
+            max_priority=0.92,
+            allow_gap_types={"mission_focus_domain"},
         )
         is None
     )

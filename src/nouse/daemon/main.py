@@ -22,6 +22,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
+from nouse.config.paths import path_from_env
 from nouse.field.surface import FieldSurface
 from nouse.daemon.extractor import (
     extract_relations_with_diagnostics,
@@ -47,6 +48,7 @@ from nouse.daemon.nightrun import NightRunScheduler
 from nouse.daemon.initiative import run_curiosity_burst
 from nouse.daemon.morning_report import generate_morning_report
 from nouse.daemon.research_queue import (
+    approve_task_after_hitl,
     claim_next_task,
     complete_task,
     enqueue_gap_tasks,
@@ -56,8 +58,10 @@ from nouse.daemon.research_queue import (
     queue_stats,
 )
 from nouse.daemon.hitl import (
+    approve_interrupt,
     create_interrupt,
     critical_task_reason,
+    low_risk_auto_approve_reason,
     pending_interrupt_for_task,
 )
 from nouse.daemon.journal import write_cycle_trace, write_daily_brief, latest_journal_file
@@ -149,7 +153,27 @@ try:
     )
 except ValueError:
     HITL_PRIORITY_THRESHOLD = 0.98
-SOURCE_THROTTLE_FILE = Path.home() / ".local" / "share" / "nouse" / "source_throttle.json"
+HITL_AUTO_APPROVE_LOW_RISK = (
+    str(os.getenv("NOUSE_HITL_AUTO_APPROVE_LOW_RISK", "1")).strip().lower() in _BOOL_TRUE
+)
+try:
+    HITL_AUTO_APPROVE_MAX_PRIORITY = max(
+        0.0,
+        min(1.0, float(os.getenv("NOUSE_HITL_AUTO_APPROVE_MAX_PRIORITY", "0.92"))),
+    )
+except ValueError:
+    HITL_AUTO_APPROVE_MAX_PRIORITY = 0.92
+HITL_AUTO_APPROVE_GAP_TYPES = {
+    str(item).strip().lower()
+    for item in str(
+        os.getenv(
+            "NOUSE_HITL_AUTO_APPROVE_GAP_TYPES",
+            "mission_focus_domain,mission_bootstrap_domain",
+        )
+    ).split(",")
+    if str(item).strip()
+}
+SOURCE_THROTTLE_FILE = path_from_env("NOUSE_SOURCE_THROTTLE_FILE", "source_throttle.json")
 SOURCE_THROTTLE_FAIL_THRESHOLD = max(
     1, int(os.getenv("NOUSE_SOURCE_THROTTLE_FAIL_THRESHOLD", "3"))
 )
@@ -556,6 +580,9 @@ async def brain_loop(
             source_fallbacks = 0
             source_throttled = 0
             source_errors = 0
+            source_quality_scores: list[float] = []
+            source_success_models: dict[str, int] = {}
+            source_attempted_models: dict[str, int] = {}
             synth_added_total = 0
             curiosity_summary: dict[str, Any] = {"status": "not_run"}
             mission_state = load_mission()
@@ -619,6 +646,9 @@ async def brain_loop(
                     break
                 source_name = source.__class__.__name__
                 throttled = 0
+                source_quality_scores_local: list[float] = []
+                source_success_models_local: dict[str, int] = {}
+                source_attempted_models_local: dict[str, int] = {}
                 docs_before = source_docs_processed
                 rels_before = source_relations_added
                 timeouts_before = source_timeouts
@@ -642,6 +672,36 @@ async def brain_loop(
                         timed_out = int(diag.get("timeouts", 0) or 0) > 0
                         used_fallback = bool(diag.get("used_heuristic_fallback"))
                         source_timeouts += int(diag.get("timeouts", 0) or 0)
+                        try:
+                            quality = float(diag.get("quality")) if diag.get("quality") is not None else None
+                        except (TypeError, ValueError):
+                            quality = None
+                        if quality is not None:
+                            source_quality_scores.append(quality)
+                            source_quality_scores_local.append(quality)
+                        success_model = str(diag.get("success_model") or "").strip()
+                        if success_model:
+                            source_success_models[success_model] = (
+                                source_success_models.get(success_model, 0) + 1
+                            )
+                            source_success_models_local[success_model] = (
+                                source_success_models_local.get(success_model, 0) + 1
+                            )
+                        attempted_models = (
+                            diag.get("attempted_models")
+                            if isinstance(diag.get("attempted_models"), list)
+                            else []
+                        )
+                        for attempted in attempted_models:
+                            model_name = str(attempted or "").strip()
+                            if not model_name:
+                                continue
+                            source_attempted_models[model_name] = (
+                                source_attempted_models.get(model_name, 0) + 1
+                            )
+                            source_attempted_models_local[model_name] = (
+                                source_attempted_models_local.get(model_name, 0) + 1
+                            )
                         if used_fallback:
                             source_fallbacks += 1
                         _record_source_result(
@@ -738,6 +798,35 @@ async def brain_loop(
                                     "docs_local": source_docs_local,
                                     "docs_total": source_docs_processed,
                                     "rels_total": source_relations_added,
+                                    "quality_samples": len(source_quality_scores_local),
+                                    "quality_avg": (
+                                        round(
+                                            sum(source_quality_scores_local)
+                                            / len(source_quality_scores_local),
+                                            4,
+                                        )
+                                        if source_quality_scores_local
+                                        else 0.0
+                                    ),
+                                    "quality_max": (
+                                        round(max(source_quality_scores_local), 4)
+                                        if source_quality_scores_local
+                                        else 0.0
+                                    ),
+                                    "success_models": {
+                                        k: v
+                                        for k, v in sorted(
+                                            source_success_models_local.items(),
+                                            key=lambda it: (-it[1], it[0]),
+                                        )[:3]
+                                    },
+                                    "attempted_models": {
+                                        k: v
+                                        for k, v in sorted(
+                                            source_attempted_models_local.items(),
+                                            key=lambda it: (-it[1], it[0]),
+                                        )[:3]
+                                    },
                                 },
                             )
                     if throttled:
@@ -785,6 +874,35 @@ async def brain_loop(
                                     "fallbacks_delta": fallbacks_delta,
                                     "throttled": throttled,
                                     "errors_delta": errors_delta,
+                                    "quality_samples": len(source_quality_scores_local),
+                                    "quality_avg": (
+                                        round(
+                                            sum(source_quality_scores_local)
+                                            / len(source_quality_scores_local),
+                                            4,
+                                        )
+                                        if source_quality_scores_local
+                                        else 0.0
+                                    ),
+                                    "quality_max": (
+                                        round(max(source_quality_scores_local), 4)
+                                        if source_quality_scores_local
+                                        else 0.0
+                                    ),
+                                    "success_models": {
+                                        k: v
+                                        for k, v in sorted(
+                                            source_success_models_local.items(),
+                                            key=lambda it: (-it[1], it[0]),
+                                        )[:3]
+                                    },
+                                    "attempted_models": {
+                                        k: v
+                                        for k, v in sorted(
+                                            source_attempted_models_local.items(),
+                                            key=lambda it: (-it[1], it[0]),
+                                        )[:3]
+                                    },
                                 },
                             )
 
@@ -804,8 +922,38 @@ async def brain_loop(
                     "added_relations": source_relations_added,
                     "timeouts": source_timeouts,
                     "fallbacks": source_fallbacks,
+                    "fallback_rate": (
+                        round(source_fallbacks / max(1, source_docs_processed), 4)
+                        if source_docs_processed > 0
+                        else 0.0
+                    ),
                     "throttled": source_throttled,
                     "errors": source_errors,
+                    "quality_samples": len(source_quality_scores),
+                    "quality_avg": (
+                        round(sum(source_quality_scores) / len(source_quality_scores), 4)
+                        if source_quality_scores
+                        else 0.0
+                    ),
+                    "quality_max": (
+                        round(max(source_quality_scores), 4)
+                        if source_quality_scores
+                        else 0.0
+                    ),
+                    "success_models": {
+                        k: v
+                        for k, v in sorted(
+                            source_success_models.items(),
+                            key=lambda it: (-it[1], it[0]),
+                        )[:5]
+                    },
+                    "attempted_models": {
+                        k: v
+                        for k, v in sorted(
+                            source_attempted_models.items(),
+                            key=lambda it: (-it[1], it[0]),
+                        )[:5]
+                    },
                 },
             )
 
@@ -1063,54 +1211,103 @@ async def brain_loop(
                                 priority_threshold=HITL_PRIORITY_THRESHOLD,
                             )
                             if reason:
-                                existing_interrupt = pending_interrupt_for_task(task_id)
-                                if existing_interrupt:
+                                auto_note = None
+                                if HITL_AUTO_APPROVE_LOW_RISK:
+                                    auto_note = low_risk_auto_approve_reason(
+                                        task,
+                                        reason=reason,
+                                        max_priority=HITL_AUTO_APPROVE_MAX_PRIORITY,
+                                        allow_gap_types=HITL_AUTO_APPROVE_GAP_TYPES,
+                                    )
+                                if auto_note:
+                                    existing_interrupt = pending_interrupt_for_task(task_id)
+                                    if existing_interrupt:
+                                        interrupt_id = int(existing_interrupt.get("id", 0) or 0)
+                                        approve_interrupt(
+                                            interrupt_id,
+                                            reviewer="daemon_auto",
+                                            note=auto_note,
+                                        )
+                                    else:
+                                        interrupt = create_interrupt(
+                                            task=task,
+                                            reason=reason,
+                                            category="research_task",
+                                            payload={
+                                                "mode": "auto_approved_low_risk",
+                                                "hint": (
+                                                    "Auto-godkänd via låg-risk-policy. "
+                                                    "Justera NOUSE_HITL_AUTO_APPROVE_* vid behov."
+                                                ),
+                                            },
+                                        )
+                                        interrupt_id = int(interrupt["id"])
+                                        approve_interrupt(
+                                            interrupt_id,
+                                            reviewer="daemon_auto",
+                                            note=auto_note,
+                                        )
+                                    approve_task_after_hitl(task_id, note=auto_note)
                                     curiosity_summary = {
-                                        "status": "hitl_waiting_existing",
+                                        "status": "hitl_auto_approved",
                                         "task_id": task_id,
                                         "reason": reason,
-                                        "interrupt_id": int(existing_interrupt.get("id", 0) or 0),
+                                        "note": auto_note,
                                     }
                                     log.info(
-                                        "  HITL väntar redan för task #%d (interrupt #%s)",
+                                        "  HITL auto-approve för task #%d (%s)",
                                         task_id,
-                                        existing_interrupt.get("id", "?"),
-                                    )
-                                    pause_task_for_hitl(
-                                        task_id,
-                                        interrupt_id=int(existing_interrupt.get("id", 0) or 0),
-                                        reason=f"HITL väntar: {reason}",
+                                        auto_note,
                                     )
                                 else:
-                                    interrupt = create_interrupt(
-                                        task=task,
-                                        reason=reason,
-                                        category="research_task",
-                                        payload={
-                                            "mode": "approve_resume",
-                                            "hint": (
-                                                "Kör `b76 hitl status` och godkänn med "
-                                                "interrupt-id: `b76 hitl approve --id <interrupt_id>`."
-                                            ),
-                                        },
-                                    )
-                                    pause_task_for_hitl(
-                                        task_id,
-                                        interrupt_id=int(interrupt["id"]),
-                                        reason=f"HITL krävs: {reason}",
-                                    )
-                                    curiosity_summary = {
-                                        "status": "hitl_interrupt_created",
-                                        "task_id": task_id,
-                                        "reason": reason,
-                                        "interrupt_id": int(interrupt["id"]),
-                                    }
-                                    log.warning(
-                                        "  HITL interrupt #%d skapad för task #%d (%s)",
-                                        int(interrupt["id"]),
-                                        task_id,
-                                        reason,
-                                    )
+                                    existing_interrupt = pending_interrupt_for_task(task_id)
+                                    if existing_interrupt:
+                                        curiosity_summary = {
+                                            "status": "hitl_waiting_existing",
+                                            "task_id": task_id,
+                                            "reason": reason,
+                                            "interrupt_id": int(existing_interrupt.get("id", 0) or 0),
+                                        }
+                                        log.info(
+                                            "  HITL väntar redan för task #%d (interrupt #%s)",
+                                            task_id,
+                                            existing_interrupt.get("id", "?"),
+                                        )
+                                        pause_task_for_hitl(
+                                            task_id,
+                                            interrupt_id=int(existing_interrupt.get("id", 0) or 0),
+                                            reason=f"HITL väntar: {reason}",
+                                        )
+                                    else:
+                                        interrupt = create_interrupt(
+                                            task=task,
+                                            reason=reason,
+                                            category="research_task",
+                                            payload={
+                                                "mode": "approve_resume",
+                                                "hint": (
+                                                    "Kör `b76 hitl status` och godkänn med "
+                                                    "interrupt-id: `b76 hitl approve --id <interrupt_id>`."
+                                                ),
+                                            },
+                                        )
+                                        pause_task_for_hitl(
+                                            task_id,
+                                            interrupt_id=int(interrupt["id"]),
+                                            reason=f"HITL krävs: {reason}",
+                                        )
+                                        curiosity_summary = {
+                                            "status": "hitl_interrupt_created",
+                                            "task_id": task_id,
+                                            "reason": reason,
+                                            "interrupt_id": int(interrupt["id"]),
+                                        }
+                                        log.warning(
+                                            "  HITL interrupt #%d skapad för task #%d (%s)",
+                                            int(interrupt["id"]),
+                                            task_id,
+                                            reason,
+                                        )
                                 task = None
 
                     if task:
@@ -1492,7 +1689,7 @@ async def brain_loop(
         log.info("Brain loop stoppad.")
 
 
-_STATUS_FILE = Path.home() / ".local" / "share" / "nouse" / "status.json"
+_STATUS_FILE = path_from_env("NOUSE_STATUS_FILE", "status.json")
 
 
 def _write_status(stats: dict, limbic: "LimbicState", cycle: int, nervbanor: int) -> None:
@@ -1570,7 +1767,7 @@ async def _run_headless(field: FieldSurface, memory: MemoryStore) -> None:
     await autonomy.start()
     # Wrap brain_loop as a Task so we can cancel it on SIGTERM.
     # The old `await brain_loop(...)` blocked the entire shutdown path because
-    # it was stuck inside sync KuzuDB BFS or LLM calls with no timeout.
+    # it was stuck inside sync graph traversal or LLM calls with no timeout.
     brain_task = asyncio.create_task(
         brain_loop(field, stop_event=stop_event, wake_event=wake_event, memory=memory)
     )
@@ -1681,5 +1878,28 @@ async def _run_with_web(field: FieldSurface, memory: MemoryStore, port: int) -> 
         bind_wake_event(None)
 
 
+def main() -> None:
+    import argparse
+
+    parser = argparse.ArgumentParser(description="NoUse daemon launcher")
+    parser.add_argument(
+        "action",
+        nargs="?",
+        default="start",
+        choices=["start", "web"],
+        help="start=headless, web=daemon+web UI",
+    )
+    parser.add_argument(
+        "--port",
+        "-p",
+        type=int,
+        default=8765,
+        help="Webb-port vid action=web",
+    )
+    args = parser.parse_args()
+
+    run(with_web=(args.action == "web"), web_port=int(args.port))
+
+
 if __name__ == "__main__":
-    run()
+    main()
