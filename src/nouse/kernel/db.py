@@ -73,16 +73,17 @@ class BrainDB:
 
     def __init__(
         self,
-        kuzu_path: str | Path,
+        storage_path: str | Path | None = None,
         *,
         w_threshold: float = 0.60,
         u_ceiling: float = 0.40,
         r_decay: float = 0.89,
         snapshot_interval: int = 25,
         r_delta_snapshot: float = 0.30,
-        use_kuzu: bool = True,
     ) -> None:
-        self.kuzu_path = Path(kuzu_path)
+        if storage_path is None:
+            raise ValueError("BrainDB requires storage_path")
+        self.storage_path = Path(storage_path)
         self.w_threshold = w_threshold
         self.u_ceiling = u_ceiling
         self.r_decay = r_decay
@@ -96,19 +97,18 @@ class BrainDB:
         self._sqlite_conn: sqlite3.Connection | None = None
         self._sqlite_write_enabled = False
         self._sqlite_error: str | None = None
-        if use_kuzu:  # parameter kept for API compat
-            self._init_sqlite()
+        self._init_sqlite()
 
     @property
     def cycle(self) -> int:
         return self._cycle
 
     @property
-    def kuzu_error(self) -> str | None:
+    def db_error(self) -> str | None:
         return self._sqlite_error
 
     def _init_sqlite(self) -> None:
-        path = self.kuzu_path.with_suffix(".sqlite")
+        path = self.storage_path.with_suffix(".sqlite")
         path.parent.mkdir(parents=True, exist_ok=True)
         try:
             self._sqlite_conn = sqlite3.connect(str(path), check_same_thread=False)
@@ -289,9 +289,9 @@ class BrainDB:
 
     def _write_archive(self, rec: ArchivedEdgeRecord) -> None:
         self._archive[rec.edge_id] = rec
-        self._write_kuzu_record(rec)
+        self._write_sqlite_record(rec)
 
-    def _write_kuzu_record(self, rec: ArchivedEdgeRecord) -> None:
+    def _write_sqlite_record(self, rec: ArchivedEdgeRecord) -> None:
         if not self._sqlite_conn or not self._sqlite_write_enabled:
             return
         try:

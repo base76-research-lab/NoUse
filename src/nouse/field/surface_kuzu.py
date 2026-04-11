@@ -1,9 +1,18 @@
 """
-Field — KuzuDB-backed persistent knowledge graph
-=================================================
+DEPRECATED — KuzuDB-backend (kuzudb-projektet avvecklat, för många lock-problem)
+=================================================================================
+Använd surface.py (SQLite WAL + NetworkX) istället. Denna fil finns kvar enbart
+för migrations-skriptets skull (scripts/migrate_kuzu_to_sqlite.py).
+Importera INTE direkt. Installera `kuzu` via `pip install nouse[migrate]` om
+du behöver migrera gamla data.
+
 Field-lagret i FNC: det substrat som binder Noder.
 Grafen lever mellan sessioner. Varje ny kant är permanent topologisk tillväxt.
 Kanternas styrka ökar Hebbiskt när stigar aktiveras.
+
+This backend is kept for compatibility and historical experiments.
+New NoUseAI work should use the canonical SQLite WAL + NetworkX backend in
+`nouse.field.surface`.
 """
 from __future__ import annotations
 
@@ -203,6 +212,32 @@ class FieldSurface:
         )
         if ensure_knowledge:
             self.ensure_minimal_concept_knowledge(name, domain=domain, source=source)
+
+    def set_concept_domain(self, name: str, domain: str) -> bool:
+        """
+        Uppdatera domän för befintligt koncept (true om konceptet hittades).
+        """
+        target_name = str(name or "").strip()
+        target_domain = str(domain or "").strip()
+        if not target_name or not target_domain:
+            return False
+        self._conn.execute(
+            "MATCH (c:Concept {name: $n}) SET c.domain = $d",
+            {"n": target_name, "d": target_domain},
+        )
+        # Kuzu Python API exponerar inte alltid affected-row-count robust, så
+        # vi verifierar med en enkel läsning.
+        try:
+            row = self._conn.execute(
+                "MATCH (c:Concept {name: $n}) RETURN c.domain AS d LIMIT 1",
+                {"n": target_name},
+            ).get_as_df()
+            if row.empty:
+                return False
+            value = str(row.iloc[0]["d"] or "").strip()
+            return value == target_domain
+        except Exception:
+            return True
 
     def add_relation(self, src: str, rel_type: str, tgt: str,
                      why: str = "", strength: float = 1.0,
@@ -404,6 +439,127 @@ class FieldSurface:
             "min_score": float(min_score),
             "per_claim_supported": bool(claims) and len(strong) >= len(claims),
             "fully_classified": bool(evidence) and len(classified) == len(evidence),
+        }
+
+    def _drift_metrics(self) -> dict:
+        try:
+            rel_rows = self._conn.execute(
+                "MATCH (a:Concept)-[r:Relation]->(b:Concept) "
+                "RETURN a.name AS src, b.name AS tgt, r.type AS type, "
+                "r.strength AS strength, r.evidence_score AS evidence_score, "
+                "r.assumption_flag AS assumption_flag"
+            ).get_as_df().to_dict("records")
+        except Exception:
+            rel_rows = []
+
+        total_relations = len(rel_rows)
+        if total_relations == 0:
+            return {
+                "relation_instability_score": 0.0,
+                "confidence_volatility": 0.0,
+                "contradiction_rate": 0.0,
+                "assumption_ratio": 0.0,
+                "relation_count": 0,
+                "triple_count": 0,
+                "contradictory_triples": 0,
+                "concept_uncertainty_std": 0.0,
+                "relation_evidence_std": 0.0,
+            }
+
+        triples: dict[tuple[str, str, str], dict[str, list[float] | set[bool]]] = {}
+        assumption_edges = 0
+        evidence_vals: list[float] = []
+
+        for row in rel_rows:
+            src = str(row.get("src") or "")
+            rel = str(row.get("type") or "")
+            tgt = str(row.get("tgt") or "")
+            key = (src, rel, tgt)
+            bucket = triples.setdefault(key, {"evidence": [], "strength": [], "flags": set()})
+
+            ev = row.get("evidence_score")
+            if ev is not None:
+                try:
+                    ev_f = max(0.0, min(1.0, float(ev)))
+                    bucket["evidence"].append(ev_f)
+                    evidence_vals.append(ev_f)
+                except (TypeError, ValueError):
+                    pass
+
+            try:
+                bucket["strength"].append(float(row.get("strength") or 0.0))
+            except (TypeError, ValueError):
+                bucket["strength"].append(0.0)
+
+            flag = bool(row.get("assumption_flag"))
+            bucket["flags"].add(flag)
+            if flag:
+                assumption_edges += 1
+
+        contradictory_triples = 0
+        instability_parts: list[float] = []
+        for bucket in triples.values():
+            evs = list(bucket["evidence"])
+            strengths = list(bucket["strength"])
+            flags = set(bucket["flags"])
+
+            ev_span = (max(evs) - min(evs)) if len(evs) > 1 else 0.0
+            str_span = (max(strengths) - min(strengths)) if len(strengths) > 1 else 0.0
+            str_mean_abs = abs(sum(strengths) / len(strengths)) if strengths else 0.0
+            str_norm = str_span / (str_mean_abs + 1.0)
+            flip = 1.0 if len(flags) > 1 else 0.0
+            if flip > 0.0:
+                contradictory_triples += 1
+
+            part = (0.55 * min(1.0, ev_span)) + (0.30 * min(1.0, str_norm)) + (0.15 * flip)
+            if len(evs) > 1 or len(strengths) > 1 or flip > 0.0:
+                instability_parts.append(part)
+
+        assumption_ratio = assumption_edges / total_relations if total_relations else 0.0
+        if instability_parts:
+            relation_instability_score = sum(instability_parts) / len(instability_parts)
+        else:
+            relation_instability_score = min(1.0, assumption_ratio * 0.5)
+
+        try:
+            unc_rows = self._conn.execute(
+                "MATCH (k:ConceptKnowledge) WHERE k.uncertainty IS NOT NULL "
+                "RETURN k.uncertainty AS uncertainty"
+            ).get_as_df().to_dict("records")
+        except Exception:
+            unc_rows = []
+
+        uncertainties: list[float] = []
+        for row in unc_rows:
+            try:
+                uncertainties.append(max(0.0, min(1.0, float(row.get("uncertainty")))))
+            except (TypeError, ValueError):
+                continue
+
+        def _std(values: list[float]) -> float:
+            if len(values) <= 1:
+                return 0.0
+            mean = sum(values) / len(values)
+            var = sum((v - mean) ** 2 for v in values) / len(values)
+            return math.sqrt(var)
+
+        unc_std = _std(uncertainties)
+        ev_std = _std(evidence_vals)
+        unc_norm = min(1.0, unc_std / 0.5)
+        ev_norm = min(1.0, ev_std / 0.5)
+        confidence_volatility = (0.6 * unc_norm) + (0.4 * ev_norm)
+        contradiction_rate = contradictory_triples / max(1, len(triples))
+
+        return {
+            "relation_instability_score": round(max(0.0, min(1.0, relation_instability_score)), 4),
+            "confidence_volatility": round(max(0.0, min(1.0, confidence_volatility)), 4),
+            "contradiction_rate": round(max(0.0, min(1.0, contradiction_rate)), 4),
+            "assumption_ratio": round(max(0.0, min(1.0, assumption_ratio)), 4),
+            "relation_count": int(total_relations),
+            "triple_count": int(len(triples)),
+            "contradictory_triples": int(contradictory_triples),
+            "concept_uncertainty_std": round(max(0.0, unc_std), 4),
+            "relation_evidence_std": round(max(0.0, ev_std), 4),
         }
 
     def upsert_concept_knowledge(
@@ -773,6 +929,7 @@ class FieldSurface:
                 "strong_facts": (with_facts_strong / total if total else 1.0),
                 "complete": (complete / total if total else 1.0),
             },
+            "drift_metrics": self._drift_metrics(),
             "missing": missing[:safe_limit],
         }
 
@@ -897,13 +1054,62 @@ class FieldSurface:
             # Kunskapslager får aldrig blockera relationsskrivning.
             return
 
-    def strengthen(self, src: str, tgt: str, delta: float = 0.05) -> None:
+    def strengthen(
+        self,
+        src: str,
+        tgt: str,
+        delta: float = 0.05,
+        *,
+        rel_type: str | None = None,
+        ceiling: float = 3.5,
+    ) -> None:
         """Hebbisk stärkning — öka styrkan på kanter längs aktiverade stigar."""
-        self._conn.execute(
-            "MATCH (a:Concept {name:$s})-[r:Relation]->(b:Concept {name:$t}) "
-            "SET r.strength = r.strength + $d",
-            {"s": src, "t": tgt, "d": delta},
-        )
+        params = {"s": src, "t": tgt, "d": max(0.0, float(delta)), "cap": max(0.05, float(ceiling))}
+        if rel_type is None:
+            self._conn.execute(
+                "MATCH (a:Concept {name:$s})-[r:Relation]->(b:Concept {name:$t}) "
+                "SET r.strength = CASE "
+                "WHEN r.strength + $d > $cap THEN $cap "
+                "ELSE r.strength + $d END",
+                params,
+            )
+        else:
+            params["type"] = rel_type
+            self._conn.execute(
+                "MATCH (a:Concept {name:$s})-[r:Relation {type:$type}]->(b:Concept {name:$t}) "
+                "SET r.strength = CASE "
+                "WHEN r.strength + $d > $cap THEN $cap "
+                "ELSE r.strength + $d END",
+                params,
+            )
+
+    def weaken(
+        self,
+        src: str,
+        tgt: str,
+        delta: float = 0.05,
+        *,
+        rel_type: str | None = None,
+        floor: float = 0.05,
+    ) -> None:
+        params = {"s": src, "t": tgt, "d": max(0.0, float(delta)), "floor": max(0.0, float(floor))}
+        if rel_type is None:
+            self._conn.execute(
+                "MATCH (a:Concept {name:$s})-[r:Relation]->(b:Concept {name:$t}) "
+                "SET r.strength = CASE "
+                "WHEN r.strength - $d < $floor THEN $floor "
+                "ELSE r.strength - $d END",
+                params,
+            )
+        else:
+            params["type"] = rel_type
+            self._conn.execute(
+                "MATCH (a:Concept {name:$s})-[r:Relation {type:$type}]->(b:Concept {name:$t}) "
+                "SET r.strength = CASE "
+                "WHEN r.strength - $d < $floor THEN $floor "
+                "ELSE r.strength - $d END",
+                params,
+            )
 
     # ── Läsoperationer ────────────────────────────────────────────────────────
 
