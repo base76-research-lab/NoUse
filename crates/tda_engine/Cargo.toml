@@ -1,0 +1,19 @@
+[package]
+name = "tda_engine"
+version = "0.1.0"
+edition = "2021"
+description = "Rust TDA engine for NoUse — persistent homology (H0/H1 Betti numbers) via incremental union-find"
+
+[lib]
+name = "tda_engine"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.23", features = ["extension-module"] }
+rayon = "1.10"
+
+[profile.release]
+opt-level = 3
+lto        = "fat"
+codegen-units = 1
+panic      = "abort"

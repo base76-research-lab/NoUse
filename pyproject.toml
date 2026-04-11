@@ -3,7 +3,7 @@ name = "nouse"
 version = "0.4.0"
 description = "Epistemic grounding substrate for LLMs — knows what it knows, what it doesn't, and why"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 license = { text = "MIT" }
 authors = [
   { name = "Björn Wikström", email = "bjorn@base76.se" }
@@ -15,8 +15,7 @@ classifiers = [
   "Intended Audience :: Science/Research",
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 dependencies = [
@@ -56,6 +55,7 @@ brian2 = [
 ]
 
 [project.scripts]
+b76             = "nouse.cli.main:app"
 nouse           = "nouse.cli.main:app"
 nouse-brain     = "nouse.daemon.main:main"
 nouse-server    = "nouse.web.server:main"
@@ -80,3 +80,8 @@ where = ["src"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths    = ["tests"]
+
+[dependency-groups]
+dev = [
+    "maturin>=1.12.6",
+]

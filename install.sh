@@ -9,19 +9,36 @@ SYSTEMD_USER_DIR="$HOME/.config/systemd/user"
 echo "🧠 nouse install"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-# 1. Synka dependencies
-echo "→ uv sync..."
+# 1. Sätt Python-version och synka dependencies
+_PY_VER="$(cat "$SCRIPT_DIR/.python-version" 2>/dev/null | tr -d '[:space:]' || echo '3.13')"
+echo "→ Python $_PY_VER (via pyenv + uv)..."
 cd "$SCRIPT_DIR"
-uv sync
+uv sync --python "$_PY_VER"
 
 # 2. Bygg Rust TDA-motorn
-echo "→ Bygger Rust TDA-motor (persistent homology)..."
-cd "$SCRIPT_DIR/crates/tda_engine"
-"$SCRIPT_DIR/.venv/bin/maturin" develop --release 2>&1 | grep -E "(Finished|Installed|error)" || true
-cd "$SCRIPT_DIR"
-echo "  ✓ tda_engine"
+echo "→ Bygger Rust TDA-motor (persistent homology, H0/H1 Betti)..."
+if [[ -d "$SCRIPT_DIR/crates/tda_engine" ]]; then
+  cd "$SCRIPT_DIR/crates/tda_engine"
+  _PY_BIN="$SCRIPT_DIR/.venv/bin/python"
+  "$SCRIPT_DIR/.venv/bin/maturin" build --release --interpreter "$_PY_BIN" 2>&1 \
+    | grep -E "(Finished|Built wheel|error)" || true
+  # Installera hjulet i venv via uv
+  _WHEEL=$(ls "$SCRIPT_DIR/crates/tda_engine/target/wheels/"tda_engine-*-cp313-*.whl 2>/dev/null | tail -1)
+  if [[ -n "$_WHEEL" ]]; then
+    _UV_BIN="$(command -v uv 2>/dev/null || ls "$HOME"/snap/code/*/local/bin/uv 2>/dev/null | tail -1 || echo "")"
+    if [[ -n "$_UV_BIN" ]]; then
+      "$_UV_BIN" pip install "$_WHEEL" --python "$_PY_BIN" --force-reinstall --quiet 2>/dev/null || true
+    else
+      "$_PY_BIN" -m pip install "$_WHEEL" --force-reinstall --quiet 2>/dev/null || true
+    fi
+    echo "  ✓ tda_engine installerad (Rust motor ~350x snabbare)"
+  fi
+  cd "$SCRIPT_DIR"
+else
+  echo "  ✗ crates/tda_engine saknas — Python-fallback används"
+fi
 
-# 2. Skapa systemd user-katalog
+# 4. Skapa systemd user-katalog
 mkdir -p "$SYSTEMD_USER_DIR"
 
 # 3. Kopiera service-filer

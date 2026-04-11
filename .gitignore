@@ -4,6 +4,7 @@ __pycache__/
 .venv/
 dist/
 build/
+target/
 .env
 *.kuzu
 *.kuzu.lock
@@ -12,3 +13,5 @@ IMG/design-mockup.png
 *.bak
 eval/results/run_20260402_*.json
 .env.pypi
+.env.personal
+*.env.personal
