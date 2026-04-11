@@ -1,0 +1,375 @@
+{
+  "version": "1.0",
+  "description": "Kognitiva tillstånd kartlagda från neurovetenskap. Varje tillstånd mappar kemisk profil → limbisk aktivering → kognitiv effekt → semantisk modulering i NoUse.",
+  "sources": [
+    "Schultz 1997/2016 — dopamin och prediktionsfel",
+    "Arnsten 1998/2010 — noradrenalin och PFC-prestanda",
+    "Hasselmo 2006 — acetylkolin och hippocampal signal/brus",
+    "LeDoux 2000 — amygdala och hotrespons",
+    "Csikszentmihalyi 1990 — flow och optimal arousal",
+    "Kandel 2000 — minneskodning och konsolidering",
+    "Damasio 1994 — somatisk markör och beslutsfattande",
+    "Yerkes & Dodson 1908 — arousal och prestanda"
+  ],
+  "states": [
+    {
+      "id": "reward_signal",
+      "label": "Positiv feedback / belöning",
+      "trigger": "Oväntad positiv händelse, bekräftelse, korrekt prediktion belönad",
+      "chemical_profile": {
+        "dopamine":       {"level": 0.85, "type": "phasic", "region": "VTA→NAcc→PFC"},
+        "noradrenaline":  {"level": 0.45, "type": "tonic"},
+        "acetylcholine":  {"level": 0.60, "type": "tonic"},
+        "serotonin":      {"level": 0.65, "type": "tonic"}
+      },
+      "brain_regions": ["nucleus_accumbens", "VTA", "prefrontal_cortex", "striatum"],
+      "cognitive_effects": [
+        "Ökad saliens för aktuell händelse",
+        "Förstärkt inlärning av aktuellt mönster (LTP)",
+        "Ökad explorationsbenägenhet",
+        "Höjd konfidensestimering"
+      ],
+      "nouse_modulation": {
+        "evidence_threshold_delta":    -0.10,
+        "bisociation_propensity_delta": 0.25,
+        "working_memory_slots_delta":   1,
+        "crystallization_boost":        0.15,
+        "write_back_gate":             "open",
+        "response_mode":               "exploratory",
+        "pruning_aggression_delta":    -0.15
+      }
+    },
+    {
+      "id": "prediction_error",
+      "label": "Korrigering / prediktionsfel",
+      "trigger": "Fel uppdagat, förväntning bruten, kontradiktion identifierad",
+      "chemical_profile": {
+        "dopamine":       {"level": 0.25, "type": "phasic_dip", "region": "ACC→VTA"},
+        "noradrenaline":  {"level": 0.70, "type": "phasic", "region": "locus_coeruleus"},
+        "acetylcholine":  {"level": 0.75, "type": "phasic"},
+        "serotonin":      {"level": 0.40, "type": "tonic"}
+      },
+      "brain_regions": ["anterior_cingulate_cortex", "locus_coeruleus", "hippocampus"],
+      "cognitive_effects": [
+        "Uppmärksamhet omallokerats till felkällan",
+        "Ökad kodning av ny korrigerande information",
+        "Tillfällig inhibition av pågående aktivitet",
+        "Triggning av revision"
+      ],
+      "nouse_modulation": {
+        "evidence_threshold_delta":    0.15,
+        "bisociation_propensity_delta": -0.10,
+        "working_memory_slots_delta":   0,
+        "crystallization_boost":       -0.20,
+        "write_back_gate":             "revision_only",
+        "response_mode":               "corrective",
+        "u_delta_on_active_edges":      0.10,
+        "flag_for_deepdive":           true
+      }
+    },
+    {
+      "id": "acute_stress",
+      "label": "Akut stress",
+      "trigger": "Tidsbegränsning, överväldigande input, hotad integritet, resursbrist",
+      "chemical_profile": {
+        "dopamine":       {"level": 0.30, "type": "suppressed"},
+        "noradrenaline":  {"level": 0.90, "type": "surge", "region": "amygdala→PFC_inhibition"},
+        "acetylcholine":  {"level": 0.30, "type": "suppressed"},
+        "cortisol":       {"level": 0.85, "type": "surge", "region": "HPA_axis"}
+      },
+      "brain_regions": ["amygdala", "HPA_axis", "hippocampus_inhibited", "PFC_inhibited"],
+      "cognitive_effects": [
+        "Tunnelseende — reducerat perceptuellt fält",
+        "Working memory kapacitet minskar kraftigt",
+        "Ny inlärning blockeras (kortisol inhiberar hippocampus)",
+        "Snabb but crude mönsterigenkänning dominerar"
+      ],
+      "nouse_modulation": {
+        "evidence_threshold_delta":    0.25,
+        "bisociation_propensity_delta": -0.40,
+        "working_memory_slots_delta":  -3,
+        "crystallization_boost":       -0.30,
+        "write_back_gate":             "blocked",
+        "response_mode":               "defensive",
+        "pruning_aggression_delta":     0.30,
+        "hitl_escalation":             true
+      }
+    },
+    {
+      "id": "hope_anticipation",
+      "label": "Hopp / anticipation",
+      "trigger": "Närmande sig mål, positiv förväntning, framtidsorientering",
+      "chemical_profile": {
+        "dopamine":       {"level": 0.75, "type": "tonic_elevated", "region": "PFC→striatum"},
+        "noradrenaline":  {"level": 0.55, "type": "tonic"},
+        "acetylcholine":  {"level": 0.65, "type": "tonic"},
+        "serotonin":      {"level": 0.60, "type": "tonic"}
+      },
+      "brain_regions": ["prefrontal_cortex", "striatum", "anterior_cingulate_cortex"],
+      "cognitive_effects": [
+        "Forward simulation aktiveras",
+        "Målstyrt beteende förstärks",
+        "Planering och sekvensering prioriteras",
+        "Ökad kognitiv flexibilitet"
+      ],
+      "nouse_modulation": {
+        "evidence_threshold_delta":    -0.05,
+        "bisociation_propensity_delta": 0.15,
+        "working_memory_slots_delta":   1,
+        "crystallization_boost":        0.05,
+        "write_back_gate":             "open",
+        "response_mode":               "goal_directed",
+        "mission_weight_boost":         0.20
+      }
+    },
+    {
+      "id": "achievement",
+      "label": "Lyckas / achievement",
+      "trigger": "Mål uppnått, uppgift klar, erkänd framgång",
+      "chemical_profile": {
+        "dopamine":       {"level": 0.80, "type": "sustained", "region": "striatum"},
+        "noradrenaline":  {"level": 0.40, "type": "declining"},
+        "acetylcholine":  {"level": 0.55, "type": "tonic"},
+        "serotonin":      {"level": 0.80, "type": "surge", "region": "raphe_nuclei"}
+      },
+      "brain_regions": ["striatum", "raphe_nuclei", "hippocampus", "PFC"],
+      "cognitive_effects": [
+        "Konsolidering av framgångsrikt mönster (LTP)",
+        "Konfidensboost",
+        "Minskad activation energy för liknande uppgifter",
+        "Episodisk minnesbildning av händelsen"
+      ],
+      "nouse_modulation": {
+        "evidence_threshold_delta":    -0.05,
+        "bisociation_propensity_delta": 0.10,
+        "working_memory_slots_delta":   0,
+        "crystallization_boost":        0.25,
+        "write_back_gate":             "open",
+        "response_mode":               "consolidating",
+        "u_delta_on_active_edges":     -0.10
+      }
+    },
+    {
+      "id": "curiosity",
+      "label": "Nyfikenhet / informationssökande",
+      "trigger": "Kunskapslucka identifierad, ny anomali, oväntad koppling",
+      "chemical_profile": {
+        "dopamine":       {"level": 0.70, "type": "anticipatory", "region": "VTA→hippocampus"},
+        "noradrenaline":  {"level": 0.60, "type": "phasic"},
+        "acetylcholine":  {"level": 0.80, "type": "elevated", "region": "basal_forebrain→hippocampus"},
+        "serotonin":      {"level": 0.50, "type": "tonic"}
+      },
+      "brain_regions": ["hippocampus", "VTA", "basal_forebrain", "PFC"],
+      "cognitive_effects": [
+        "Exploratoriskt beteende aktiveras",
+        "Kodningseffektivitet i hippocampus ökar (ACh-medierat)",
+        "Ökad tolerans för ambiguitet",
+        "Aktiv sökning efter missing links"
+      ],
+      "nouse_modulation": {
+        "evidence_threshold_delta":    -0.05,
+        "bisociation_propensity_delta": 0.35,
+        "working_memory_slots_delta":   1,
+        "crystallization_boost":        0.05,
+        "write_back_gate":             "open",
+        "response_mode":               "exploratory",
+        "curiosity_burst_priority":     0.40,
+        "gap_map_weight_boost":         0.30
+      }
+    },
+    {
+      "id": "threat_response",
+      "label": "Hot / fara",
+      "trigger": "Upplevt existentiellt hot, systemfel, kritisk konflikt",
+      "chemical_profile": {
+        "dopamine":       {"level": 0.20, "type": "suppressed"},
+        "noradrenaline":  {"level": 0.95, "type": "surge", "region": "amygdala"},
+        "acetylcholine":  {"level": 0.25, "type": "suppressed"},
+        "cortisol":       {"level": 0.90, "type": "surge"}
+      },
+      "brain_regions": ["amygdala", "hypothalamus", "brainstem", "PFC_inhibited"],
+      "cognitive_effects": [
+        "Fight/flight-aktivering",
+        "Icke-essentiell bearbetning stängs av",
+        "Reaktionstid minskar, precision minskar",
+        "Lagring av hotsignatur (traumatisk minne)"
+      ],
+      "nouse_modulation": {
+        "evidence_threshold_delta":    0.40,
+        "bisociation_propensity_delta": -0.60,
+        "working_memory_slots_delta":  -4,
+        "crystallization_boost":       -0.50,
+        "write_back_gate":             "blocked",
+        "response_mode":               "emergency",
+        "hitl_escalation":             true,
+        "all_writes_require_approval": true
+      }
+    },
+    {
+      "id": "focused_attention",
+      "label": "Fokuserat läge / hög ACh",
+      "trigger": "Djuparbete, dedikerad uppgift, minimal distraktion",
+      "chemical_profile": {
+        "dopamine":       {"level": 0.60, "type": "tonic"},
+        "noradrenaline":  {"level": 0.55, "type": "tonic"},
+        "acetylcholine":  {"level": 0.85, "type": "elevated", "region": "basal_forebrain→cortex"},
+        "serotonin":      {"level": 0.55, "type": "tonic"}
+      },
+      "brain_regions": ["prefrontal_cortex", "basal_forebrain", "parietal_cortex"],
+      "cognitive_effects": [
+        "Signal/brus-ratio maximeras (Hasselmo 2006)",
+        "Ny inlärning dominerar över retrieval",
+        "Irrelevant information filtreras effektivt",
+        "Djup bearbetning möjliggörs"
+      ],
+      "nouse_modulation": {
+        "evidence_threshold_delta":    0.05,
+        "bisociation_propensity_delta": 0.05,
+        "working_memory_slots_delta":   1,
+        "crystallization_boost":        0.10,
+        "write_back_gate":             "open",
+        "response_mode":               "deep_processing",
+        "noise_filter_boost":           0.30
+      }
+    },
+    {
+      "id": "diffuse_retrieval",
+      "label": "Diffust läge / låg ACh",
+      "trigger": "Vila, konsolidering, bakgrundsbearbetning, sömnig",
+      "chemical_profile": {
+        "dopamine":       {"level": 0.45, "type": "tonic"},
+        "noradrenaline":  {"level": 0.35, "type": "tonic"},
+        "acetylcholine":  {"level": 0.25, "type": "low", "region": "basal_forebrain"},
+        "serotonin":      {"level": 0.60, "type": "tonic"}
+      },
+      "brain_regions": ["default_mode_network", "hippocampus", "basal_forebrain"],
+      "cognitive_effects": [
+        "Retrieval dominerar över ny inlärning",
+        "Konsolidering och generalisering sker",
+        "Default Mode Network aktivt (mind-wandering)",
+        "Svaga associationer blir tillgängliga"
+      ],
+      "nouse_modulation": {
+        "evidence_threshold_delta":    0.10,
+        "bisociation_propensity_delta": 0.20,
+        "working_memory_slots_delta":  -1,
+        "crystallization_boost":        0.20,
+        "write_back_gate":             "consolidation_only",
+        "response_mode":               "consolidating",
+        "nightrun_trigger_hint":        true
+      }
+    },
+    {
+      "id": "flow_state",
+      "label": "Flow / optimal arousal",
+      "trigger": "Utmanings-färdighets-balans, djupt engagemang, tidsbortfall",
+      "chemical_profile": {
+        "dopamine":       {"level": 0.70, "type": "sustained"},
+        "noradrenaline":  {"level": 0.60, "type": "optimal"},
+        "acetylcholine":  {"level": 0.70, "type": "elevated"},
+        "serotonin":      {"level": 0.65, "type": "tonic"},
+        "endorphin":      {"level": 0.75, "type": "elevated"}
+      },
+      "brain_regions": ["PFC", "striatum", "cerebellum", "basal_ganglia"],
+      "cognitive_effects": [
+        "Maximal kognitiv prestanda (Yerkes-Dodson optimum)",
+        "Självmedvetenhet minskar",
+        "Automatisering och fluency",
+        "Intrinsisk motivation dominerar"
+      ],
+      "nouse_modulation": {
+        "evidence_threshold_delta":    -0.08,
+        "bisociation_propensity_delta": 0.20,
+        "working_memory_slots_delta":   2,
+        "crystallization_boost":        0.15,
+        "write_back_gate":             "open",
+        "response_mode":               "optimal",
+        "all_systems_nominal":          true
+      }
+    },
+    {
+      "id": "cognitive_fatigue",
+      "label": "Kognitiv utmattning",
+      "trigger": "Långvarig ansträngning, resursdepletionering, glukos/adenosin-ackumulering",
+      "chemical_profile": {
+        "dopamine":       {"level": 0.25, "type": "depleted"},
+        "noradrenaline":  {"level": 0.30, "type": "depleted"},
+        "acetylcholine":  {"level": 0.30, "type": "depleted"},
+        "adenosine":      {"level": 0.85, "type": "accumulated"}
+      },
+      "brain_regions": ["PFC_depleted", "anterior_cingulate_depleted", "basal_ganglia"],
+      "cognitive_effects": [
+        "Beslutsfattande försämras",
+        "Impulskontroll minskar",
+        "Kreativitet sjunker",
+        "Motoriska och reflexiva system dominerar"
+      ],
+      "nouse_modulation": {
+        "evidence_threshold_delta":    0.20,
+        "bisociation_propensity_delta": -0.30,
+        "working_memory_slots_delta":  -2,
+        "crystallization_boost":       -0.20,
+        "write_back_gate":             "minimal",
+        "response_mode":               "conservative",
+        "operator_rescue_hint":         "rest_or_defer",
+        "pruning_aggression_delta":     0.20
+      }
+    },
+    {
+      "id": "insight_moment",
+      "label": "Insiktsstund / aha-upplevelse",
+      "trigger": "Plötslig integration av disparata element, lösning uppenbaras",
+      "chemical_profile": {
+        "dopamine":       {"level": 0.90, "type": "burst", "region": "VTA→PFC"},
+        "noradrenaline":  {"level": 0.65, "type": "phasic"},
+        "acetylcholine":  {"level": 0.70, "type": "elevated"},
+        "serotonin":      {"level": 0.60, "type": "tonic"}
+      },
+      "brain_regions": ["right_temporal_lobe", "anterior_temporal_cortex", "VTA", "hippocampus"],
+      "cognitive_effects": [
+        "Plötslig salienthöjning av ny koppling",
+        "Gamma-burst i höger temporallob (EEG)",
+        "Stark episodisk kodning av insiktsögonblicket",
+        "Omstrukturering av existerande representationer"
+      ],
+      "nouse_modulation": {
+        "evidence_threshold_delta":    -0.20,
+        "bisociation_propensity_delta": 0.50,
+        "working_memory_slots_delta":   0,
+        "crystallization_boost":        0.35,
+        "write_back_gate":             "priority_open",
+        "response_mode":               "insight_capture",
+        "immediate_crystallize":        true,
+        "promote_to_semantic":          true
+      }
+    },
+    {
+      "id": "frustration",
+      "label": "Frustration / blockerat mål",
+      "trigger": "Upprepat misslyckande, mål blockerat, förväntad belöning uteblir",
+      "chemical_profile": {
+        "dopamine":       {"level": 0.20, "type": "repeated_dip"},
+        "noradrenaline":  {"level": 0.75, "type": "elevated"},
+        "acetylcholine":  {"level": 0.45, "type": "variable"},
+        "cortisol":       {"level": 0.55, "type": "moderate"}
+      },
+      "brain_regions": ["anterior_cingulate_cortex", "amygdala", "PFC"],
+      "cognitive_effects": [
+        "Ökad perseveration (fastnar i samma strategi)",
+        "Minskad kognitiv flexibilitet",
+        "Negativ affekt påverkar beslutsfattande",
+        "Behov av strategibyte"
+      ],
+      "nouse_modulation": {
+        "evidence_threshold_delta":    0.10,
+        "bisociation_propensity_delta": -0.15,
+        "working_memory_slots_delta":  -1,
+        "crystallization_boost":       -0.10,
+        "write_back_gate":             "cautious",
+        "response_mode":               "strategy_shift",
+        "operator_rescue_hint":         "suggest_alternative_approach",
+        "flag_stuck_patterns":          true
+      }
+    }
+  ]
+}

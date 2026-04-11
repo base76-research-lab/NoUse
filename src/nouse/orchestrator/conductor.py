@@ -54,6 +54,7 @@ from nouse.limbic.signals import (
 	run_limbic_cycle,
 	save_state as save_limbic,
 )
+from nouse.limbic.state_modulator import SemanticModulation, modulate as modulate_limbic
 from nouse.memory.store import MemoryStore
 from nouse.orchestrator.global_workspace import GlobalWorkspace, WorkspaceProposal
 from nouse.self_layer.living_core import (
@@ -91,6 +92,7 @@ class CycleResult:
 	"""Resultat av en kognitiv cykel."""
 	episode_id:              str
 	limbic_state:            LimbicState
+	semantic_modulation:     SemanticModulation | None
 	bisociation_score:       float
 	bisociation_verdict:     str
 	tda_h0_a:                int
@@ -408,6 +410,26 @@ class CognitiveConductor:
 			active_domains=max(1, len(set(e.get("domain_hint", "") for e in episodes))),
 		)
 
+		# ── Steg 4b: Semantisk modulering ───────────────────────────────────
+		semantic_mod = modulate_limbic(limbic)
+		# Applicera bisociationsmodulering på λ (skalad till 30 % påverkan)
+		if semantic_mod.bisociation_propensity_delta != 0.0:
+			from nouse.limbic.signals import LAMBDA_MIN, LAMBDA_MAX
+			limbic.lam = max(
+				LAMBDA_MIN,
+				min(LAMBDA_MAX, limbic.lam + semantic_mod.bisociation_propensity_delta * 0.30),
+			)
+		# Eskalera till HITL om tillståndet kräver det
+		if semantic_mod.wants_hitl:
+			log.warning(
+				"HITL-eskalering: state=%s flags=%s",
+				semantic_mod.dominant_state,
+				list(semantic_mod.flags.keys()),
+			)
+		# NightRun-hint
+		if semantic_mod.wants_nightrun:
+			log.info("NightRun-hint från limbisk modulering (state=%s)", semantic_mod.dominant_state)
+
 		# ── Steg 5: F_bisoc ──────────────────────────────────────────────────
 		f_bisoc, verdict = _f_bisoc(h0_a, h1_a, h0_b, h1_b, limbic.lam)
 		log.info(f"F_bisoc={f_bisoc:.3f} verdict={verdict} λ={limbic.lam:.2f}")
@@ -517,6 +539,7 @@ class CognitiveConductor:
 		result = CycleResult(
 			episode_id=episode_id,
 			limbic_state=limbic,
+			semantic_modulation=semantic_mod,
 			bisociation_score=f_bisoc,
 			bisociation_verdict=verdict,
 			tda_h0_a=h0_a,

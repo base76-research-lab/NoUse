@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import logging
+from dataclasses import dataclass, field
 from inspect import Parameter, signature
 from typing import Any, Callable
 
-from nouse.inject import QueryResult
+from nouse.inject import ContradictionResult, QueryResult
+from nouse.limbic.state_modulator import SemanticModulation
+
+_log = logging.getLogger("nouse.wrapper")
 
 
 DEFAULT_SYSTEM_PREAMBLE = """You are wrapped by NoUse, a persistent epistemic brain layer.
@@ -27,6 +31,8 @@ class WrappedLLMResponse:
     answer: str
     memory: QueryResult
     raw_response: Any = None
+    contradiction: ContradictionResult | None = None
+    semantic_modulation: SemanticModulation | None = None
 
 
 def build_system_prompt(
@@ -73,8 +79,42 @@ def run_with_nouse(
     learn: bool = True,
     source: str = "nouse-wrapper",
     model: str | None = None,
+    check_contradictions: bool = True,
+    contradiction_threshold: float = 0.75,
 ) -> WrappedLLMResponse:
     """Run a model call through NoUse grounding, then learn from the answer."""
+    # ── Läs limbisk modulering ────────────────────────────────────────────────
+    semantic_mod: SemanticModulation | None = None
+    try:
+        from nouse.limbic.signals import load_state as _load_limbic
+        from nouse.limbic.state_modulator import modulate as _modulate
+        semantic_mod = _modulate(_load_limbic())
+        # Injicera tillståndsläge i systemprompten
+        if semantic_mod.response_mode not in ("balanced", "optimal"):
+            _MODE_HINTS = {
+                "corrective":      "IMPORTANT: Correction mode — prioritize identifying errors and inconsistencies.",
+                "defensive":       "IMPORTANT: Degraded state — be concise and conservative. Avoid speculation.",
+                "emergency":       "IMPORTANT: Emergency state — minimal output, flag critical issues only.",
+                "consolidating":   "NOTE: Consolidation mode — prefer grounded, well-evidenced assertions.",
+                "deep_processing": "NOTE: Focused mode — high signal/noise priority. Filter irrelevant content.",
+                "exploratory":     "NOTE: Exploratory mode — welcome novel connections and low-confidence bridges.",
+                "insight_capture": "NOTE: Insight mode — capture the full structure of emerging insights precisely.",
+                "goal_directed":   "NOTE: Goal-directed mode — stay closely aligned with operator mission.",
+                "conservative":    "NOTE: Conservative mode — low resources, minimal elaboration.",
+                "strategy_shift":  "NOTE: Strategy-shift mode — suggest alternative approaches if current is blocked.",
+            }
+            hint = _MODE_HINTS.get(semantic_mod.response_mode, "")
+            if hint:
+                preamble = preamble.rstrip() + f"\n\n{hint}"
+        if semantic_mod.wants_hitl:
+            _log.warning(
+                "HITL hint in run_with_nouse: state=%s flags=%s",
+                semantic_mod.dominant_state,
+                list(semantic_mod.flags.keys()),
+            )
+    except Exception as _e:
+        _log.debug("Limbic modulation unavailable (non-fatal): %s", _e)
+
     system_prompt, memory = build_system_prompt(
         user_prompt,
         brain=brain,
@@ -92,21 +132,76 @@ def run_with_nouse(
     )
     answer = extract_response_text(raw_response)
 
-    if learn:
-        active_brain = brain
+    # ── Epistemic authority check ─────────────────────────────────────────────
+    contradiction: ContradictionResult | None = None
+    active_brain = brain
+    if check_contradictions:
         if active_brain is None:
-            import nouse
+            try:
+                import nouse
+                active_brain = nouse.attach()
+            except Exception:
+                active_brain = None
+        if active_brain is not None:
+            try:
+                contradiction = active_brain.check_contradiction(
+                    answer, threshold=contradiction_threshold
+                )
+                if contradiction.has_conflict:
+                    active_brain.log_contradiction_event(contradiction, query=user_prompt)
+                    annotation = contradiction.as_annotation()
+                    if contradiction.recommendation == "block":
+                        answer = answer + f"\n\n{annotation}"
+                        _log.warning(
+                            "BLOCK: contradiction severity=%.2f — annotated answer. "
+                            "query=%r concepts=%s",
+                            contradiction.severity,
+                            user_prompt[:60],
+                            contradiction.checked_concepts[:4],
+                        )
+                    elif contradiction.recommendation in ("flag", "warn"):
+                        answer = answer + f"\n\n{annotation}"
+                        _log.info(
+                            "CONTRADICTION %s: severity=%.2f query=%r",
+                            contradiction.recommendation,
+                            contradiction.severity,
+                            user_prompt[:60],
+                        )
+            except Exception as e:
+                _log.debug("check_contradiction failed (non-fatal): %s", e)
 
-            active_brain = nouse.attach()
-        active_brain.learn(
-            user_prompt,
-            answer,
-            source=source,
-            model=model,
-            context_block=memory.context_block(max_axioms=max_axioms),
-            confidence_in=memory.confidence,
-            nodes_used=[concept.name for concept in memory.concepts],
-        )
+    # ── Learn from exchange (write-back gated by limbic state) ───────────────
+    _gate = (semantic_mod.write_back_gate if semantic_mod else "open")
+    if _gate == "blocked":
+        learn = False
+        _log.info("write_back_gate=blocked — learning skipped (state=%s)",
+                  semantic_mod.dominant_state if semantic_mod else "unknown")
+    elif _gate == "minimal":
+        # Learn with halved confidence weight to reduce graph pollution during fatigue
+        if active_brain is None:
+            try:
+                import nouse
+                active_brain = nouse.attach()
+            except Exception:
+                active_brain = None
+
+    if learn:
+        if active_brain is None:
+            try:
+                import nouse
+                active_brain = nouse.attach()
+            except Exception:
+                active_brain = None
+        if active_brain is not None:
+            active_brain.learn(
+                user_prompt,
+                answer,
+                source=source,
+                model=model,
+                context_block=memory.context_block(max_axioms=max_axioms),
+                confidence_in=memory.confidence,
+                nodes_used=[concept.name for concept in memory.concepts],
+            )
 
     return WrappedLLMResponse(
         user_prompt=user_prompt,
@@ -114,6 +209,8 @@ def run_with_nouse(
         answer=answer,
         memory=memory,
         raw_response=raw_response,
+        contradiction=contradiction,
+        semantic_modulation=semantic_mod,
     )
 
 
