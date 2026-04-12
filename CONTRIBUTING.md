@@ -1,6 +1,17 @@
-# Contributing to NoUse
+# Contributing to Nous
 
-Welcome — and thank you for considering a contribution to **NoUse**, an epistemic memory layer for LLMs. Whether you're fixing a bug, improving documentation, or proposing a new feature, your help is appreciated.
+Welcome — and thank you for considering a contribution to **Nous**, a persistent epistemic substrate for AI.
+
+Nous treats language models as the larynx, not the mind. Good contributions help make that claim more legible, more reproducible, and more falsifiable.
+
+Whether you are fixing a bug, improving docs, building benchmark infrastructure, or stress-testing the core thesis, your help matters.
+
+## What Matters Most
+
+- **Epistemic clarity** — make the system's knowledge boundaries, contradictions, and uncertainty easier to inspect.
+- **Benchmark rigor** — help us measure what current LLM benchmarks miss.
+- **Local-first reliability** — keep the runtime observable, inspectable, and useful on real machines.
+- **Conceptual legibility** — help the repo explain what category of system `Nous` is, and what it is not.
 
 ## Setting Up the Dev Environment
 
@@ -42,7 +53,7 @@ Open a [GitHub Issue](../../issues) with:
 - A clear title and description.
 - Steps to reproduce the problem.
 - Expected vs. actual behavior.
-- Environment details (OS, Python version, NoUse version).
+- Environment details (OS, Python version, Nous version).
 
 ## Feature Discussions
 
@@ -50,31 +61,42 @@ Feature ideas and design discussions are welcome! Open a GitHub Issue tagged as 
 
 ## Ways to Contribute Beyond Code
 
-You don't need to write Python to make a meaningful contribution to NoUse.
+You do not need to write Python to make a meaningful contribution to Nous.
 
-### Domain Benchmark Question Banks
+### Benchmark Datasets and Protocols
 
-The current benchmark is intentionally narrow. The hypothesis only holds if it generalises across domains. You can contribute by submitting a domain-specific question bank using the [Domain Benchmark issue template](../../issues/new?template=domain_benchmark.md).
+The current benchmark work is still intentionally incomplete. The category claim only becomes credible if it survives contact with more domains, better scoring, and harder longitudinal tests.
 
-**Format:** A JSON or CSV file with 60 questions in your domain, each with a reference answer. The evaluation script runs against it automatically.
+You can contribute by submitting:
 
-Good domains to add: medicine, law, history, chemistry, climate science, economics, philosophy.
+- domain-specific question banks
+- gap-detection datasets
+- contradiction-injection protocols
+- longitudinal evaluation ideas for GDP, LPI, and CLC
+- replication runs, including negative results
 
-### Integration Examples
+The [Domain Benchmark issue template](../../issues/new?template=domain_benchmark.md) is still a good starting point.
 
-If you've built something with NoUse — a LangChain wrapper, a CrewAI integration, a custom daemon plugin — a working example in `examples/` is worth more than a feature request. Open a PR with the script and a one-paragraph explanation.
+### Integration Examples and Runtime Experiments
 
-### Documentation and Tutorials
+If you've built something with Nous — a LangChain wrapper, a CrewAI integration, a custom daemon plugin, a research workflow, or a model-routing setup — a working example in `examples/` is worth more than a vague feature request. Open a PR with the script and a short explanation.
 
-The gap between "it works" and "people understand it" is large. Contributions welcome:
+### Documentation, Wiki, and Explanatory Writing
+
+The gap between "it runs" and "people understand what category of system this is" is still large. Contributions are especially welcome for:
 - Step-by-step tutorials for specific use cases
-- Wiki pages explaining architecture decisions
+- Wiki pages explaining architecture and benchmark decisions
+- Better explanations of the Larynx Problem, FNC-Bench, and epistemic substrate framing
 - Translations of the README
 - Corrections and clarifications anywhere in the docs
 
 ### Research Replication
 
 If you replicate the benchmark on your own domain and get results (even negative ones), open a [GitHub Discussion](../../discussions) in the **Research** category. Null results are useful. Unexpected results are especially welcome.
+
+### Naming and Narrative Cleanup
+
+There are still places in the repo where older `NoUse` naming survives for compatibility or because the cleanup is incomplete. Targeted cleanup PRs are welcome as long as they preserve working APIs where needed and explain the compatibility tradeoff clearly.
 
 ---
 

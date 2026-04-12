@@ -420,6 +420,19 @@ Contributions welcome — especially domain-specific question banks.
 
 ## Research
 
+The repo now stands on three linked claims:
+
+- **The Larynx Problem**: current AI discourse often mistakes the expression channel of intelligence for intelligence itself.
+- **FNC-Bench**: a different category of system needs a different benchmark, centered on epistemic structure rather than output fluency.
+- **Nous**: a local, persistent epistemic substrate is one concrete attempt to instantiate that missing category.
+
+If there is a paradigm-shift claim here, it lives in the relationship between those three layers.
+
+Further reading:
+
+- [The Larynx Problem (wiki)](https://github.com/base76-research-lab/Nous/wiki/The-Larynx-Problem)
+- [Benchmark philosophy (wiki)](https://github.com/base76-research-lab/Nous/wiki/Benchmark)
+- [Architecture (wiki)](https://github.com/base76-research-lab/Nous/wiki/Architecture)
 
 The theoretical foundation for Nous is described in:
 
