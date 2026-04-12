@@ -10,7 +10,7 @@
 
 > "Why don't all computers use NN as storage buckets instead of coded disk?!"
 
-**Short answer:** They should — that's exactly what NoUse is building.
+**Short answer:** They should — that's exactly what Nous is building.
 
 **Long answer:** It's complicated, but the tide is turning.
 
@@ -50,7 +50,7 @@ Fördelar:
 
 ## 🧠 NEURAL LAGRING (Associativ)
 
-### Hur NoUse gör det:
+### Hur Nous gör det:
 
 ```
 NEURALT LAGER (Associativt):
@@ -154,7 +154,7 @@ Resultat: NEURAL lagring blir mainstream
 | 2020 | Ingen | Bara forskning |
 | 2022 | Pinecone | Early adopters |
 | 2024 | Chroma, Weaviate, Qdrant | Mainstream |
-| 2026 | **NoUse** | **Next-gen: plastic, episodic, semantic** |
+| 2026 | **Nous** | **Next-gen: plastic, episodic, semantic** |
 
 ### Faktor 3: Hårdvara förbättras
 
@@ -224,7 +224,7 @@ Traditionell dator:
   Hittar: 0 results (filen heter thesis_final_v3.pdf)
   Resultat: ❌ Not found
 
-NoUse-dator:
+Nous-dator:
   Neuralt: "Avhandling" → koncept cluster
           "FNC" → related nodes
           Traversera: hitta alla närliggande
@@ -238,7 +238,7 @@ NoUse-dator:
 
 | Nu (2024) | Snart (2026) | Framtid (2028+) |
 |-----------|--------------|-----------------|
-| Vector DB för LLM | **NoUse** episodic + plastic | Full NN-storage |
+| Vector DB för LLM | **Nous** episodic + plastic | Full NN-storage |
 | Filer + metadata | Koncept-graf | Purely associative |
 | Grep/ag | Neural search | Intent-based retrieval |
 | Path-based | Semantic distance | Contextual memory |
@@ -256,22 +256,22 @@ NoUse-dator:
 
 **MEN:** Det ÄNDRAR SIG.
 
-**NoUse är på rätt sida av historien.** 🦞
+**Nous är på rätt sida av historien.** 🦞
 
 ---
 
 ## 🎯 KONKLUSION
 
-| | Symbolisk (Idag) | Neuralt (NoUse) |
+| | Symbolisk (Idag) | Neuralt (Nous) |
 |---|---|---|
 | **Metaphor** | Arkiv (exakta lådor) | Hjärna (associativt)
 | **Best for** | Banker, program, matematik | Kunskap, minne, sök |
 | **Future** | Legacy | Emerging |
-| **NoUse** | Använder för exakthet | Använder för mening |
+| **Nous** | Använder för exakthet | Använder för mening |
 
 **Framtida datorer KOMMER använda neural lagring** — för semantisk data.
 
-**NoUse är först.** 🚀
+**Nous är först.** 🚀
 
 ---
 

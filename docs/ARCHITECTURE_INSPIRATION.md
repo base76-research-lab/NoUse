@@ -1,8 +1,8 @@
-# NoUse Architecture — Inspired by Best Practices
+# Nous Architecture — Inspired by Best Practices
 
 ## Philosophy
 
-**NoUse is built on lessons learned from:**
+**Nous is built on lessons learned from:**
 - OpenClaw/Claw-Code (harness architecture)
 - b76 (FNC theory, persistent memory)
 - Cognitive neuroscience (working memory, neural pathways)
@@ -23,18 +23,18 @@
 
 **Our adaptation:**
 - Same protocol, our implementation
-- NoUse-specific tools: `remember`, `recall`, `connect`, `get_working_memory`
+- Nous-specific tools: `remember`, `recall`, `connect`, `get_working_memory`
 
 ```rust
 // Inspired by MCP spec, our own code
 #[derive(Serialize, Deserialize)]
-struct NouseTool {
+struct NousTool {
     name: String,
     description: String,
     parameters: JsonSchema,
 }
 
-impl MCPTool for NouseMemoryTool {
+impl MCPTool for NousMemoryTool {
     fn execute(&self, params: Value) -> Result<Value, Error> {
         // Our implementation
     }
@@ -98,7 +98,7 @@ crates/
 
 ## What We Build Differently
 
-| Aspect | Others | NoUse |
+| Aspect | Others | Nous |
 |--------|--------|-------|
 | **Memory** | Ephemeral | Persistent (FNC) |
 | **Working Memory** | None | 7-slot system |
@@ -114,13 +114,13 @@ crates/
 
 ```rust
 // Inspired by actor patterns, our own implementation
-pub struct NouseKernel {
+pub struct NousKernel {
     working_memory: WorkingMemory,  // 7 slots
     long_term_graph: Arc<RwLock<KnowledgeGraph>>,
     axon_pool: AxonPool,  // Active connection seekers
 }
 
-impl NouseKernel {
+impl NousKernel {
     pub fn remember(&mut self, content: String, context: Context) -> NodeId {
         // Our FNC implementation
     }
@@ -152,7 +152,7 @@ const WorkingMemoryView: React.FC = () => {
 
 ## Attribution & Respect
 
-**NoUse is possible because of:**
+**Nous is possible because of:**
 - OpenClaw/Claw-Code — showed MCP works for agents
 - Anthropic — LLM research
 - Cognitive scientists — working memory theory

@@ -1,5 +1,5 @@
-# NoUse: The Plastic Alternative to Static Forecasting
-## Why Traditional AI Fails & How NoUse Fixes It
+# Nous: The Plastic Alternative to Static Forecasting
+## Why Traditional AI Fails & How Nous Fixes It
 **Date:** 2026-04-02 08:51
 **Author:** Björn Wikström
 **Status:** Core Identity Document
@@ -43,7 +43,7 @@ TRAIN → FREEZE → DEPLOY → (Stays the same forever)
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
 │  Statisk:    Vikter frysta efter training               │
-│  NoUse:      Vikter förändras vid VARJE användning      │
+│  Nous:      Vikter förändras vid VARJE användning      │
 │                                                         │
 │  LTP (Long-Term Potentiation):                          │
 │    → Använd ofta = starkare koppling                    │
@@ -61,7 +61,7 @@ TRAIN → FREEZE → DEPLOY → (Stays the same forever)
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
 │  Traditionell:  "Om 'fnc' → anta definition"          │
-│  NoUse:         "'fnc' → 'f'+'n'+'c' → historia?      │
+│  Nous:         "'fnc' → 'f'+'n'+'c' → historia?      │
 │                  → kontext? → relaterade noder?         │
 │                  → bygg path → minimal antagande"      │
 │                                                         │
@@ -76,7 +76,7 @@ TRAIN → FREEZE → DEPLOY → (Stays the same forever)
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
 │  Traditionell:  "Svar: X" (varför? who knows)        │
-│  NoUse:         "Svar: X"                              │
+│  Nous:         "Svar: X"                              │
 │                  "Evidence:"                            │
 │                    - Finding 1: node_247 (0.95 conf)   │
 │                    - Finding 2: node_1289 (0.87 conf)  │
@@ -109,7 +109,7 @@ Problem:
 - Static for all users, all contexts
 ```
 
-**NoUse:**
+**Nous:**
 ```
 Input: "fnc"
 
@@ -118,14 +118,14 @@ Process:
 2. MEMORY: Find related nodes
    → node_1289: "FNC deep-dive 2026-03-31" (user asked before!)
    → node_247: "FNC core concept"
-   → node_7890: "NoUse development" (active project!)
+   → node_7890: "Nous development" (active project!)
 3. MICRO-FINDINGS:
    → User knows FNC already (high confidence)
-   → Active context: NoUse development
-   → Likely question: "FNC in NoUse context?"
+   → Active context: Nous development
+   → Likely question: "FNC in Nous context?"
 4. PATH: 1289 → 7890 → 247 → specific implementation
 
-Output: "FNC in your NoUse implementation context..."
+Output: "FNC in your Nous implementation context..."
         "You asked about this 2026-03-31 — reviewing?"
         "Current active project uses FNC architecture."
 
@@ -146,9 +146,9 @@ Advantage:
 - ✅ Biologically realistic
 - ✅ Open source (Python)
 
-**Integration med NoUse:**
+**Integration med Nous:**
 ```
-Brian2 (Physics Layer)          NoUse (Cognitive Layer)
+Brian2 (Physics Layer)          Nous (Cognitive Layer)
 ───────────────                 ─────────────────────
 SNN Simulation        ←→        Semantic Content
 Neuron dynamics       ←→        Meaning & Context
@@ -159,13 +159,13 @@ Result: Physical realism + Cognitive depth
 ```
 
 **Brian2 handles:** Neural physics (realistic spikes)  
-**NoUse handles:** Meaning, memory, prediction
+**Nous handles:** Meaning, memory, prediction
 
 ---
 
-## 📊 SAMMANFATTNING: NoUse vs Världen
+## 📊 SAMMANFATTNING: Nous vs Världen
 
-| Aspect | WenHai | GLONET | OceanNet | SeaCast | PINNs | Brian2 | **NoUse** |
+| Aspect | WenHai | GLONET | OceanNet | SeaCast | PINNs | Brian2 | **Nous** |
 |--------|--------|--------|----------|---------|-------|--------|-----------|
 | **Scale** | Global | Global | Regional | Regional | Any | Any | **Any** |
 | **Plastisk** | ❌ | ❌ | ❌ | ❌ | ❌ | ⚠️ | **✅ YES** |
@@ -175,7 +175,7 @@ Result: Physical realism + Cognitive depth
 | **Personalized** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **✅ YES** |
 | **Learns from user** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **✅ YES** |
 
-**NoUse är det ENDA systemet som är:**
+**Nous är det ENDA systemet som är:**
 - ✅ Plastiskt (lärande)
 - ✅ Mikroskopiskt (inga grova antaganden)
 - ✅ Evidence-based (spårbarhet)
@@ -184,22 +184,22 @@ Result: Physical realism + Cognitive depth
 
 ---
 
-## 🚀 PITCH: "Varför NoUse?"
+## 🚀 PITCH: "Varför Nous?"
 
 **För användare:**
 > "Andra AI-system är som en encyklopedi — samma svar varje gång.  
-> NoUse är som en kollega som lär känna dig — den kommer ihåg  
+> Nous är som en kollega som lär känna dig — den kommer ihåg  
 > vad ni pratade om, anpassar sig till din kontext,  
 > och förklarar VARFÖR den svarar som den gör."
 
 **För tekniker:**
 > "WenHai/GLONET/SeaCast = statiska nätverk.  
-> NoUse = dynamiskt, plastiskt, evidence-baserat.  
-> Brian2 + NoUse = biologisk realism + kognitiv djup."
+> Nous = dynamiskt, plastiskt, evidence-baserat.  
+> Brian2 + Nous = biologisk realism + kognitiv djup."
 
 **För investerare:**
 > "Marknaden är full av statisk AI.  
-> NoUse är det enda plastiska alternativet.  
+> Nous är det enda plastiska alternativet.  
 > First-mover i nästa generation av AI."
 
 ---
@@ -207,7 +207,7 @@ Result: Physical realism + Cognitive depth
 ## 🎯 KONKLUSION
 
 **Traditionell AI = Statisk kunskap**  
-**NoUse = Levande kunskap**
+**Nous = Levande kunskap**
 
 | | Statisk | Plastisk |
 |---|---|---|
@@ -217,10 +217,10 @@ Result: Physical realism + Cognitive depth
 | **Personalisering** | None | Kontext-drivet |
 | **Learning** | Batch (offline) | Kontinuerlig (online) |
 
-**NoUse = The Plastic Brain for AI.**
+**Nous = The Plastic Brain for AI.**
 
 ---
 
 *Core Identity: Björn Wikström*
 *Date: 2026-04-02 08:51*
-*Status: NoUse is the ONLY plastic alternative*
+*Status: Nous is the ONLY plastic alternative*

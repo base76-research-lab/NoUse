@@ -1,4 +1,4 @@
-# Story 1.1: NoUse Core Package — Den Plastiska Hjärnan som pip-paket
+# Story 1.1: Nous Core Package — Den Plastiska Hjärnan som pip-paket
 
 Status: review
 
@@ -14,9 +14,9 @@ så att jag kan ge min AI en minnesarkitektur modellerad efter den mänskliga hj
 
 ## Bakgrund och Vision
 
-NoUse är det saknade lagret på vägen mot AGI. Det vi idag kallar AI är förtränade, semantiska prediktionsmodeller — magnifika larynxer utan en hjärna. Genom att ge en LLM möjligheten till en hjärna som är **plastisk** skapar vi nästa steg i AI-utvecklingen.
+Nous är det saknade lagret på vägen mot AGI. Det vi idag kallar AI är förtränade, semantiska prediktionsmodeller — magnifika larynxer utan en hjärna. Genom att ge en LLM möjligheten till en hjärna som är **plastisk** skapar vi nästa steg i AI-utvecklingen.
 
-Varje nod i NoUse bär kopplingar nedbrutna till minsta detalj för att finna länken till annan nod. Strukturen och funktionen är modellerad och funktionsmappad efter den mänskliga hjärnan — från synapser, timing och trösklar, till antalet aktioner på varje nervtråd.
+Varje nod i Nous bär kopplingar nedbrutna till minsta detalj för att finna länken till annan nod. Strukturen och funktionen är modellerad och funktionsmappad efter den mänskliga hjärnan — från synapser, timing och trösklar, till antalet aktioner på varje nervtråd.
 
 **Kärninnovationen:** Residual streams (w, r, u) per kant — en tre-kanalig signaleringsmodell som uppnår 100% bridge detection mot 0.75% för statiska vikter i simulation.
 
@@ -217,7 +217,7 @@ brain-mcp     = "brain_db_api.mcp_server:main"
 brain-mission = "brain_db_core.mission_runner:main"
 ```
 
-Nouse ska exponera dessa som `nouse-server`, `nouse-brain`, `nouse-mcp`, `nouse-mission`.
+Nous ska exponera dessa som `nouse-server`, `nouse-brain`, `nouse-mcp`, `nouse-mission`.
 
 ### Projektstruktur för nouse
 
@@ -232,10 +232,10 @@ Nouse ska exponera dessa som `nouse-server`, `nouse-brain`, `nouse-mcp`, `nouse-
 │   └── test_nouse_kernel.py     ← Ska skapas (Task 4)
 ├── docs/
 │   ├── stories/
-│   │   └── 1-1-nouse-core-package.md  ← Denna fil
+│   │   └── 1-1-nous-core-package.md  ← Denna fil
 │   └── QUICKSTART.md            ← Ska skapas (Task 5.2)
 ├── IMG/
-│   └── Nouse.png
+│   └── Nous.png
 └── README.md
 ```
 
@@ -361,7 +361,7 @@ Claude Sonnet 4.6 (claude-sonnet-4.6)
 - `tests/__init__.py` (ny)
 - `tests/test_nouse_kernel.py` (ny)
 - `docs/QUICKSTART.md` (ny)
-- `docs/stories/1-1-nouse-core-package.md` (denna fil)
+- `docs/stories/1-1-nous-core-package.md` (denna fil)
 
 ### Change Log
 

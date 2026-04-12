@@ -5,7 +5,7 @@
 
 ## 🎯 KÄRNIDÉ
 
-**Ta SeaCast's (eller liknande) graf-baserade neurala nätverk + Lägg till NoUse's FNC-funktionalitet = En faktisk AI-hjärna**
+**Ta SeaCast's (eller liknande) graf-baserade neurala nätverk + Lägg till Nous's FNC-funktionalitet = En faktisk AI-hjärna**
 
 ---
 
@@ -34,7 +34,7 @@ class OceanGraphNet:
 
 ---
 
-### Layer 2: NoUse/FNC (Vår unika del)
+### Layer 2: Nous/FNC (Vår unika del)
 
 ```rust
 // FNC-overlay på graf-nätverket
@@ -102,7 +102,7 @@ Process: GNN layers
 Output: [prediktion 2026-04-09]
 ```
 
-**NoUse Brain (SeaCast + FNC):**
+**Nous Brain (SeaCast + FNC):**
 ```
 Input:  "Vad är temperaturtrenden i Stilla Havet?"
         ↓
@@ -214,7 +214,7 @@ ws.onmessage = (event) => {
 | System | Vad det har | Vad det saknar |
 |--------|------------|----------------|
 | SeaCast | Massiv skalbarhet, fysisk noggrannhet | Ingen "förståelse", ingen historia |
-| NoUse FNC | Meningsfull representation, minne | Ingen massiv skalbarhet (ännu) |
+| Nous FNC | Meningsfull representation, minne | Ingen massiv skalbarhet (ännu) |
 | **KOMBINERAT** | **Båda!** | **Inget** |
 
 **Resultat:** En AI som både:

@@ -1,4 +1,4 @@
-# The NoUse Plasticity Hypothesis
+# The Nous Plasticity Hypothesis
 ## Structural Plasticity as Architecture, Not Afterthought
 **Date:** 2026-04-02 09:04
 **Author:** Björn Wikström
@@ -96,14 +96,14 @@
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
 │  INPUT: New information/query                          │
-│    └── "What is FNC in context of NoUse?"              │
+│    └── "What is FNC in context of Nous?"              │
 │                                                         │
 │         ↓                                               │
 │                                                         │
 │  DECOMPOSITION: Dendritic Integration                  │
 │    └── Break into MICRO-FACTS                            │
 │    └── "FNC" → "Field" + "Node" + "Cockpit"             │
-│    └── Context: "NoUse" → "current project"              │
+│    └── Context: "Nous" → "current project"              │
 │                                                         │
 │         ↓                                               │
 │                                                         │
@@ -114,7 +114,7 @@
 │         ↓                                               │
 │                                                         │
 │  NEUROGENESIS: New Node Creation (Structural)           │
-│    └── New Concept Node: "FNC in NoUse"                  │
+│    └── New Concept Node: "FNC in Nous"                  │
 │    └── New Episodic Node: Query context                 │
 │    └── New Semantic Edges: Connections to existing      │
 │                                                         │
@@ -122,7 +122,7 @@
 │                                                         │
 │  STDP: Temporal Binding (Hebbian)                      │
 │    └── "Fire together" = activate together → strengthen  │
-│    └── Edge: "FNC" ↔ "NoUse" ↑ strength                │
+│    └── Edge: "FNC" ↔ "Nous" ↑ strength                │
 │    └── Edge: "Query" ↔ "Answer" ↑ strength             │
 │                                                         │
 │         ↓                                               │
@@ -137,9 +137,9 @@
 
 ---
 
-## 🔬 FORMAL MAPPING: Biology → NoUse
+## 🔬 FORMAL MAPPING: Biology → Nous
 
-| Biological Mechanism | Brain Region | NoUse Implementation |
+| Biological Mechanism | Brain Region | Nous Implementation |
 |---------------------|--------------|---------------------|
 | **Neurogenesis** | Hippocampus (dentate gyrus) | `create_node()` — New nodes born on demand |
 | **Synaptogenesis** | Cortex | `create_edge()` — New connections form |
@@ -164,7 +164,7 @@
 Old Knowledge ← [OVERWRITTEN] ← New Training
 ```
 
-**NoUse:**
+**Nous:**
 ```
 Old Knowledge ← [PRESERVED] → New Knowledge (new nodes)
 ```
@@ -178,7 +178,7 @@ Old Knowledge ← [PRESERVED] → New Knowledge (new nodes)
 Weight[i][j] = 0.73  ← FROZEN FOREVER
 ```
 
-**NoUse:**
+**Nous:**
 ```
 edge.strength ∈ [0, 1]  ← LTP/LTD continuous update
 edge.last_activation    ← STDP temporal tracking
@@ -194,7 +194,7 @@ Layer 1 → Layer 2 → Layer 3 → Output
 (Fixed, immutable)
 ```
 
-**NoUse:**
+**Nous:**
 ```
 Node A ←→ Node B
    ↕       ↕
@@ -206,7 +206,7 @@ Node C ←→ Node D ←→ [NEW NODE E born from query]
 
 ---
 
-## 🔧 IMPLEMENTATION: Brian2 + NoUse Integration
+## 🔧 IMPLEMENTATION: Brian2 + Nous Integration
 
 ### Brian2 Provides: STDP Timing Precision
 
@@ -228,12 +228,12 @@ def stdp_update(delta_t):
         return -A_minus * exp(delta_t / tau_minus)  # LTD
 ```
 
-### NoUse Provides: Semantic Content & Structure
+### Nous Provides: Semantic Content & Structure
 
 ```rust
-// NoUse node with Brian2 timing
+// Nous node with Brian2 timing
 pub struct PlasticNode {
-    // Content (NoUse)
+    // Content (Nous)
     content: SemanticContent,
     node_type: ConceptType,
     
@@ -259,7 +259,7 @@ pub struct PlasticEdge {
 ### Integration: Physics + Cognition
 
 ```
-Brian2 Layer                    NoUse Layer
+Brian2 Layer                    Nous Layer
 ────────────                    ───────────
 Neuron dynamics     ←→          Semantic activation
 Spike timing (ms)   ←→          Concept relevance
@@ -272,7 +272,7 @@ Result: Biologically realistic, cognitively meaningful plasticity
 
 ## 📊 COMPARISON: Paradigm Shift
 
-| Aspect | Traditional DL | LoRA/Continual | NoUse |
+| Aspect | Traditional DL | LoRA/Continual | Nous |
 |--------|---------------|----------------|-------|
 | **Architecture** | Fixed | Frozen + adapter layers | Dynamic, growing |
 | **New Knowledge** | Retrain full model | Layer on top | New nodes (neurogenesis) |
@@ -290,21 +290,21 @@ Result: Biologically realistic, cognitively meaningful plasticity
 ```
 Test: Train on Task A → Learn Task B → Test Task A
 Traditional: Performance ↓↓↓ (forgetting)
-NoUse: Performance = stable (separate nodes)
+Nous: Performance = stable (separate nodes)
 ```
 
 ### Prediction 2: Continuous Learning
 ```
 Test: Stream of diverse tasks over time
 Traditional: Requires rehearsal / replay
-NoUse: Natural integration (new nodes for new tasks)
+Nous: Natural integration (new nodes for new tasks)
 ```
 
 ### Prediction 3: Explanation Traces
 ```
 Test: "Why did you predict X?"
 Traditional: "Pattern match" (opaque)
-NoUse: Full node path with evidence scores
+Nous: Full node path with evidence scores
 ```
 
 ---
@@ -327,7 +327,7 @@ NoUse: Full node path with evidence scores
 
 ### Contrast with Prior Art
 
-| Approach | Limitation | NoUse Advance |
+| Approach | Limitation | Nous Advance |
 |----------|-----------|---------------|
 | Neural Turing Machines | External memory only | Internal structural plasticity |
 | Differentiable Neural Computers | Learn to read/write | Learn to GROW structure |
@@ -364,7 +364,7 @@ NoUse: Full node path with evidence scores
 | **Solution** | Freeze and patch | Structure as plastic |
 | **Metaphor** | Stone sculpture (static) | Garden (organic growth) |
 
-**NoUse is the first AI system designed from the ground up for structural plasticity — where every new insight literally grows the network, rather than fighting for space in a frozen architecture.**
+**Nous is the first AI system designed from the ground up for structural plasticity — where every new insight literally grows the network, rather than fighting for space in a frozen architecture.**
 
 ---
 

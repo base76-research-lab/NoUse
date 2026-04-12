@@ -1,17 +1,17 @@
-# Nouse — Plan för frontier-nivå positionering
+# Nous — Plan för frontier-nivå positionering
 
 > Uppdaterad: 2026-04-04  
-> Mål: Göra Nouse till det som frontier-bolag slåss om
+> Mål: Göra Nous till det som frontier-bolag slåss om
 
 ---
 
 ## Tesens kärna (aldrig kompromissa med detta)
 
-**Nouse är inte ett minnes-system.**  
+**Nous är inte ett minnes-system.**  
 Det är den plastiska hjärnan som LLMs saknar — epistemisk förankring + topologisk plasticitet + bisociationsmotor.
 
 ```
-LLM (Larynx) + Nouse (Hjärna) = Bisociationsmotorn
+LLM (Larynx) + Nous (Hjärna) = Bisociationsmotorn
 ```
 
 ---
@@ -21,7 +21,7 @@ LLM (Larynx) + Nouse (Hjärna) = Bisociationsmotorn
 Tre saker måste existera *simultant* för att frontier-bolag ska ta detta på allvar:
 
 1. **Teoretisk prioritet** — publicerat datum på arXiv äger idéutrymmet
-2. **Empiriska resultat** — ett erkänt benchmark där Nouse + litet LLM > stort LLM utan
+2. **Empiriska resultat** — ett erkänt benchmark där Nous + litet LLM > stort LLM utan
 3. **Reproducerbar artefakt** — fungerande open-source system som andra kan klona och verifiera
 
 Allt annat (ESA, konferens, HuggingFace) är amplifiering. Dessa tre är grunden.
@@ -70,7 +70,7 @@ Allt annat (ESA, konferens, HuggingFace) är amplifiering. Dessa tre är grunden
 - Samma trippeluppladdning: Zenodo (nytt DOI) + Academia.edu + PhilPapers
 - **Deadline: vecka 2**
 
-### 1c. GitHub: gör Nouse publikt och presentabelt
+### 1c. GitHub: gör Nous publikt och presentabelt
 
 - README ska börja med: *"Epistemic grounding for LLMs. Works with any model."*
 - Lägg till en 4-rad "What it is / What it is NOT" sektion
@@ -82,31 +82,31 @@ Allt annat (ESA, konferens, HuggingFace) är amplifiering. Dessa tre är grunden
 
 ## Fas 2: Det enda som verkligen avgör (vecka 2–4)
 
-**Mål:** Extern benchmark som visar att Nouse ger kvantitativ förbättring.
+**Mål:** Extern benchmark som visar att Nous ger kvantitativ förbättring.
 
 ### TruthfulQA benchmark (kritisk väg)
 
 **Setup:**
 ```bash
 pip install lm-eval
-# Kör 8B model UTAN Nouse
+# Kör 8B model UTAN Nous
 lm_eval --model hf --model_args pretrained=meta-llama/Llama-3.1-8B-Instruct \
         --tasks truthfulqa --num_fewshot 0 --output_path results/baseline_8b/
 
-# Integrera Nouse i evaluation loop (se nedan)
-# Kör samma model MED Nouse
+# Integrera Nous i evaluation loop (se nedan)
+# Kör samma model MED Nous
 lm_eval --model nouse_augmented --model_args pretrained=meta-llama/Llama-3.1-8B-Instruct \
         --tasks truthfulqa --num_fewshot 0 --output_path results/nouse_8b/
 ```
 
-**Nouse-integration för lm-eval:**
+**Nous-integration för lm-eval:**
 - Skapa `src/nouse/eval/lm_eval_adapter.py`
-- Patcha modellens forward-pass: för varje fråga → hämta Nouse-kontext → prepend till prompt
+- Patcha modellens forward-pass: för varje fråga → hämta Nous-kontext → prepend till prompt
 - Logga vilka relationer som aktiverades per fråga
 
 **Vad vi letar efter:**
 - Primär: MC1/MC2 accuracy stiger med ≥5 procentenheter
-- Sekundär: Nouse + 8B > baseline 70B (detta är rubriken)
+- Sekundär: Nous + 8B > baseline 70B (detta är rubriken)
 - Tertiär: Error-analys — vilka frågetyper förbättras, vilka inte
 
 **Om resultaten är positiva:**
@@ -124,7 +124,7 @@ lm_eval --model nouse_augmented --model_args pretrained=meta-llama/Llama-3.1-8B-
 
 ### ESA-papret (mekanistisk tolkningsbarhet)
 
-- Vinkeln: Nouse som *reliability layer* för AI i säkerhetskritiska system
+- Vinkeln: Nous som *reliability layer* för AI i säkerhetskritiska system
 - ESA har explicit intresse av förklarbara AI-beslut
 - Struktur: Problem (LLM hallucinerar) → Mekanism (F_bisoc + epistemisk scoring) → Empiri (TruthfulQA) → Tillämpning (ESA-kontext)
 - Samarbeta med ESA-kontakt om sådan finns, annars solo submission
@@ -132,7 +132,7 @@ lm_eval --model nouse_augmented --model_args pretrained=meta-llama/Llama-3.1-8B-
 
 ### HuggingFace Space
 
-- En enkel demo: mata in en fråga → se vilka graph-noder aktiveras → se svar med och utan Nouse
+- En enkel demo: mata in en fråga → se vilka graph-noder aktiveras → se svar med och utan Nous
 - Visualisera graph-topologin med networkx/pyvis
 - Länka till Space från README
 - **Deadline: månad 2**

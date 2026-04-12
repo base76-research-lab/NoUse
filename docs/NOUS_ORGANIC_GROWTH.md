@@ -1,4 +1,4 @@
-# NoUse Organic Growth Architecture
+# Nous Organic Growth Architecture
 ## Start Small, Grow Organically
 **Date:** 2026-04-02 08:41
 **Author:** Björn Wikström
@@ -106,7 +106,7 @@ Academic papers on AI consciousness and FNC theory.
 ## Content
 - FNC papers
 - Consciousness research
-- NoUse architecture docs
+- Nous architecture docs
 
 ## Connections
 - Related to: fnc, consciousness, nouse
@@ -230,7 +230,7 @@ pub fn grow_network(graph: &mut Graph, new_content: Content) -> NodeId {
 # Kör:
 nouse index ~/Documents/research/
 
-# NoUse skapar:
+# Nous skapar:
 ~/.nouse/neural_graph/
 ├── node_0001/  ← "research"
 │   ├── README.md: "Research documents on AI consciousness"
@@ -251,7 +251,7 @@ nouse index ~/Documents/research/
 │       └── node_0001 -> ../node_0001/
 │
 └── node_0004/  ← "nouse"
-    ├── README.md: "NoUse architecture"
+    ├── README.md: "Nous architecture"
     └── edges/
         └── node_0002 -> ../node_0002/
 ```
@@ -310,7 +310,7 @@ Hybrid:
 ## 🚀 KONKRET START
 
 ```bash
-# 1. Installera NoUse
+# 1. Installera Nous
 curl -fsSL https://nouse.base76research.com/install | bash
 
 # 2. Initiera SEED (litet)

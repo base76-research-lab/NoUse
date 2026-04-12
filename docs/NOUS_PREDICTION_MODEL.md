@@ -1,4 +1,4 @@
-# NoUse Prediction: Microscopic Decomposition vs Macro Assumptions
+# Nous Prediction: Microscopic Decomposition vs Macro Assumptions
 ## Epistemic Precision in AI Prediction
 **Date:** 2026-04-02 08:45
 **Author:** Björn Wikström
@@ -69,8 +69,8 @@ ANVÄNDARE: "fnc"
 │    → Evidence: MEDIUM (indirect)                         │
 │    → Koppling: User might want related concepts          │
 │                                                         │
-│  Finding 3: Current context: "NoUse development"       │
-│    → node_7890: "NoUse → FNC architecture"             │
+│  Finding 3: Current context: "Nous development"       │
+│    → node_7890: "Nous → FNC architecture"             │
 │    → Evidence: HIGH (active working memory)            │
 │    → Koppling: User is BUILDING with FNC, not learning   │
 │                                                         │
@@ -83,11 +83,11 @@ ANVÄNDARE: "fnc"
 │                                                         │
 │  Bygg upp från MICRO-findings:                          │
 │    ✅ Finding 1: User knows FNC (historia)              │
-│    ✅ Finding 2: Active context: NoUse development       │
+│    ✅ Finding 2: Active context: Nous development       │
 │    ✅ Finding 3: Related: consciousness (sidospår?)      │
 │    ✅ Finding 4: Time: Morning (user active, focused)   │
 │                                                         │
-│  MCD: "User is referencing FNC in context of NoUse"   │
+│  MCD: "User is referencing FNC in context of Nous"   │
 │                                                         │
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
@@ -97,14 +97,14 @@ ANVÄNDARE: "fnc"
 │                                                         │
 │  Query "fnc"                                            │
 │    → node_1289 (historia)                               │
-│      → node_7890 (NoUse)                                 │
+│      → node_7890 (Nous)                                 │
 │        → node_247 (FNC core)                             │
 │          → node_456 (consciousness)                      │
 │            → node_101 (AI)                               │
 │              → node_999 (current project)                │
 │                                                         │
 │  PREDICTION: "User wants to CONNECT FNC to current     │
-│                NoUse implementation"                     │
+│                Nous implementation"                     │
 │                                                         │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -113,7 +113,7 @@ ANVÄNDARE: "fnc"
 
 ## 🔬 JÄMFÖRELSE
 
-| | Traditionell | NoUse |
+| | Traditionell | Nous |
 |---|---|---|
 | **Input** | "fnc" | "fnc" |
 | **Process** | Pattern match → Direct answer | Decompose → Reconstruct → Connect |
@@ -142,7 +142,7 @@ def predict_traditional(input: str) -> Response:
 # Problem: Kan inte hantera ny kontext
 ```
 
-### NoUse Prediction (Microscopic Decomposition)
+### Nous Prediction (Microscopic Decomposition)
 
 ```rust
 pub fn predict_nouse(query: Query) -> Prediction {
@@ -191,7 +191,7 @@ pub fn predict_nouse(query: Query) -> Prediction {
 
 **Traditional:** "FNC är ett ramverk för..." (generiskt)
 
-**NoUse:**
+**Nous:**
 ```
 Finding: No prior "fnc" in memory
 Finding: User profile: researcher
@@ -206,22 +206,22 @@ Prediction: "FNC (Field-Node-Cockpit) - new concept?"
 
 **Traditional:** Samma svar (minns inte)
 
-**NoUse:**
+**Nous:**
 ```
 Finding: node_1289 "FNC deep-dive 2026-03-31"
 Finding: User already has FNC knowledge
-Finding: Active project: NoUse development
+Finding: Active project: Nous development
 MCD: User is IMPLEMENTING FNC, not learning
-Prediction: "FNC in NoUse context - architecture question?"
+Prediction: "FNC in Nous context - architecture question?"
          + Link to: current implementation docs
-         + Link to: specific NoUse-FNC integration
+         + Link to: specific Nous-FNC integration
 ```
 
 ### Scenario C: Tangentbordsfelsstavning
 
 **Traditional:** "I don't understand 'fnc'" (eller fel svar)
 
-**NoUse:**
+**Nous:**
 ```
 Finding: "fnc" not in primary nodes
 Finding: Similar: "fn" (Swedish "få")
@@ -253,7 +253,7 @@ Input → Decompose → Findings → Evidence →
 
 ## 🚀 RESULTAT: Prediktion som förstår
 
-| Egenskap | NoUse |
+| Egenskap | Nous |
 |----------|-------|
 | **Kontext-aware** | Ja (bygger från historik) |
 | **Transparant** | Ja (full path visible) |

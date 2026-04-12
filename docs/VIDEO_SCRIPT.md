@@ -1,4 +1,4 @@
-# Nouse — Video Script
+# Nous — Video Script
 ### "The AI Memory That Makes Small Models Beat Big Ones"
 **Format:** Text-to-video (AI narration)
 **Duration:** ~90 seconds
@@ -22,11 +22,11 @@
 
 ---
 
-## Scene 3 — Introduce Nouse
+## Scene 3 — Introduce Nous
 
-**Visual:** Logo animation — "Nouse" — Greek letters νοῦς fade in
+**Visual:** Logo animation — "Nous" — Greek letters νοῦς fade in
 
-> Meet Nouse. Named after the Greek word for mind. Nouse is a persistent, self-growing knowledge graph that attaches to any language model as a memory substrate. It works with OpenAI, Anthropic, Groq, Ollama — any model you already use.
+> Meet Nous. Named after the Greek word for mind. Nous is a persistent, self-growing knowledge graph that attaches to any language model as a memory substrate. It works with OpenAI, Anthropic, Groq, Ollama — any model you already use.
 
 ---
 
@@ -39,10 +39,10 @@ Model                          Score   Questions
 ─────────────────────────────────────────────────
 llama 3.1   8B  (no memory)     46%       60
 llama 3.3  70B  (no memory)     47%       60
-llama 3.1   8B  + Nouse    →    96%       60
+llama 3.1   8B  + Nous    →    96%       60
 ```
 
-> In our benchmark — 60 domain-specific questions — the 8B model with Nouse scored 96%. The 70B model without it scored 47%. Same questions. The only difference was memory.
+> In our benchmark — 60 domain-specific questions — the 8B model with Nous scored 96%. The 70B model without it scored 47%. Same questions. The only difference was memory.
 
 ---
 
@@ -53,7 +53,7 @@ llama 3.1   8B  + Nouse    →    96%       60
 ```
 Your documents, conversations, research
               ↓
-    Nouse daemon (background)
+    Nous daemon (background)
               ↓
     Extract concepts + relations
               ↓
@@ -62,7 +62,7 @@ Your documents, conversations, research
     Structured context injected into any LLM
 ```
 
-> Nouse runs a background daemon that watches your documents, conversations, and notes. It extracts concepts and relationships — not just text chunks — and builds a typed knowledge graph. Every interaction strengthens or weakens connections, just like a real brain.
+> Nous runs a background daemon that watches your documents, conversations, and notes. It extracts concepts and relationships — not just text chunks — and builds a typed knowledge graph. Every interaction strengthens or weakens connections, just like a real brain.
 
 ---
 
@@ -82,7 +82,7 @@ context = brain.query("transformer attention").context_block()
 # inject context into any LLM prompt
 ```
 
-> Three lines of code. Query your memory graph, get back a structured context block, inject it into any LLM call. You keep your existing setup. Nouse just makes it smarter.
+> Three lines of code. Query your memory graph, get back a structured context block, inject it into any LLM call. You keep your existing setup. Nous just makes it smarter.
 
 ---
 
@@ -98,11 +98,11 @@ context = brain.query("transformer attention").context_block()
 
 **Visual:** GitHub URL + PyPI badge on screen
 
-> Nouse is open source, MIT licensed, and available today. Install with pip, run the benchmark yourself, or contribute your own domain question bank. The hypothesis is clear — small model plus Nouse beats big model alone. Help us prove it at scale.
+> Nous is open source, MIT licensed, and available today. Install with pip, run the benchmark yourself, or contribute your own domain question bank. The hypothesis is clear — small model plus Nous beats big model alone. Help us prove it at scale.
 
 ```
 pip install nouse
-github.com/base76-research-lab/NoUse
+github.com/base76-research-lab/Nous
 ```
 
 ---

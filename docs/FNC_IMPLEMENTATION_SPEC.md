@@ -1,5 +1,5 @@
 # FNC Implementation Specification
-## For: brain-db-core / b76 / NoUse
+## For: brain-db-core / b76 / Nous
 **Date:** 2026-04-02 00:26
 **Author:** Björn Wikström
 **Status:** Technical Specification
@@ -214,7 +214,7 @@ def evaluate_for_promotion(node_id):
 
 ---
 
-## Integration with NoUse
+## Integration with Nous
 
 **MCP Tools Exposed:**
 
@@ -241,11 +241,11 @@ nouse_commit_to_ltm(node_id)
 
 1. **Schema design** — Finalize Zulu DB tables
 2. **Algorithm implementation** — Core logic in Rust
-3. **Python bindings** — Expose to b76/NoUse
+3. **Python bindings** — Expose to b76/Nous
 4. **Visualization** — Frontend (WebGL/Three.js)
 5. **Training pipeline** — Wikipedia scrape → structured graph
 
 ---
 
-*Specifikation: FNC Implementation for NoUse*
+*Specifikation: FNC Implementation for Nous*
 *Based on: The Larynx Problem, FNC Theory, Cognitive Neuroscience*

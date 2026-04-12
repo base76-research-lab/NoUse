@@ -1,4 +1,4 @@
-# NoUse Installation Specification
+# Nous Installation Specification
 ## User Setup Flow
 **Date:** 2026-04-02 08:39
 **Author:** Björn Wikström
@@ -8,7 +8,7 @@
 
 ## 🎯 KÄRNKONCEPT
 
-**När användaren installerar NoUse:**
+**När användaren installerar Nous:**
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -192,7 +192,7 @@ pub fn initial_training(core: &mut FNCCore, source: DataSource) {
 
 ```
 ┌──────────────────────────────────────────┐
-│  Installing NoUse...                     │
+│  Installing Nous...                     │
 │                                          │
 │  [████      ] NN Setup        40%        │
 │  [          ] Plasticity       0%        │
@@ -205,7 +205,7 @@ pub fn initial_training(core: &mut FNCCore, source: DataSource) {
 ...senare...
 
 ┌──────────────────────────────────────────┐
-│  ✓ NoUse Installed!                      │
+│  ✓ Nous Installed!                      │
 │                                          │
 │  Neural Network: 10M nodes ready         │
 │  Plasticity: Active                      │
@@ -254,7 +254,7 @@ max_initial_nodes = 100_000
 
 ## 🚀 POST-INSTALLATION
 
-### Start NoUse
+### Start Nous
 
 ```bash
 nouse start

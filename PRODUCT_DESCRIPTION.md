@@ -1,17 +1,17 @@
-# NoUse — Autonomous Knowledge Graph with Biological Intelligence
+# Nous — Persistent Epistemic Substrate with Biological Intelligence
 
 ## One-Line Pitch
-**NoUse is a self-organizing knowledge graph that thinks like a brain — it learns, dreams, forgets, and discovers connections no one told it to look for.**
+**Nous is a self-organizing epistemic substrate that learns, consolidates, forgets, and discovers connections no one told it to look for.**
 
 ---
 
-## What Is NoUse?
+## What Is Nous?
 
-NoUse is a **structured cognitive memory system** for AI agents and humans. Unlike vector databases (RAG) that just retrieve documents, NoUse **actively processes, consolidates, and connects knowledge** using mechanisms borrowed from neuroscience: Hebbian plasticity, spike-timing-dependent plasticity (STDP), limbic neuromodulation, topological data analysis (TDA), and recursive epistemic decomposition.
+Nous is a **persistent epistemic substrate** for AI agents and humans. Unlike vector databases (RAG) that just retrieve documents, Nous **actively processes, consolidates, and connects knowledge** using mechanisms borrowed from neuroscience: Hebbian plasticity, spike-timing-dependent plasticity (STDP), limbic neuromodulation, topological data analysis (TDA), and recursive epistemic decomposition.
 
-**The core insight:** LLMs are the larynx (language wrapper). NoUse is the brain (structured memory + reasoning substrate). Together they form a **bisociation engine** — a system that discovers creative cross-domain connections that neither component could find alone.
+**The core insight:** LLMs are the larynx (language wrapper). Nous is the brain (structured memory + reasoning substrate). Together they form a **bisociation engine** — a system that discovers creative cross-domain connections that neither component could find alone.
 
-**Key differentiator:** NoUse doesn't just store facts. It **grows neural pathways between them**, strengthens frequently-used connections, prunes weak ones, and autonomously discovers that quantum coherence in photosynthesis is structurally isomorphic to error correction in distributed systems — without anyone telling it to look.
+**Key differentiator:** Nous doesn't just store facts. It **grows neural pathways between them**, strengthens frequently-used connections, prunes weak ones, and autonomously discovers that quantum coherence in photosynthesis is structurally isomorphic to error correction in distributed systems — without anyone telling it to look.
 
 ---
 
@@ -19,7 +19,7 @@ NoUse is a **structured cognitive memory system** for AI agents and humans. Unli
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        NoUse Daemon                             │
+│                        Nous Daemon                             │
 │                                                                 │
 │  ┌──────────────┐  ┌──────────────┐  ┌────────────────────┐    │
 │  │  Brain Loop   │  │   NightRun   │  │  Limbic System     │    │
@@ -280,7 +280,7 @@ NOUSE_GROWTH_META_THRESHOLD = 0.70    # Meta-axiom crystallization threshold
 
 ### 8. Bisociative Problem Solver — Cross-Domain Engineering
 
-**The killer application:** When solving a problem, instead of searching only within the same domain, NoUse decomposes the problem to primitives and searches ALL domains for solutions.
+**The killer application:** When solving a problem, instead of searching only within the same domain, Nous decomposes the problem to primitives and searches ALL domains for solutions.
 
 **Example flow:**
 ```
@@ -289,7 +289,7 @@ Problem: "Python GIL blocks multicore performance"
 Step 1 — DECOMPOSE to primitives:
   → parallellism, resource contention, exclusive locking, workload partitioning
 
-Step 2 — SEARCH NoUse cross-domain:
+Step 2 — SEARCH Nous cross-domain:
   → Go: goroutines (CSP model)
   → Erlang: actors (message passing)
   → Neuroscience: parallel processing
@@ -370,7 +370,7 @@ NOUSE_MODEL_AUTODISCOVER = 1          # Auto-detect available models
 
 ### 11. Source Management — Multi-Channel Ingestion
 
-NoUse monitors multiple input sources autonomously:
+Nous monitors multiple input sources autonomously:
 - **File system** — watched directories (markdown, PDFs, code)
 - **Conversations** — .gemini, .claude project folders
 - **Chrome bookmarks** — browser bookmark changes
@@ -517,13 +517,13 @@ Pre-populate graph with universal primitives by running decomposition on top hub
 
 **TruthfulQA (retrieval-augmented):**
 - llama-3.1-8b baseline: **46%**
-- llama-3.1-8b + NoUse: **96%**
+- llama-3.1-8b + Nous: **96%**
 
 ---
 
-## What Makes NoUse Different from RAG?
+## What Makes Nous Different from RAG?
 
-| Feature | Traditional RAG | NoUse |
+| Feature | Traditional RAG | Nous |
 |---------|----------------|-------|
 | Storage | Flat vector chunks | Typed knowledge graph with evidence scoring |
 | Learning | None — static embeddings | Hebbian plasticity + STDP + limbic modulation |
@@ -540,11 +540,11 @@ Pre-populate graph with universal primitives by running decomposition on top hub
 
 ## Philosophy
 
-> "LLM(Larynx) + NoUse(Brain) = Bisociation Engine"
+> "LLM(Larynx) + Nous(Brain) = Bisociation Engine"
 
-NoUse embodies the principle that intelligence isn't about having the right answer — it's about having the right **connections**. By continuously building, strengthening, pruning, and bridging knowledge paths, NoUse creates a substrate where creative insights emerge from structure, not from brute-force retrieval.
+Nous embodies the principle that intelligence isn't about having the right answer — it's about having the right **connections**. By continuously building, strengthening, pruning, and bridging knowledge paths, Nous creates a substrate where creative insights emerge from structure, not from brute-force retrieval.
 
-The system is designed around Arthur Koestler's concept of **bisociation**: the creative act of connecting two previously unrelated frames of reference. NoUse automates this through topological analysis — finding domains that are structurally similar but semantically distant, then using LLMs to synthesize the bridge.
+The system is designed around Arthur Koestler's concept of **bisociation**: the creative act of connecting two previously unrelated frames of reference. Nous automates this through topological analysis — finding domains that are structurally similar but semantically distant, then using LLMs to synthesize the bridge.
 
 ---
 

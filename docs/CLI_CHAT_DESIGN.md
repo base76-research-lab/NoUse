@@ -1,7 +1,7 @@
-# Goose-inspirerat CLI-chat för NoUse
+# Goose-inspirerat CLI-chat för Nous
 
 ## Mål
-- Ett enda kommando (`nouse chat`) startar en interaktiv chat med NoUse-minne och valfri LLM (lokal eller API).
+- Ett enda kommando (`nouse chat`) startar en interaktiv chat med Nous-minne och valfri LLM (lokal eller API).
 - Ingen konfiguration krävs vid start.
 - Automatisk upptäckt av lokal modell (Ollama/LM Studio) eller API-nyckel (OpenAI).
 - Tydlig feedback om ingen modell hittas.
@@ -21,7 +21,7 @@
 - Byggs som nytt kommando i `nouse.cli.main` (t.ex. `@app.command("chat")`).
 - Modellupptäckt i Python (försök ansluta till Ollama/LM Studio, annars fråga efter OpenAI-nyckel).
 - Enkel REPL-loop med input()/print().
-- Använd befintlig NoUse-minnesintegration.
+- Använd befintlig Nous-minnesintegration.
 - Tydliga felmeddelanden och exit-vägar.
 
 ## Test
@@ -32,6 +32,6 @@
 ## Nästa steg
 1. Skapa CLI-kommando och REPL.
 2. Implementera modellupptäckt.
-3. Integrera NoUse-minne.
+3. Integrera Nous-minne.
 4. Testa och verifiera.
 5. Commit/push.

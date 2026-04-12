@@ -1,11 +1,11 @@
-# NoUse — 5-minute Quickstart
+# Nous — 5-minute Quickstart
 
-> **NoUse** gives an LLM agent structured memory that knows what is known, how confidently it is known, and where knowledge ends.
+> **Nous** gives an LLM agent a grounded epistemic substrate that knows what is known, how confidently it is known, and where knowledge ends.
 
 ## What you will do in 5 minutes
 
 1. Install the package.
-2. Attach to a local NoUse brain.
+2. Attach to a local Nous brain.
 3. Query it for grounded context.
 4. Inject that context into the model you already use.
 
@@ -34,7 +34,7 @@ print(result.confidence)
 `brain.query(...)` returns a structured result, not just raw text.
 
 ```text
-[Nouse memory]
+[Nous memory]
 • transformer attention: mechanism for routing token influence across context
 
 Validated relations:
@@ -127,7 +127,7 @@ nouse-brain
 # Optional: expose the HTTP API used by attach() auto-detection
 nouse-server
 
-# Optional: expose NoUse as an MCP server
+# Optional: expose Nous as an MCP server
 nouse-mcp
 ```
 
@@ -146,14 +146,14 @@ That is the direction for users who want larger hosted memory graphs, shared pro
 ```text
 your docs / chats / research
             ↓
-      NoUse graph memory
+      Nous graph memory
             ↓
     confidence + relations + gaps
             ↓
       injected into any LLM
 ```
 
-## When to use NoUse
+## When to use Nous
 
 - When a coding or research agent needs persistent project memory
 - When confidence and uncertainty matter as much as the answer itself
@@ -162,6 +162,6 @@ your docs / chats / research
 
 ## If you want the lower-level brain kernel
 
-NoUse also exposes a deeper kernel API with residual streams, crystallization, and explicit field events. That path is still available, but it is not the fastest way to get value from the package.
+Nous also exposes a deeper kernel API with residual streams, crystallization, and explicit field events. That path is still available, but it is not the fastest way to get value from the package.
 
 See the full docs and source for the lower-level kernel, daemon, and graph internals.

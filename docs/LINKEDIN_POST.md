@@ -7,7 +7,7 @@ Not with fine-tuning. Not with a bigger context window. Just with **memory**.
 ```
 llama3.1-8b   (no memory)   →  46%
 llama-3.3-70b (no memory)   →  47%
-llama3.1-8b   + Nouse       →  96%
+llama3.1-8b   + Nous       →  96%
 ```
 
 The gap isn't about intelligence. It's about **disambiguation**.
@@ -18,9 +18,9 @@ We call this the **Intent Disambiguation Effect**.
 
 ---
 
-Today I'm releasing **Nouse** (νοῦς — Greek for *mind*) as open source.
+Today I'm releasing **Nous** (νοῦς — Greek for *mind*) as open source.
 
-Nouse is a persistent, self-growing knowledge graph that attaches to any LLM as a domain memory substrate.
+Nous is a persistent, self-growing knowledge graph that attaches to any LLM as a domain memory substrate.
 
 → It runs a background daemon that watches your files, conversations, and research
 → Extracts typed, weighted relations between concepts (not chunks — *relations*)
@@ -41,14 +41,14 @@ context = brain.query("your question").context_block()
 
 The hypothesis is simple:
 
-> **small model + Nouse[domain] > large model without Nouse**
+> **small model + Nous[domain] > large model without Nous**
 
 We have evidence. We need more domains, more models, more contributors to stress-test it.
 
 If you work at **@OpenAI**, **@Anthropic**, **@Google DeepMind**, **@Meta AI**, **@Mistral**, **@Groq**, **@Cerebras**, **@Ollama**, **@Hugging Face**, **@Cohere**, or **@NVIDIA** — I'd love to hear what you think. This either changes how you think about memory in LLM pipelines, or it doesn't. Either way, let's talk.
 
 📦 pip install nouse
-🔗 github.com/base76-research-lab/NoUse
+🔗 github.com/base76-research-lab/Nous
 📖 Full benchmark + methodology in the repo
 
 #AI #LLM #OpenSource #MachineLearning #KnowledgeGraph #RAG #LocalAI #Ollama #ArtificialIntelligence #Python
