@@ -1,0 +1,26 @@
+<svg width="1440" height="520" viewBox="0 0 1440 520" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Nous header</title>
+  <desc id="desc">A quiet white header using the provided Nous wordmark style.</desc>
+  <rect width="1440" height="520" fill="#FFFFFF"/>
+
+  <g transform="translate(492 290)">
+    <text
+      x="0"
+      y="0"
+      fill="#050505"
+      font-family="'Times New Roman', 'Georgia', 'Baskerville', serif"
+      font-size="166"
+      font-weight="400"
+      letter-spacing="-1.4"
+    >νοῦς</text>
+    <text
+      x="302"
+      y="4"
+      fill="#C9CBD0"
+      font-family="'Times New Roman', 'Georgia', 'Baskerville', serif"
+      font-size="154"
+      font-weight="400"
+      letter-spacing="-0.8"
+    >AI</text>
+  </g>
+</svg>

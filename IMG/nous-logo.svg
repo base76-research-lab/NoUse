@@ -1,0 +1,26 @@
+<svg width="900" height="320" viewBox="0 0 900 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Nous logo</title>
+  <desc id="desc">Minimal Nous wordmark with light grey AI suffix.</desc>
+  <rect width="900" height="320" fill="#FFFFFF"/>
+
+  <g transform="translate(205 192)">
+    <text
+      x="0"
+      y="0"
+      fill="#050505"
+      font-family="'Times New Roman', 'Georgia', 'Baskerville', serif"
+      font-size="132"
+      font-weight="400"
+      letter-spacing="-1.1"
+    >νοῦς</text>
+    <text
+      x="242"
+      y="3"
+      fill="#C9CBD0"
+      font-family="'Times New Roman', 'Georgia', 'Baskerville', serif"
+      font-size="123"
+      font-weight="400"
+      letter-spacing="-0.7"
+    >AI</text>
+  </g>
+</svg>

@@ -1,32 +1,35 @@
 <p align="center">
-Do you Like NoUse? Show it by giving it a star and sharing 
-  <img src="IMG/nouse-header.png" alt="NoUse — Epistemic Knowledge Graph for LLMs" width="100%">
+  <img src="IMG/nous-header.svg" alt="Nous (νοῦς) — persistent epistemic substrate for AI" width="100%">
 </p>
 
 <p align="center">
-  <strong>An 8B model with NoUse outperforms a 70B model without it.</strong>
+  <strong>Language models are a larynx. Nous is a persistent epistemic substrate for AI.</strong>
+</p>
+
+<p align="center">
+  Nous stores typed relations, graded uncertainty, contradiction boundaries, and memory across time.
 </p>
 
 <p align="center">
   <a href="https://discord.gg/Fbwmr7Vv"><img src="https://img.shields.io/badge/Discord-join-5865F2?logo=discord&logoColor=white" alt="Discord"></a>
   <a href="https://pypi.org/project/nouse/"><img src="https://img.shields.io/pypi/v/nouse" alt="PyPI"></a>
-  <a href="https://github.com/base76-research-lab/NoUse/actions/workflows/tests.yml"><img src="https://github.com/base76-research-lab/NoUse/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
+  <a href="https://github.com/base76-research-lab/Nous/actions/workflows/tests.yml"><img src="https://github.com/base76-research-lab/Nous/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
-  <a href="eval/RESULTS.md"><img src="https://img.shields.io/badge/benchmark-96%25_vs_46%25-brightgreen" alt="Benchmark"></a>
+  <a href="eval/RESULTS_INDEX.md"><img src="https://img.shields.io/badge/benchmark-run--indexed-blue" alt="Benchmark Index"></a>
 </p>
 
 <p align="center">
-  <a href="#quick-start">Quick Start</a> · <a href="#the-result">Benchmark</a> · <a href="#how-it-works">How It Works</a> · <a href="#how-nouse-differs-from-alternatives">vs Alternatives</a> · <a href="#use-with-openai-anthropic-or-ollama">Examples</a> · <a href="#research">Research</a> · <a href="#roadmap">Roadmap</a> · <a href="#community">Community</a>
+  <a href="#quick-start">Quick Start</a> · <a href="#why-this-category-is-different">Why This Category Is Different</a> · <a href="#the-result">Benchmark</a> · <a href="#how-nous-differs-from-alternatives">vs Alternatives</a> · <a href="#use-with-openai-anthropic-or-ollama">Examples</a> · <a href="#research">Research</a> · <a href="#roadmap">Roadmap</a> · <a href="#community">Community</a>
 </p>
 
 <p align="center">
-  <img src="IMG/nouse-graph-growth.gif" alt="NoUse knowledge graph growing — discovering concepts, substrates, gaps, and axioms" width="800">
+  <img src="IMG/nouse-graph-growth.gif" alt="Nous knowledge graph growing — discovering concepts, substrates, gaps, and axioms" width="800">
 </p>
 
 ---
 
-## Try NoUse In 60 Seconds
+## Try Nous In 60 Seconds
 
 ```bash
 pip install nouse
@@ -41,39 +44,56 @@ print("confidence:", round(result.confidence, 2))
 PY
 ```
 
-If NoUse already knows something relevant, you get back a grounded context block with validated relations, uncertainty, and explicit boundaries instead of a generic answer blob.
+If Nous already knows something relevant, you get back a grounded context block with validated relations, uncertainty, and explicit boundaries instead of a generic answer blob.
 
 If that output feels more useful than plain chat history or chunk retrieval, then the project is doing its job.
 
 ---
 
+## Why This Category Is Different
+
+Evaluating `Nous` with standard LLM benchmarks would be like measuring the sweetness of chocolate with a Scoville scale. The instrument is not merely inaccurate; it is measuring the wrong physical phenomenon entirely.
+
+Benchmarks such as MMLU, ARC, and HumanEval are valid instruments for language models. `Nous` is not merely a language model output surface. It is a persistent epistemic substrate.
+
+The relevant question is therefore not only whether a model produced the expected answer right now. It is whether the system knew what it knew, knew what it did not know, preserved consistency under contradiction, and changed structure coherently across time.
+
+---
+
 ## Why It Matters
 
-NoUse gives an LLM agent a persistent epistemic memory layer.
+Nous is not an attempt to make an LLM slightly more fluent or slightly more helpful.
+
+It is an attempt to move part of intelligence back out of the output surface and into a persistent epistemic substrate.
 
 - It stores relations, not just retrieved chunks.
-- It carries confidence, rationale, and uncertainty with the memory itself.
+- It carries confidence, rationale, contradiction, and uncertainty with the memory itself.
 - It makes the boundary between known, probable, and unknown visible to the model.
+- It learns across time instead of existing only inside a single prompt window.
 
-That changes agent behavior in the place that actually matters: when a model is close to hallucinating but still sounds fluent.
+That matters exactly where fluent systems fail: when a model is close to hallucinating but still sounds convincing.
 
 ## The Result
+
+Reference run used for the claim below: `run_20260403_094211` (see `eval/RESULTS_INDEX.md`).
 
 ```text
 Model                               Score   Questions
 ─────────────────────────────────────────────────────
 llama3.1-8b  (no memory)            46%     60
 llama-3.3-70b  (no memory)          47%     60
-llama3.1-8b  + Nouse memory  →      96%     60
+llama3.1-8b  + Nous memory  →      96%     60
 ```
 
-**An 8B model with Nouse outperforms a 70B model without it.**
+**In this reference run, an 8B model with Nous outperformed a 70B baseline.**
 
 The effect is not retrieval. It is *epistemic grounding* — a small, precise knowledge signal
 redirects the model's existing priors onto the correct frame, with confidence and evidence attached.
 We call this the **Intent Disambiguation Effect**.
 
-→ Full benchmark details: [eval/RESULTS.md](eval/RESULTS.md) · [Run it yourself](#run-the-benchmark-yourself)
+This is useful evidence for graph grounding. It is not yet a complete measure of a cognitive substrate.
+
+→ Full benchmark details: [eval/RESULTS.md](eval/RESULTS.md) · [eval/RESULTS_INDEX.md](eval/RESULTS_INDEX.md) · [Run it yourself](#run-the-benchmark-yourself)
 
 ---
 
@@ -89,16 +109,16 @@ We call this the **Intent Disambiguation Effect**.
 
 ---
 
-## What Nouse Is
+## What Nous Is
 
-Nouse (νοῦς, Gk. *mind*) is a **persistent, self-growing epistemic substrate** that attaches to any LLM.
+Nous (νοῦς, Gk. *mind* / *active intellect*) is a **persistent, self-growing epistemic substrate** that can attach to any LLM.
 
 It is informed by brain-inspired plasticity, cognitive research, and the practical failure modes of LLM memory.
 
 ```text
 Your documents, conversations, research
            ↓
-    Nouse knowledge graph
+    Nous knowledge graph
     (SQLite WAL + NetworkX + Hebbian learning + evidence scoring)
            ↓
     brain.query("your question")
@@ -109,10 +129,10 @@ Your documents, conversations, research
       — what is NOT known (gap map from TDA)
 ```
 
-It is **not** a RAG system. RAG retrieves chunks. Nouse extracts *relations* — typed, weighted,
+It is **not** a RAG system. RAG retrieves chunks. Nous extracts *relations* — typed, weighted,
 evidence-scored connections between concepts — and injects a compact, structured context block.
 
-It is **not** just a memory system. Memory stores and retrieves. Nouse maintains an epistemic
+It is **not** just a memory system. Memory stores and retrieves. Nous maintains an epistemic
 account: every relation carries a trust tier (hypothesis / indication / validated), a rationale,
 and a contradiction flag. The system knows the difference between what it has evidence for
 and what it is guessing.
@@ -122,7 +142,7 @@ There is no retraining. No gradient descent. The graph grows — and the gaps be
 
 ---
 
-## How Nouse Differs From Alternatives
+## How Nous Differs From Alternatives
 
 | System | Main unit | Knows confidence | Knows what's missing | Learns over time | Local-first |
 | --- | --- | :---: | :---: | :---: | :---: |
@@ -131,9 +151,9 @@ There is no retraining. No gradient descent. The graph grows — and the gaps be
 | **Mem0** | memory objects | ~ | ✗ | ~ | ✓ |
 | **MemGPT / Letta** | conversation pages | ✗ | ✗ | ~ | ✗ |
 | **Claude Memory** | key-value | ✗ | ✗ | ✗ | ✗ |
-| **Nouse** | typed relation + evidence | **✓** | **✓** | **✓** | **✓** |
+| **Nous** | typed relation + evidence | **✓** | **✓** | **✓** | **✓** |
 
-Nouse is not trying to replace the model. It gives the model a brain-like memory substrate it can query before speaking.
+Nous does not try to replace the model. It treats the model as the larynx, and the substrate as the persistent epistemic layer behind it.
 
 ---
 
@@ -162,7 +182,7 @@ If the daemon is running, `attach()` connects over HTTP. Otherwise it falls back
 Works with any provider — OpenAI, Anthropic, Groq, Cerebras, Ollama:
 
 ```python
-# You handle the LLM call. Nouse handles the memory.
+# You handle the LLM call. Nous handles the memory.
 context = brain.query(user_question).context_block()
 response = openai.chat(messages=[
     {"role": "system", "content": context},
@@ -267,9 +287,9 @@ The pattern is always the same: `brain.query(...)` first, provider call second.
 
 ---
 
-## Managed NoUse (Coming)
+## Managed Nous (Coming)
 
-NoUse is local-first today. A managed cloud version is planned:
+Nous is local-first today. A managed cloud version is planned:
 
 ```python
 brain = nouse.attach(api_key="nouse_sk_...")
@@ -282,10 +302,10 @@ Interested? [Get in touch](mailto:bjorn@base76research.com).
 
 ## What A Grounded Answer Looks Like
 
-When you query NoUse, the model does not just get a blob of context. It gets an epistemic frame:
+When you query Nous, the model does not just get a blob of context. It gets an epistemic frame:
 
 ```text
-[Nouse memory]
+[Nous memory]
 • transformer attention: mechanism for routing token influence across context
        claim: attention modulates token relevance based on learned relational patterns
 
@@ -304,8 +324,8 @@ That is the real product surface: not storage, but a more honest and better-cali
 ## Run the benchmark yourself
 
 ```bash
-git clone https://github.com/base76-research-lab/NoUse
-cd NoUse
+git clone https://github.com/base76-research-lab/Nous
+cd Nous
 pip install -e .
 
 # Generate questions from your own graph
@@ -319,6 +339,18 @@ python eval/run_eval.py \
 ```
 
 The current benchmark is domain-specific and intentionally small. Its purpose is to test whether a grounded memory signal can redirect the model onto the right frame, not to claim a universal leaderboard win.
+
+For claim consistency, each public benchmark statement should cite an explicit run id from [eval/RESULTS_INDEX.md](eval/RESULTS_INDEX.md).
+
+### Why standard LLM benchmarks do not apply
+
+Evaluating Nous with standard LLM benchmarks — MMLU, ARC, HumanEval, and similar — would be like measuring the sweetness of chocolate with a Scoville scale. The instrument is not merely inaccurate; it is measuring the wrong physical phenomenon entirely.
+
+Standard benchmarks measure **output quality at a single moment**: does the system produce the statistically expected token sequence given this prompt? That is a meaningful question for a language model. Nous is not a language model.
+
+Nous is a **plastic cognitive substrate**: a system that changes its internal structure through what it learns, maintains persistent beliefs with graded uncertainty, consolidates memory asynchronously, and runs a continuous cognitive loop between interactions. The relevant questions are not about outputs — they are about the system's internal epistemic state, how that state evolves over time, and whether that evolution reflects genuine learning rather than pattern matching.
+
+FNC-Bench (in `eval/fnc_bench/`) is built around different primitives: epistemic honesty, contradiction resistance, and confidence calibration. Even these are partial measures. A complete benchmark for a cognitive architecture must be **longitudinal and structural**, not momentary and behavioral. That benchmark does not yet exist — because the category of system it would measure has not existed before.
 
 ---
 
@@ -376,7 +408,7 @@ nouse/
 ## The hypothesis (work in progress)
 
 ```text
-small model + Nouse[domain]  >  large model without Nouse
+small model + Nous[domain]  >  large model without Nous
 ```
 
 We have evidence for this in our benchmark. The next step is to test across
@@ -389,14 +421,14 @@ Contributions welcome — especially domain-specific question banks.
 ## Research
 
 
-The theoretical foundation for Nouse is described in:
+The theoretical foundation for Nous is described in:
 
 - Wikström, B. (2026). **The Larynx Problem: Why Large Language Models Are Not Artificial Intelligence.** [Zenodo](https://zenodo.org/records/19413234) · [PhilPapers](https://philpapers.org/rec/WIKTLP)
 - Quattrociocchi, W. et al. (2025). **Epistemia: Structural Fault Lines in Generative AI.** [arXiv:2512.19466](https://arxiv.org/abs/2512.19466)
 
 Wikström (2026) argumenterar att LLMs modellerar uttryckskanalen för intelligens (språk), inte intelligens i sig — och att epistemisk grundning via strukturerade, plastiska kunskapsgrafer är nödvändig.
 
-Quattrociocchi et al. (2025) introducerar begreppet "epistemia" för att beskriva det strukturella glappet där språklig trovärdighet ersätter faktisk epistemisk utvärdering. Artikeln identifierar sju epistemologiska "fault lines" mellan mänskligt och maskinellt omdöme och ger en teoretisk ram för varför system som NoUse behövs.
+Quattrociocchi et al. (2025) introducerar begreppet "epistemia" för att beskriva det strukturella glappet där språklig trovärdighet ersätter faktisk epistemisk utvärdering. Artikeln identifierar sju epistemologiska "fault lines" mellan mänskligt och maskinellt omdöme och ger en teoretisk ram för varför system som Nous behövs.
 
 ---
 
@@ -436,8 +468,8 @@ Requires Python 3.11+. Graph stored in `~/.local/share/nouse/`.
 ## Community
 
 - [Discord](https://discord.gg/Fbwmr7Vv) — real-time chat, help, show & tell
-- [GitHub Discussions](https://github.com/base76-research-lab/NoUse/discussions) — Q&A, ideas, research notes, show & tell
-- [Open an issue](https://github.com/base76-research-lab/NoUse/issues) — bugs, feature requests, domain benchmark submissions
+- [GitHub Discussions](https://github.com/base76-research-lab/Nous/discussions) — Q&A, ideas, research notes, show & tell
+- [Open an issue](https://github.com/base76-research-lab/Nous/issues) — bugs, feature requests, domain benchmark submissions
 - [Contributing guide](CONTRIBUTING.md) — how to contribute code, benchmarks, examples, and docs
 
 Contributions welcome — especially domain-specific question banks. See [CONTRIBUTING.md](CONTRIBUTING.md) for how.
@@ -457,6 +489,6 @@ Björn Wikström / [Base76 Research Lab](https://github.com/base76-research-lab)
 - 𝕏 / Twitter: [@Q_for_qualia](https://x.com/Q_for_qualia)
 - LinkedIn: [bjornshomelab](https://www.linkedin.com/in/bjornshomelab/)
 - Email: [bjorn@base76research.com](mailto:bjorn@base76research.com)
-- Issues: [GitHub Issues](https://github.com/base76-research-lab/NoUse/issues)
+- Issues: [GitHub Issues](https://github.com/base76-research-lab/Nous/issues)
 
 For security vulnerabilities, see [SECURITY.md](SECURITY.md).
