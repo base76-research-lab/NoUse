@@ -30,12 +30,14 @@ import time
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
+
+from nouse.config.paths import path_from_env
 
 _log = logging.getLogger("nouse.nightrun")
 
-CONFIG_FILE  = Path.home() / ".local" / "share" / "nouse" / "nightrun_config.json"
-STATUS_FILE  = Path.home() / ".local" / "share" / "nouse" / "nightrun_status.json"
+CONFIG_FILE  = path_from_env("NOUSE_NIGHTRUN_CONFIG_FILE", "nightrun_config.json")
+STATUS_FILE  = path_from_env("NOUSE_NIGHTRUN_STATUS_FILE", "nightrun_status.json")
 
 # Konsoliderings-trösklar
 CONSOLIDATION_MIN_EVIDENCE  = float(os.getenv("NOUSE_NIGHTRUN_MIN_EVIDENCE",  "0.45"))
@@ -128,6 +130,13 @@ class ConsolidationResult:
     ghost_q_queries: int = 0    # Ghost Q: antal LLM-anrop
     ghost_q_relations: int = 0  # Ghost Q: antal nya relationer
     ghost_q_new_topics: int = 0 # Ghost Q: dangling edges som fylldes
+    contradiction_caught: int = 0   # contradiction events caught since last cycle
+    contradiction_severity_mean: float = 0.0
+    contradiction_acted_on: int = 0
+    crystallization_rate: float = 0.0   # % av kanter med w > 0.55
+    evidence_quality: float = 0.0       # medel-ev på kristalliserade kanter
+    evidence_promoted: int = 0         # kanter promovisade i evidens
+    evidence_demoted: int = 0          # kanter demoverade i evidens
     duration:        float = 0.0
 
 
@@ -427,17 +436,58 @@ async def run_night_consolidation(
     except Exception as e:
         _log.warning("NightRun Decomposition misslyckades: %s", e)
 
+    # ── Steg 12: Contradiction metrics (since last cycle) ────────────────────
+    try:
+        from nouse.daemon.journal import count_contradiction_events
+        prev_status = NightRunStatus.load()
+        since_ts = (
+            datetime.fromtimestamp(prev_status.last_run_ts, tz=timezone.utc).isoformat()
+            if prev_status.last_run_ts > 0
+            else ""
+        )
+        cc = count_contradiction_events(since_ts) if since_ts else {"caught": 0, "severity_mean": 0.0, "acted_on": 0}
+        result.contradiction_caught = cc["caught"]
+        result.contradiction_severity_mean = cc["severity_mean"]
+        result.contradiction_acted_on = cc["acted_on"]
+    except Exception as e:
+        _log.warning("NightRun contradiction count misslyckades: %s", e)
+
+    # ── Steg 13: Evidence pass + crystallization metrics ──────────────────────
+    try:
+        from nouse.daemon.evidence import run_evidence_pass, measure_crystallization
+        ev_result = run_evidence_pass(field, max_items=500)
+        result.evidence_promoted = ev_result.promoted
+        result.evidence_demoted = ev_result.demoted
+        cryst = measure_crystallization(field)
+        result.crystallization_rate = cryst.crystallization_rate
+        result.evidence_quality = cryst.evidence_quality
+        _log.info(
+            "NightRun [13] Evidence pass: promoted=%d demoted=%d "
+            "crystallization=%.1f%% ev_quality=%.3f tiers=%s",
+            ev_result.promoted, ev_result.demoted,
+            cryst.crystallization_rate * 100, cryst.evidence_quality,
+            cryst.tier_counts,
+        )
+    except Exception as e:
+        _log.warning("NightRun evidence pass misslyckades: %s", e)
+
     result.duration = round(time.monotonic() - t0, 2)
     _log.info(
         "NightRun klar: konsoliderat=%d kasserat=%d bisociationer=%d pruning=%d "
         "berikat=%d axiom_committed=%d axiom_flagged=%d "
         "reviews_promoted=%d reviews_discarded=%d "
-        "ghost_q=%d +rels=%d new_topics=%d (%.1fs)",
+        "ghost_q=%d +rels=%d new_topics=%d "
+        "contradictions=%d(acted=%d,sev=%.2f) "
+        "crystallization=%.1f%% ev_quality=%.3f ev_promoted=%d ev_demoted=%d (%.1fs)",
         result.consolidated, result.discarded,
         result.bisociations, result.pruned, result.enriched,
         result.axioms_committed, result.axioms_flagged,
         result.reviews_promoted, result.reviews_discarded,
         result.ghost_q_queries, result.ghost_q_relations, result.ghost_q_new_topics,
+        result.contradiction_caught, result.contradiction_acted_on,
+        result.contradiction_severity_mean,
+        result.crystallization_rate * 100, result.evidence_quality,
+        result.evidence_promoted, result.evidence_demoted,
         result.duration,
     )
     return result
@@ -511,6 +561,46 @@ class NightRunScheduler:
             self.status.total_pruned       += result.pruned
             self.status.last_error         = ""
             self.status.save()
+
+            # ── Evalving: logga eval-entry + trendanalys ─────────────────────
+            try:
+                from nouse.daemon.eval_log import (
+                    write_eval_entry, read_eval_entries, generate_policy_suggestion,
+                )
+                stats = field.stats() if hasattr(field, "stats") else {}
+                cc_rate = (
+                    result.contradiction_caught / max(1, result.contradiction_caught + result.contradiction_acted_on)
+                    if (result.contradiction_caught + result.contradiction_acted_on) > 0
+                    else 0.0
+                )
+                write_eval_entry(
+                    cycle=int(self.status.total_consolidated),
+                    crystallization_rate=result.crystallization_rate,
+                    evidence_quality=result.evidence_quality,
+                    gap_map_shrink_rate=0.0,
+                    contradiction_catch_rate=cc_rate,
+                    contradiction_caught=result.contradiction_caught,
+                    contradiction_acted_on=result.contradiction_acted_on,
+                    graph_concepts=stats.get("concepts", 0),
+                    graph_relations=stats.get("relations", 0),
+                    extra={
+                        "consolidated": result.consolidated,
+                        "discarded": result.discarded,
+                        "bisociations": result.bisociations,
+                        "duration": result.duration,
+                        "evidence_promoted": result.evidence_promoted,
+                        "evidence_demoted": result.evidence_demoted,
+                    },
+                )
+                # Trendanalys — generera policyförslag om mätvärden sjunker
+                entries = read_eval_entries(limit=10)
+                if len(entries) >= 4:
+                    suggestion = generate_policy_suggestion(entries)
+                    if suggestion:
+                        _log.info("Evalving policy-förslag: %s", suggestion)
+            except Exception as e:
+                _log.warning("Evalving loggning misslyckades: %s", e)
+
             return result
         except Exception as e:
             self.status.last_error = str(e)

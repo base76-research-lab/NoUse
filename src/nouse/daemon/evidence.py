@@ -1,23 +1,32 @@
 """
-nouse.daemon.evidence — Bayesiansk evidensmodell för autonoma relationer
+nouse.daemon.evidence — Bayesiansk evidensmodell + aktiveringsackumulator
 =========================================================================
 Ger varje föreslagen relation:
   - evidence_score (0..1)  — kalibrerad Bayesiansk posterior
   - trust_tier             — hypotes | indikation | validerad
   - rationale              — spårbar motiveringskedja
 
-Modell:
+Bayesiansk modell:
   Prior P(true) baseras på strukturella signaler (har motivering, domänkorsning, etc.)
   Likelihood-uppdatering med bekräftande och motstridiiga relationer i grafen:
     P(true | k bekräftningar, m motstridigheter) ∝ prior × LR^k × (1-LR)^m
   LR = likelihood ratio (satt till 3.0 för bekräftning, 0.4 för motbevisning)
+
+Aktiveringsackumulator (P2 — evidenspromotion):
+  - activate_relation(): varje aktivering (query-träff, bisociation) → w+=0.02, u-=0.01
+  - confirm_relation(): ny källa bekräftar → ev+=0.05
+  - run_evidence_pass(): NightRun-granskning av kanter 0.35 < ev < 0.65
+  - measure_crystallization(): kristalliseringsgrad + evidenskvalitet
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+import logging
+from dataclasses import dataclass, field
 import math
 import re
 from typing import Any
+
+_log = logging.getLogger("nouse.evidence")
 
 
 _NUMERIC_CUE_RE = re.compile(r"\b\d+([.,]\d+)?(%|x| gånger| fold)?\b", re.IGNORECASE)
@@ -174,3 +183,257 @@ def format_why_with_evidence(original_why: str, assessment: EvidenceAssessment) 
     if body:
         return f"{prefix} {body}"
     return prefix
+
+
+# ── Aktiveringsackumulator (P2 — evidenspromotion) ────────────────────────────
+# Trösklar för kristallisering och evidenspass
+CRYSTAL_STRENGTH_FLOOR   = 0.55      # w > denna → kristalliserad
+EVIDENCE_PROMOTE_FLOOR   = 0.65      # ev > denna → stark/validerad
+EVIDENCE_DEMOTE_CEILING  = 0.35      # ev < denna → svag/hypotes
+CONFIRMATION_DELTA        = 0.05     # ev-ökning per bekräftelse
+ACTIVATION_W_DELTA        = 0.02     # styrkeökning per aktivering
+ACTIVATION_EV_DELTA       = 0.01     # ev-ökning per aktivering
+EVIDENCE_CAP              = 1.0
+STRENGTH_CAP              = 3.5
+
+
+@dataclass
+class AccumulationResult:
+    """Resultat av en ackumulerings- eller evidenspass-cykel."""
+    activated: int = 0          # antal aktiverade relationer
+    confirmed: int = 0          # antal bekräftade relationer
+    promoted: int = 0          # antal som gick upp i evidenskategori
+    demoted: int = 0           # antal som gick ner i evidenskategori
+
+
+@dataclass
+class CrystallizationMetrics:
+    """Mätvärden för grafkristallisering."""
+    total_relations: int = 0
+    crystallized: int = 0            # w > CRYSTAL_STRENGTH_FLOOR
+    crystallization_rate: float = 0.0   # crystallized / total
+    evidence_quality: float = 0.0      # medel-ev på kristalliserade
+    mean_evidence: float = 0.0          # medel-ev på alla relationer
+    tier_counts: dict[str, int] = field(default_factory=dict)
+
+
+def activate_relation(
+    field,
+    src: str,
+    tgt: str,
+    *,
+    rel_type: str | None = None,
+    source: str = "query",
+) -> bool:
+    """
+    Styrk en relation vid aktivering (query-träff, bisociation, etc.).
+
+    w_delta = +0.02 (Hebbisk förstärkning)
+    ev_delta = +0.01 (liten evidensboost)
+    """
+    try:
+        field.strengthen(src, tgt, delta=ACTIVATION_W_DELTA,
+                         rel_type=rel_type, ceiling=STRENGTH_CAP)
+        _bump_evidence(field, src, tgt, delta=ACTIVATION_EV_DELTA,
+                       rel_type=rel_type)
+        _log.debug("Aktiverade: %s→%s (källa=%s)", src, tgt, source)
+        return True
+    except Exception as e:
+        _log.warning("Aktiveringsfel för %s→%s: %s", src, tgt, e)
+        return False
+
+
+def confirm_relation(
+    field,
+    src: str,
+    tgt: str,
+    *,
+    rel_type: str | None = None,
+    confidence: float = 0.0,
+    source: str = "corroboration",
+) -> bool:
+    """
+    Bekräfta en relation från ny källa.
+
+    evidence_score += CONFIRMATION_DELTA (eller confidence om angivet)
+    Styrkan förstärks proportionellt.
+    """
+    delta = confidence if confidence > 0 else CONFIRMATION_DELTA
+    try:
+        _bump_evidence(field, src, tgt, delta=delta, rel_type=rel_type)
+        field.strengthen(src, tgt, delta=delta * 0.4,
+                         rel_type=rel_type, ceiling=STRENGTH_CAP)
+        _log.debug("Bekräftade: %s→%s (ev+%.3f, källa=%s)", src, tgt, delta, source)
+        return True
+    except Exception as e:
+        _log.warning("Bekräftelsefel för %s→%s: %s", src, tgt, e)
+        return False
+
+
+def run_evidence_pass(
+    field,
+    *,
+    max_items: int = 500,
+) -> AccumulationResult:
+    """
+    NightRun evidens-pass: granska kanter med 0.35 < ev < 0.65.
+
+    För varje sådan relation:
+      - ev >= 0.65: promovisera (ev += 0.05)
+      - ev < 0.35: demovera (ev -= 0.05)
+      - annars: liten boost (ev += 0.01)
+    """
+    result = AccumulationResult()
+
+    try:
+        rows = field._sql.execute(
+            "SELECT src, type, tgt, evidence_score FROM relation "
+            "WHERE evidence_score > ? AND evidence_score < ? "
+            "ORDER BY evidence_score DESC LIMIT ?",
+            (EVIDENCE_DEMOTE_CEILING, EVIDENCE_PROMOTE_FLOOR, max_items),
+        ).fetchall()
+    except Exception as e:
+        _log.warning("Evidence pass: kunde inte hämta kandidater: %s", e)
+        return result
+
+    for row in rows:
+        src = row["src"]
+        tgt = row["tgt"]
+        rel_type = row.get("type") or row.get("rel_type")
+        old_ev = float(row.get("evidence_score", 0.5) or 0.5)
+        old_tier = _tier(old_ev)
+
+        if old_ev >= EVIDENCE_PROMOTE_FLOOR:
+            new_ev = min(EVIDENCE_CAP, old_ev + CONFIRMATION_DELTA)
+        elif old_ev < EVIDENCE_DEMOTE_CEILING:
+            new_ev = max(0.0, old_ev - CONFIRMATION_DELTA)
+        else:
+            new_ev = min(EVIDENCE_CAP, old_ev + 0.01)
+
+        new_tier = _tier(new_ev)
+        _set_evidence(field, src, tgt, new_ev, rel_type=rel_type)
+
+        if new_tier != old_tier:
+            if new_tier > old_tier:
+                result.promoted += 1
+            else:
+                result.demoted += 1
+
+        result.activated += 1
+
+    _log.info(
+        "Evidence pass: granskade=%d promoted=%d demoted=%d",
+        result.activated, result.promoted, result.demoted,
+    )
+    return result
+
+
+def measure_crystallization(field) -> CrystallizationMetrics:
+    """
+    Beräkna kristalliseringsgrad och evidenskvalitet för grafen.
+
+    crystallization_rate = kanter med w > 0.55 / totalt antal kanter
+    evidence_quality = medel-evidence_score på kristalliserade kanter
+    """
+    metrics = CrystallizationMetrics()
+    tier_counts: dict[str, int] = {"hypotes": 0, "indikation": 0, "validerad": 0}
+
+    try:
+        rows = field.query_all_relations_with_metadata(
+            limit=50000, include_evidence=True,
+        )
+    except Exception as e:
+        _log.warning("Crystallization: kunde inte hämta relationer: %s", e)
+        metrics.tier_counts = tier_counts
+        return metrics
+
+    total = len(rows)
+    crystallized = 0
+    ev_sum_crystallized = 0.0
+    ev_sum_all = 0.0
+
+    for row in rows:
+        ev = float(row.get("evidence_score", 0.5) or 0.5)
+        strength = float(row.get("strength", 1.0) or 1.0)
+        ev_sum_all += ev
+
+        tier_key = _tier_label_accum(ev)
+        tier_counts[tier_key] = tier_counts.get(tier_key, 0) + 1
+
+        if strength > CRYSTAL_STRENGTH_FLOOR:
+            crystallized += 1
+            ev_sum_crystallized += ev
+
+    metrics.total_relations = total
+    metrics.crystallized = crystallized
+    metrics.crystallization_rate = round(crystallized / total, 4) if total > 0 else 0.0
+    metrics.evidence_quality = round(ev_sum_crystallized / crystallized, 4) if crystallized > 0 else 0.0
+    metrics.mean_evidence = round(ev_sum_all / total, 4) if total > 0 else 0.0
+    metrics.tier_counts = tier_counts
+
+    _log.info(
+        "Crystallization: %d/%d kanter kristalliserade (%.1f%%), "
+        "ev_quality=%.3f, tiers=%s",
+        crystallized, total, metrics.crystallization_rate * 100,
+        metrics.evidence_quality, tier_counts,
+    )
+    return metrics
+
+
+# ── Interna hjälpfunktioner ────────────────────────────────────────────────────
+
+def _bump_evidence(field, src, tgt, delta, *, rel_type=None):
+    """Öka evidence_score på en relation med delta, taket 1.0."""
+    try:
+        with field._lock:
+            cur = field._sql.execute(
+                "SELECT evidence_score FROM relation WHERE src = ? AND tgt = ?",
+                (src, tgt),
+            )
+            row = cur.fetchone()
+            if row is None:
+                return
+            old_ev = float(row["evidence_score"] or 0.5)
+            new_ev = min(EVIDENCE_CAP, old_ev + delta)
+            field._sql.execute(
+                "UPDATE relation SET evidence_score = ? WHERE src = ? AND tgt = ?",
+                (new_ev, src, tgt),
+            )
+            field._sql.commit()
+
+        # Synka NetworkX
+        if hasattr(field, "_G") and field._G.has_edge(src, tgt):
+            for key in field._G[src][tgt]:
+                if rel_type and field._G[src][tgt][key].get("type") != rel_type:
+                    continue
+                field._G[src][tgt][key]["evidence_score"] = new_ev
+    except Exception as e:
+        _log.debug("Evidence bump-fel för %s→%s: %s", src, tgt, e)
+
+
+def _set_evidence(field, src, tgt, evidence_score, *, rel_type=None):
+    """Sätt evidence_score direkt på en relation."""
+    try:
+        with field._lock:
+            field._sql.execute(
+                "UPDATE relation SET evidence_score = ? WHERE src = ? AND tgt = ?",
+                (evidence_score, src, tgt),
+            )
+            field._sql.commit()
+
+        if hasattr(field, "_G") and field._G.has_edge(src, tgt):
+            for key in field._G[src][tgt]:
+                if rel_type and field._G[src][tgt][key].get("type") != rel_type:
+                    continue
+                field._G[src][tgt][key]["evidence_score"] = evidence_score
+    except Exception as e:
+        _log.debug("Evidence set-fel för %s→%s: %s", src, tgt, e)
+
+
+def _tier_label_accum(ev: float) -> str:
+    """Evidenskategori som sträng (för ackumulatorns mätvärden)."""
+    if ev >= EVIDENCE_PROMOTE_FLOOR:
+        return "validerad"
+    if ev >= EVIDENCE_DEMOTE_CEILING:
+        return "indikation"
+    return "hypotes"

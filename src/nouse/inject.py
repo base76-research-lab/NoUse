@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Any
+from typing import Callable
 
 
 # ── Structured types ──────────────────────────────────────────────────────────
@@ -80,6 +80,134 @@ class QueryResult:
         return [a for a in self.axioms if a.flagged]
 
 
+@dataclass
+class ContradictionResult:
+    """
+    Result from brain.check_contradiction() — epistemic authority check.
+
+    Severity scale:
+        0.0      → no conflict
+        0.2–0.5  → flagged assumptions asserted as fact (warn)
+        0.5–0.8  → contradiction relation found in graph (flag)
+        0.8–1.0  → high-evidence direct contradiction (block)
+    """
+    text: str
+    conflicts: list[Axiom]           # axioms with rel_type contradicts/negates
+    flagged_assertions: list[Axiom]  # assumption_flag=True axioms in text's domain
+    severity: float                  # 0.0–1.0
+    recommendation: str              # "block" | "flag" | "warn" | "pass"
+    has_conflict: bool
+    checked_concepts: list[str]      # terms that were searched in the graph
+
+    def as_annotation(self) -> str:
+        """Inline annotation for LLM response — injected when has_conflict=True."""
+        if not self.has_conflict:
+            return ""
+        parts = []
+        if self.conflicts:
+            items = "; ".join(a.as_text() for a in self.conflicts[:2])
+            parts.append(f"[Grafen motsäger: {items}]")
+        if self.flagged_assertions:
+            items = "; ".join(f"{a.src}→{a.tgt}" for a in self.flagged_assertions[:2])
+            parts.append(f"[Grafen flaggar som osäkert antagande: {items}]")
+        return "\n".join(parts)
+
+
+# ── Contradiction helpers ─────────────────────────────────────────────────────
+
+_CONTRADICTION_REL_TYPES = frozenset({
+    "contradicts", "negates", "refutes", "opposes",
+    "motsäger", "förnekar", "motbevisar",
+})
+
+_STOPWORDS = frozenset({
+    # Swedish
+    "och", "eller", "att", "det", "som", "är", "inte", "men", "den",
+    "de", "vi", "du", "han", "hon", "ett", "var", "har", "kan", "ska",
+    "med", "för", "till", "från", "på", "av", "om", "när", "hur",
+    # English
+    "the", "and", "or", "is", "not", "but", "this", "that", "are",
+    "was", "with", "have", "has", "for", "from", "can", "will",
+    "would", "should", "could", "been", "they", "them", "their",
+    "also", "which", "when", "what", "where", "who",
+})
+
+
+def _extract_key_terms(text: str, max_terms: int = 12) -> list[str]:
+    """Extract meaningful terms from text for graph lookup."""
+    import re
+    words = re.findall(r"\b[a-zA-ZåäöÅÄÖ]{4,}\b", text.lower())
+    seen: set[str] = set()
+    result: list[str] = []
+    for w in words:
+        if w not in _STOPWORDS and w not in seen:
+            seen.add(w)
+            result.append(w)
+        if len(result) >= max_terms:
+            break
+    return result
+
+
+def _run_contradiction_check(
+    axiom_getter,
+    text: str,
+    threshold: float,
+) -> "ContradictionResult":
+    """
+    Core contradiction logic — shared between NouseBrain and NouseBrainHTTP.
+
+    axiom_getter: callable(concept: str, top_k: int) -> list[Axiom]
+    """
+    concepts = _extract_key_terms(text)
+    conflicts: list[Axiom] = []
+    flagged: list[Axiom] = []
+    seen_axiom_ids: set[str] = set()
+
+    for concept in concepts[:8]:
+        try:
+            axioms = axiom_getter(concept, 6)
+        except Exception:
+            continue
+        for a in axioms:
+            uid = f"{a.src}|{a.rel}|{a.tgt}"
+            if uid in seen_axiom_ids:
+                continue
+            seen_axiom_ids.add(uid)
+            if a.rel in _CONTRADICTION_REL_TYPES and a.evidence >= threshold:
+                conflicts.append(a)
+            elif a.flagged and a.evidence >= 0.40:
+                flagged.append(a)
+
+    # Severity — direct contradictions outweigh flagged assumptions
+    severity = 0.0
+    if conflicts:
+        severity = max(a.evidence for a in conflicts) * 0.9
+    elif flagged:
+        severity = max(a.evidence for a in flagged) * 0.35
+    severity = min(1.0, severity)
+
+    if severity > 0.8:
+        recommendation = "block"
+    elif severity > 0.5:
+        recommendation = "flag"
+    elif severity > 0.2:
+        recommendation = "warn"
+    else:
+        recommendation = "pass"
+
+    has_conflict = bool(conflicts) or (bool(flagged) and severity > 0.2)
+
+    return ContradictionResult(
+        text=text[:500],
+        conflicts=sorted(conflicts, key=lambda a: -a.evidence)[:5],
+        flagged_assertions=sorted(flagged, key=lambda a: -a.evidence)[:5],
+        severity=severity,
+        recommendation=recommendation,
+        has_conflict=has_conflict,
+        checked_concepts=concepts,
+    )
+
+
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _format_context_block(
@@ -90,7 +218,7 @@ def _format_context_block(
     if not concepts and not axioms:
         return ""
 
-    parts: list[str] = ["[Nouse memory]"]
+    parts: list[str] = ["[Nous memory]"]
 
     # Concept summaries
     for c in concepts[:5]:
@@ -390,7 +518,9 @@ class NouseBrain:
                     )
                 else:
                     # Fallback: use Ollama directly with configured model
-                    import os, httpx
+                    import os
+
+                    import httpx
                     _model = model or os.getenv("NOUSE_OLLAMA_MODEL", "deepseek-r1:1.5b")
                     ollama_base = os.getenv("OLLAMA_HOST", "http://localhost:11434")
                     payload = {
@@ -457,6 +587,61 @@ class NouseBrain:
     ) -> None:
         """Directly add a relation to the knowledge graph."""
         self._field.add_relation(src, rel_type, tgt, why=why, evidence_score=evidence_score)
+
+    # ── Contradiction API ─────────────────────────────────────────────────────
+
+    def check_contradiction(
+        self,
+        text: str,
+        *,
+        threshold: float = 0.75,
+    ) -> ContradictionResult:
+        """
+        Check if text/claim conflicts with knowledge in the graph.
+
+        Searches for:
+        - Axioms with rel_type contradicts/negates/refutes (direct contradiction)
+        - Axioms with assumption_flag=True being asserted as fact (epistemic risk)
+
+        Returns ContradictionResult with severity [0.0–1.0] and recommendation:
+        - "block" → severity > 0.8 (high-evidence direct contradiction)
+        - "flag"  → severity > 0.5 (contradiction found, annotate response)
+        - "warn"  → severity > 0.2 (flagged assumption asserted as fact)
+        - "pass"  → no significant conflict
+
+        Usage:
+            result = brain.check_contradiction(llm_answer)
+            if result.has_conflict:
+                print(result.as_annotation())
+        """
+        return _run_contradiction_check(
+            lambda concept, top_k: self.recall_axioms(concept, top_k=top_k),
+            text,
+            threshold,
+        )
+
+    def log_contradiction_event(self, contradiction: ContradictionResult, query: str = "") -> None:
+        """Write contradiction event to journal for tracking contradiction_catch_rate."""
+        import logging
+        from nouse.daemon.journal import write_contradiction_event
+        _log = logging.getLogger("nouse.contradiction")
+        _log.info(
+            "CONTRADICTION_EVENT query=%r severity=%.2f recommendation=%s "
+            "conflicts=%d flagged=%d concepts=%s",
+            query[:80] if query else "",
+            contradiction.severity,
+            contradiction.recommendation,
+            len(contradiction.conflicts),
+            len(contradiction.flagged_assertions),
+            ",".join(contradiction.checked_concepts[:5]),
+        )
+        write_contradiction_event(
+            severity=contradiction.severity,
+            recommendation=contradiction.recommendation,
+            conflicts=len(contradiction.conflicts),
+            flagged=len(contradiction.flagged_assertions),
+            query=query[:120] if query else "",
+        )
 
     # ── Session relay API ─────────────────────────────────────────────────────
 
@@ -542,7 +727,7 @@ class NouseBrain:
         Returns EscalationResult with .context_block ready for LLM injection.
 
         Usage:
-            result = await brain.escalate("vad är KuzuDB?")
+            result = await brain.escalate("vad är epistemisk grundning?")
             # result.escalated == True  → web was used
             # result.context_block      → inject into LLM prompt
         """
@@ -578,7 +763,7 @@ class NouseBrainHTTP:
     """
     HTTP client for NouseBrain — returned by attach() when the daemon is running.
 
-    Avoids opening KuzuDB directly (write-lock conflict) by routing all calls
+    Avoids opening local DB directly (write-lock conflict) by routing all calls
     through the daemon's REST API at localhost:8765.
 
     The interface is identical to NouseBrain so callers need no changes.
@@ -588,7 +773,21 @@ class NouseBrainHTTP:
         import httpx
         self._base = base_url.rstrip("/")
         headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
-        self._client = httpx.Client(timeout=30.0, headers=headers)
+        # Test doubles and some embedded clients may not accept a `headers=...`
+        # constructor argument. Fall back gracefully so attach(prefer_http=True)
+        # still returns HTTP mode when daemon health checks pass.
+        try:
+            self._client = httpx.Client(timeout=30.0, headers=headers)
+        except TypeError:
+            try:
+                self._client = httpx.Client(timeout=30.0)
+            except TypeError:
+                self._client = httpx.Client()
+            if headers and hasattr(self._client, "headers"):
+                try:
+                    self._client.headers.update(headers)
+                except Exception:
+                    pass
 
     # ── Primary query API ─────────────────────────────────────────────────────
 
@@ -647,6 +846,36 @@ class NouseBrainHTTP:
 
     # ── Write API ─────────────────────────────────────────────────────────────
 
+    def check_contradiction(
+        self,
+        text: str,
+        *,
+        threshold: float = 0.75,
+    ) -> ContradictionResult:
+        """Contradiction check via HTTP mode — uses local logic on queried axioms."""
+        return _run_contradiction_check(
+            lambda concept, top_k: self.recall_axioms(concept, top_k=top_k),
+            text,
+            threshold,
+        )
+
+    def log_contradiction_event(self, contradiction: ContradictionResult, query: str = "") -> None:
+        import logging
+        from nouse.daemon.journal import write_contradiction_event
+        logging.getLogger("nouse.contradiction").info(
+            "CONTRADICTION_EVENT query=%r severity=%.2f recommendation=%s",
+            query[:80] if query else "",
+            contradiction.severity,
+            contradiction.recommendation,
+        )
+        write_contradiction_event(
+            severity=contradiction.severity,
+            recommendation=contradiction.recommendation,
+            conflicts=len(contradiction.conflicts),
+            flagged=len(contradiction.flagged_assertions),
+            query=query[:120] if query else "",
+        )
+
     def learn(self, prompt: str, response: str, source: str = "conversation") -> None:
         try:
             self._client.post(
@@ -703,10 +932,10 @@ def attach(
 ) -> "NouseBrain | NouseBrainHTTP":
     """
     One-line entry point.  Auto-detects a running daemon and connects via HTTP
-    so the caller never needs to worry about KuzuDB write-lock conflicts.
+    so the caller never needs to worry about DB write-lock conflicts.
 
         brain = nouse.attach()               # auto: HTTP if daemon running
-        brain = nouse.attach(prefer_http=False)  # always direct KuzuDB
+        brain = nouse.attach(prefer_http=False)  # always direct local DB
         brain = nouse.attach(read_only=True) # eval / direct read
         brain = nouse.attach(api_key="nsk-xxx", base_url="https://api.nouse.ai")  # SaaS cloud
     """

@@ -13,9 +13,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from nouse.config.paths import path_from_env
 
-JOURNAL_DIR = Path.home() / ".local" / "share" / "nouse" / "journal"
-DEDUP_STATE_FILE = JOURNAL_DIR / ".trace_dedup_state.json"
+
+def journal_dir() -> Path:
+    return path_from_env("NOUSE_JOURNAL_DIR", "journal")
+
+
+def _dedup_state_file() -> Path:
+    return journal_dir() / ".trace_dedup_state.json"
 
 
 def _journal_dedup_window_sec() -> float:
@@ -27,21 +33,24 @@ def _journal_dedup_window_sec() -> float:
 
 def _today_file(now: datetime | None = None) -> Path:
     dt = now or datetime.now(timezone.utc)
-    JOURNAL_DIR.mkdir(parents=True, exist_ok=True)
-    return JOURNAL_DIR / f"{dt.strftime('%Y-%m-%d')}.md"
+    base = journal_dir()
+    base.mkdir(parents=True, exist_ok=True)
+    return base / f"{dt.strftime('%Y-%m-%d')}.md"
 
 
 def _today_research_file(now: datetime | None = None) -> Path:
     dt = now or datetime.now(timezone.utc)
-    JOURNAL_DIR.mkdir(parents=True, exist_ok=True)
-    return JOURNAL_DIR / f"{dt.strftime('%Y-%m-%d')}.events.jsonl"
+    base = journal_dir()
+    base.mkdir(parents=True, exist_ok=True)
+    return base / f"{dt.strftime('%Y-%m-%d')}.events.jsonl"
 
 
 def _load_dedup_state() -> dict[str, float]:
-    if not DEDUP_STATE_FILE.exists():
+    path = _dedup_state_file()
+    if not path.exists():
         return {}
     try:
-        payload = json.loads(DEDUP_STATE_FILE.read_text(encoding="utf-8"))
+        payload = json.loads(path.read_text(encoding="utf-8"))
         if isinstance(payload, dict):
             out: dict[str, float] = {}
             for k, v in payload.items():
@@ -57,8 +66,8 @@ def _load_dedup_state() -> dict[str, float]:
 
 def _save_dedup_state(state: dict[str, float]) -> None:
     try:
-        JOURNAL_DIR.mkdir(parents=True, exist_ok=True)
-        DEDUP_STATE_FILE.write_text(
+        journal_dir().mkdir(parents=True, exist_ok=True)
+        _dedup_state_file().write_text(
             json.dumps(state, ensure_ascii=False, sort_keys=True),
             encoding="utf-8",
         )
@@ -72,6 +81,65 @@ def _write_research_event(now: datetime, event: dict[str, Any]) -> None:
     row.setdefault("ts", now.isoformat())
     with path.open("a", encoding="utf-8") as f:
         f.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
+
+
+def write_contradiction_event(
+    *,
+    severity: float,
+    recommendation: str,
+    conflicts: int = 0,
+    flagged: int = 0,
+    query: str = "",
+) -> None:
+    """Write a contradiction event to the research event log."""
+    now = datetime.now(timezone.utc)
+    _write_research_event(now, {
+        "event": "contradiction",
+        "severity": float(severity),
+        "recommendation": recommendation,
+        "conflicts": int(conflicts),
+        "flagged": int(flagged),
+        "query": query[:120] if query else "",
+    })
+
+
+def count_contradiction_events(since_ts: str) -> dict[str, Any]:
+    """Count contradiction events in journal since the given ISO timestamp.
+
+    Returns dict with: caught, severity_mean, acted_on (block+flag).
+    """
+    caught = 0
+    total_sev = 0.0
+    acted_on = 0
+    journal_base = journal_dir()
+
+    for events_file in sorted(journal_base.glob("*.events.jsonl")):
+        try:
+            for line in events_file.read_text(encoding="utf-8").splitlines():
+                if not line.strip():
+                    continue
+                try:
+                    row = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if row.get("event") != "contradiction":
+                    continue
+                ts = row.get("ts", "")
+                if ts < since_ts:
+                    continue
+                caught += 1
+                total_sev += float(row.get("severity", 0.0))
+                rec = row.get("recommendation", "")
+                if rec in ("block", "flag"):
+                    acted_on += 1
+        except Exception:
+            continue
+
+    return {
+        "caught": caught,
+        "severity_mean": round(total_sev / caught, 3) if caught > 0 else 0.0,
+        "acted_on": acted_on,
+    }
 
 
 def _as_float(value: Any, default: float = 0.0) -> float:
@@ -293,10 +361,140 @@ def write_cycle_trace(
 
 
 def latest_journal_file() -> Path | None:
-    if not JOURNAL_DIR.exists():
+    base = journal_dir()
+    if not base.exists():
         return None
-    files = sorted(JOURNAL_DIR.glob("*.md"))
+    files = sorted(base.glob("*.md"))
     return files[-1] if files else None
+
+
+def latest_research_file() -> Path | None:
+    base = journal_dir()
+    if not base.exists():
+        return None
+    files = sorted(base.glob("*.events.jsonl"))
+    return files[-1] if files else None
+
+
+def load_research_events(
+    *,
+    path: Path | None = None,
+    limit: int = 200,
+    event: str = "",
+) -> tuple[Path | None, list[dict[str, Any]]]:
+    target = path or latest_research_file()
+    if target is None or not target.exists():
+        return target, []
+
+    safe_limit = max(1, min(int(limit), 5000))
+    wanted_event = str(event or "").strip().lower()
+    rows: list[dict[str, Any]] = []
+    try:
+        for raw in target.read_text(encoding="utf-8", errors="ignore").splitlines():
+            line = str(raw or "").strip()
+            if not line:
+                continue
+            try:
+                payload = json.loads(line)
+            except Exception:
+                continue
+            if not isinstance(payload, dict):
+                continue
+            if wanted_event and str(payload.get("event") or "").strip().lower() != wanted_event:
+                continue
+            rows.append(payload)
+    except Exception:
+        return target, []
+
+    if len(rows) > safe_limit:
+        rows = rows[-safe_limit:]
+    return target, rows
+
+
+def summarize_research_events(events: list[dict[str, Any]]) -> dict[str, Any]:
+    stage_counts: dict[str, int] = {}
+    event_counts: dict[str, int] = {}
+    evidence_avg_samples: list[float] = []
+    evidence_max_samples: list[float] = []
+    quality_samples: list[float] = []
+    tier_totals = {"hypotes": 0, "indikation": 0, "validerad": 0}
+
+    def _as_number(value: Any) -> float | None:
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return None
+
+    for row in events:
+        event = str(row.get("event") or "unknown").strip() or "unknown"
+        event_counts[event] = event_counts.get(event, 0) + 1
+        if event != "cycle_trace":
+            continue
+        stage = str(row.get("stage") or "unknown_stage").strip() or "unknown_stage"
+        stage_counts[stage] = stage_counts.get(stage, 0) + 1
+
+        details = row.get("details") if isinstance(row.get("details"), dict) else {}
+        avg_ev = _as_number(details.get("avg_evidence"))
+        if avg_ev is None:
+            avg_ev = _as_number(details.get("evidence_score"))
+        if avg_ev is not None:
+            evidence_avg_samples.append(avg_ev)
+        max_ev = _as_number(details.get("max_evidence"))
+        if max_ev is not None:
+            evidence_max_samples.append(max_ev)
+        quality = _as_number(details.get("quality"))
+        if quality is None:
+            quality = _as_number(details.get("quality_avg"))
+        if quality is not None:
+            quality_samples.append(quality)
+
+        tier_counts = details.get("tier_counts") if isinstance(details.get("tier_counts"), dict) else {}
+        for key in ("hypotes", "indikation", "validerad"):
+            try:
+                tier_totals[key] += int(tier_counts.get(key, 0) or 0)
+            except Exception:
+                continue
+
+    def _mean(values: list[float]) -> float:
+        return float(sum(values) / len(values)) if values else 0.0
+
+    stage_top = sorted(
+        (
+            {"stage": stage, "count": count}
+            for stage, count in stage_counts.items()
+        ),
+        key=lambda item: (item["count"], item["stage"]),
+        reverse=True,
+    )
+    event_top = sorted(
+        (
+            {"event": event, "count": count}
+            for event, count in event_counts.items()
+        ),
+        key=lambda item: (item["count"], item["event"]),
+        reverse=True,
+    )
+
+    return {
+        "events_total": len(events),
+        "event_counts": event_counts,
+        "event_top": event_top,
+        "cycle_trace_total": sum(stage_counts.values()),
+        "stage_counts": stage_counts,
+        "stage_top": stage_top,
+        "evidence": {
+            "avg_evidence_samples": len(evidence_avg_samples),
+            "avg_evidence_mean": round(_mean(evidence_avg_samples), 4),
+            "avg_evidence_min": round(min(evidence_avg_samples), 4) if evidence_avg_samples else 0.0,
+            "avg_evidence_max": round(max(evidence_avg_samples), 4) if evidence_avg_samples else 0.0,
+            "max_evidence_samples": len(evidence_max_samples),
+            "max_evidence_peak": round(max(evidence_max_samples), 4) if evidence_max_samples else 0.0,
+            "quality_samples": len(quality_samples),
+            "quality_mean": round(_mean(quality_samples), 4),
+            "quality_max": round(max(quality_samples), 4) if quality_samples else 0.0,
+            "tier_totals": tier_totals,
+        },
+    }
 
 
 def _build_open_questions(tasks: list[dict[str, Any]]) -> list[str]:
