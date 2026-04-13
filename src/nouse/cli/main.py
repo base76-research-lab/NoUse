@@ -5220,6 +5220,25 @@ def consolidation_run_cmd(
     )
     console.print_json(data=result)
 
+    # Kör goal cycle efter konsolidering
+    try:
+        from nouse.daemon.goal_registry import active_goals, expire_stale_goals, goal_metrics
+        from nouse.daemon.goal_generator import generate_goals
+        cycle = result.get("processed_episodes", 0)
+
+        expired = expire_stale_goals(cycle)
+        new_goals = generate_goals(field, cycle, max_total=10)
+        all_active = active_goals()
+        if hasattr(field, 'apply_goal_weights'):
+            field.apply_goal_weights(all_active)
+
+        gm = goal_metrics()
+        console.print(f"\n[bold cyan]Mål:[/] aktiva={gm['goals_active']} "
+                      f"nya={len(new_goals)} utgångna={expired} "
+                      f"tillfredsställelse={gm['goal_satisfaction_rate']:.0%}")
+    except Exception as e:
+        console.print(f"[dim]Mål-cykel hoppades över: {e}[/]")
+
 
 @app.command(name="mcp")
 def mcp_cmd(
