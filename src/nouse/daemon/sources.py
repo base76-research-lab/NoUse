@@ -115,6 +115,7 @@ class FileSource:
         self._state = _load_state()
 
     def read_new(self) -> Iterator[tuple[str, dict]]:
+        _batch_count = 0
         for path in self.root.rglob("*"):
             if is_path_excluded(path, excluded_dir_names=self.excluded_dir_names):
                 continue
@@ -136,9 +137,13 @@ class FileSource:
                     "domain_hint": _domain_from_path(path),
                 }
                 self._state[key] = mtime
-                _save_state(self._state)
+                _batch_count += 1
+                if _batch_count % 50 == 0:
+                    _save_state(self._state)
             except Exception:
                 continue
+        if _batch_count % 50 != 0:
+            _save_state(self._state)
 
 
 class ConversationSource:
@@ -149,6 +154,7 @@ class ConversationSource:
         self._state = _load_state()
 
     def read_new(self) -> Iterator[tuple[str, dict]]:
+        _batch_count = 0
         for path in self.root.rglob("*.md"):
             if not path.is_file():
                 continue
@@ -166,9 +172,13 @@ class ConversationSource:
                     "domain_hint": "AI-forskning",
                 }
                 self._state[key] = mtime
-                _save_state(self._state)
+                _batch_count += 1
+                if _batch_count % 50 == 0:
+                    _save_state(self._state)
             except Exception:
                 continue
+        if _batch_count % 50 != 0:
+            _save_state(self._state)
 
 
 class BashHistorySource:

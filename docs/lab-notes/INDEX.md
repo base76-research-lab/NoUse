@@ -15,6 +15,9 @@ Dated research notes, strategic documents, and external communications for the N
 
 | Date | Note | Format |
 |------|------|--------|
+| 2026-04-14 | [Daemon Cognitive Cycle Fix](2026-04-14-daemon-cognitive-cycle-fix.md) | md |
+| 2026-04-14 | [Language Models Are the Larynx, Not the Mind](2026-04-14-language-models-are-the-larynx-not-the-mind.md) | md + [html](2026-04-14-language-models-are-the-larynx-not-the-mind.html) |
+| 2026-04-14 | [Larynx Problem — Substack Positioning Draft](2026-04-14-larynx-problem-substack-positioning.md) | md + [html](2026-04-14-larynx-problem-substack-positioning.html) + [pdf](2026-04-14-larynx-problem-substack-positioning.pdf) |
 | 2026-04-13 | [Intrinsic Drive Engine](2026-04-13-intrinsic-drive-engine.md) | md |
 | 2026-04-13 | [P1-P5 Roadmap Implementation](2026-04-13-p1-p5-roadmap.md) | md |
 | 2026-04-13 | [A Note to Google DeepMind](2026-04-13-deepmind-note.md) | md + [pdf](2026-04-13-deepmind-note.pdf) |
@@ -36,6 +39,7 @@ Dated research notes, strategic documents, and external communications for the N
 ## Adding a new note
 
 1. Create `YYYY-MM-DD-slug.md` in this directory
-2. If external-facing, generate PDF: `pandoc YYYY-MM-DD-slug.md -o YYYY-MM-DD-slug.pdf --pdf-engine=xelatex -V mainfont="DejaVu Sans" -V monofont="DejaVu Sans Mono"`
-3. Add entry to the table above
-4. Update wiki index (see CONTRIBUTING.md)
+2. If external-facing for Substack, render HTML preview: `python scripts/render_substack_html.py docs/lab-notes/YYYY-MM-DD-slug.md` (see `docs/SUBSTACK_WORKFLOW.md`)
+3. If external-facing and print-style matters, generate PDF: `pandoc YYYY-MM-DD-slug.md -o YYYY-MM-DD-slug.pdf --pdf-engine=xelatex -V mainfont="DejaVu Sans" -V monofont="DejaVu Sans Mono"`
+4. Add entry to the table above
+5. Update wiki index (see CONTRIBUTING.md)

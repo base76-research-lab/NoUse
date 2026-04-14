@@ -143,10 +143,22 @@ SOURCE_PROGRESS_TRACE = (
 )
 try:
     SOURCE_PROGRESS_DOC_EVERY = max(
-        1, int(os.getenv("NOUSE_SOURCE_PROGRESS_DOC_EVERY", "5"))
+        1, int(os.getenv("NOUSE_SOURCE_PROGRESS_DOC_EVERY", "20"))
     )
 except ValueError:
-    SOURCE_PROGRESS_DOC_EVERY = 5
+    SOURCE_PROGRESS_DOC_EVERY = 20
+try:
+    MAX_SOURCE_DOCS_PER_CYCLE = max(
+        1, int(os.getenv("NOUSE_MAX_SOURCE_DOCS_PER_CYCLE", "50"))
+    )
+except ValueError:
+    MAX_SOURCE_DOCS_PER_CYCLE = 50
+try:
+    SOURCE_TIMEOUT_SEC = max(
+        60, int(os.getenv("NOUSE_SOURCE_TIMEOUT_SEC", "600"))
+    )
+except ValueError:
+    SOURCE_TIMEOUT_SEC = 600
 try:
     HITL_PRIORITY_THRESHOLD = max(
         0.0, min(1.0, float(os.getenv("NOUSE_HITL_PRIORITY_THRESHOLD", "0.98")))
@@ -641,6 +653,7 @@ async def brain_loop(
             )
 
             # ── 1-3: Läs → Extrahera → Uppdatera graf ─────────────────────────
+            _source_cycle_start = time.monotonic()
             for source in sources:
                 if stop_event and stop_event.is_set():
                     break
@@ -655,9 +668,24 @@ async def brain_loop(
                 fallbacks_before = source_fallbacks
                 errors_before = source_errors
                 source_docs_local = 0
+                source_start = time.monotonic()
                 try:
                     for text, meta in source.read_new():
                         if stop_event and stop_event.is_set():
+                            break
+                        # ── Per-cycle caps: doc limit + per-source timeout ──
+                        if source_docs_processed >= MAX_SOURCE_DOCS_PER_CYCLE:
+                            log.info(
+                                "  Source doc cap reached (%d/%d), deferring remaining docs",
+                                source_docs_processed, MAX_SOURCE_DOCS_PER_CYCLE,
+                            )
+                            break
+                        if time.monotonic() - source_start > SOURCE_TIMEOUT_SEC:
+                            log.warning(
+                                "  Source %s timed out after %ds",
+                                source_name, SOURCE_TIMEOUT_SEC,
+                            )
+                            break
                             break
                         source_docs_processed += 1
                         source_docs_local += 1

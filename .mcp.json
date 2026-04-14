@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "nous-sqlite": {
+      "command": "python3",
+      "args": ["-m", "mcp_server_sqlite.server", "/home/bjorn/.local/share/nouse/personal/field.sqlite"],
+      "description": "Direct SQL access to the Nous knowledge graph database. Use for deep analysis, trend detection, and raw queries beyond the Nous API."
+    },
+    "arxiv": {
+      "command": "arxiv-mcp",
+      "args": [],
+      "description": "Search and fetch papers from arXiv. Use for literature review, finding related work, and ingesting research into Nous."
+    },
+    "nouse-mcp": {
+      "command": "nouse-mcp",
+      "args": [],
+      "description": "Nous cognitive substrate — query, learn, and add knowledge to the Nous knowledge graph."
+    }
+  }
+}
