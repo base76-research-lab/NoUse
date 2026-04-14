@@ -170,7 +170,7 @@ def test_status_command_no_db_no_daemon(tmp_path):
                 result = runner.invoke(app, ["status"])
 
     assert result.exit_code == 0
-    assert "Nouse v" in result.output
+    assert "Nous v" in result.output
     assert "Graph:" in result.output
     assert "Memory:" in result.output
     assert "Daemon:        not running" in result.output

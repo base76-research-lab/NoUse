@@ -38,10 +38,15 @@ from __future__ import annotations
 
 import asyncio
 import collections
+import json
 import logging
 import os
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
+
+from nouse.llm.model_router import order_models_for_workload, record_model_result
+from nouse.llm.policy import resolve_model_candidates
+from nouse.ollama_client.client import AsyncOllama
 
 if TYPE_CHECKING:
     from nouse.field.surface import FieldSurface
@@ -57,6 +62,47 @@ BRIDGE_WRITE_CHAIN      = bool(int(os.getenv("NOUSE_BRIDGE_WRITE_CHAIN", "1")))
 BRIDGE_SAMPLE_PER_DOMAIN = int(os.getenv("NOUSE_BRIDGE_SAMPLE_PER_DOMAIN", "5"))
 BRIDGE_LLM_TIMEOUT      = float(os.getenv("NOUSE_BRIDGE_LLM_TIMEOUT", "60.0"))
 BRIDGE_MIN_EVIDENCE     = float(os.getenv("NOUSE_BRIDGE_MIN_EVIDENCE", "0.20"))
+BISOC_MODEL = (
+    os.getenv("NOUSE_BISOC_MODEL")
+    or os.getenv("NOUSE_BRIDGE_MODEL")
+    or os.getenv("NOUSE_OLLAMA_MODEL")
+    or os.getenv("NOUSE_TEACHER_MODEL")
+    or "deepseek-r1:1.5b"
+).strip()
+BISOC_FALLBACK_MODEL = (os.getenv("NOUSE_BISOC_FALLBACK_MODEL") or "").strip()
+BISOC_CANDIDATES_RAW = (os.getenv("NOUSE_MODEL_CANDIDATES_BISOC") or "").strip()
+GLOBAL_CANDIDATES_RAW = (os.getenv("NOUSE_MODEL_CANDIDATES") or "").strip()
+
+
+def _csv_candidates(raw: str) -> list[str]:
+    return [item.strip() for item in str(raw or "").split(",") if item.strip()]
+
+
+def _dedup_models(models: list[str]) -> list[str]:
+    out: list[str] = []
+    seen: set[str] = set()
+    for model in models:
+        text = str(model or "").strip()
+        if not text or text in seen:
+            continue
+        seen.add(text)
+        out.append(text)
+    return out
+
+
+def _bridge_model_candidates() -> list[str]:
+    defaults: list[str] = [BISOC_MODEL]
+    if BISOC_FALLBACK_MODEL:
+        defaults.append(BISOC_FALLBACK_MODEL)
+    defaults.extend(_csv_candidates(BISOC_CANDIDATES_RAW))
+    defaults.extend(_csv_candidates(GLOBAL_CANDIDATES_RAW))
+    defaults = _dedup_models(defaults)
+
+    # Primär workload för bisociationer.
+    merged = list(resolve_model_candidates("bisoc", defaults))
+    # Bakåtkompatibilitet: återanvänd ev. äldre teacher-policy om den finns.
+    merged.extend(resolve_model_candidates("teacher", []))
+    return _dedup_models(merged)
 
 
 # ── Datastrukturer ────────────────────────────────────────────────────────────
@@ -346,27 +392,7 @@ async def _discover_bridge_via_llm(
     sig_a: AxiomSignature,
     sig_b: AxiomSignature,
 ) -> dict:
-    """Ber frontier LLM hitta kopplingkedjan baserat på axiom-signaturer."""
-    import httpx
-    import json as _json
-
-    base_url = os.getenv("NOUSE_TEACHER_BASE_URL", "https://models.inference.ai.azure.com")
-    token = os.getenv("GITHUB_TOKEN", "")
-    # Hämta teacher-modell från model_policy.json eller env-fallback
-    model = os.getenv("NOUSE_TEACHER_MODEL", "")
-    if not model:
-        try:
-            import json as _json2
-            from pathlib import Path
-            _policy_path = Path.home() / ".local" / "share" / "nouse" / "model_policy.json"
-            _policy = _json2.loads(_policy_path.read_text())
-            model = (_policy.get("workloads", {}).get("teacher", {})
-                     .get("candidates", [""])[0]) or ""
-        except Exception:
-            pass
-    if not model:
-        model = "gpt-4o"
-
+    """Hitta bryggkedja med dedikerad bisoc-workload (med legacy fallback)."""
     shared = list(sig_a.structural_pattern & sig_b.structural_pattern)
 
     prompt = _BRIDGE_USER.format(
@@ -385,19 +411,98 @@ async def _discover_bridge_via_llm(
         shared_patterns=", ".join(shared[:8]) or "direkta mönster saknas — sök djupare",
     )
 
-    # Ollama cloud-modeller stödjer inte response_format via /v1
-    _is_ollama = "localhost:11434" in base_url or "127.0.0.1:11434" in base_url
-    _payload: dict = {
+    models = order_models_for_workload("bisoc", _bridge_model_candidates())
+    for model in models:
+        try:
+            client = AsyncOllama(timeout_sec=BRIDGE_LLM_TIMEOUT)
+            resp = await client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": _BRIDGE_SYSTEM},
+                    {"role": "user", "content": prompt},
+                ],
+                options={"temperature": 0.4},
+                b76_meta={
+                    "workload": "bisoc",
+                    "session_id": "autonomous",
+                },
+            )
+            parsed = _parse_bridge_response(resp.message.content or "")
+            confidence = _safe_confidence(parsed)
+            chain = parsed.get("chain")
+            success = isinstance(chain, list) and bool(chain) and confidence >= 0.3
+            record_model_result(
+                "bisoc",
+                model,
+                success=success,
+                timeout=False,
+                quality=confidence,
+            )
+            if success:
+                return parsed
+        except Exception as exc:
+            timed_out = "timeout" in str(exc).lower()
+            record_model_result("bisoc", model, success=False, timeout=timed_out)
+            _log.warning("LLM bridge discovery misslyckades (model=%s): %s", model, exc)
+
+    # Bakåtkompatibilitet: NOUSE_TEACHER_* + GITHUB_TOKEN.
+    return await _discover_bridge_via_legacy_teacher(prompt)
+
+
+def _safe_confidence(payload: dict) -> float:
+    try:
+        return max(0.0, min(1.0, float(payload.get("confidence", 0.0) or 0.0)))
+    except Exception:
+        return 0.0
+
+
+def _parse_bridge_response(raw: str) -> dict:
+    import re
+
+    text = str(raw or "").strip()
+    if not text:
+        return {"chain": [], "confidence": 0.0}
+
+    if not text.startswith("{"):
+        match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
+        if match:
+            text = match.group(1)
+        else:
+            match = re.search(r"\{.*\}", text, re.DOTALL)
+            if match:
+                text = match.group(0)
+
+    if not text:
+        return {"chain": [], "confidence": 0.0}
+    try:
+        payload = json.loads(text)
+    except Exception:
+        return {"chain": [], "confidence": 0.0}
+    if isinstance(payload, dict):
+        return payload
+    return {"chain": [], "confidence": 0.0}
+
+
+async def _discover_bridge_via_legacy_teacher(prompt: str) -> dict:
+    import httpx
+
+    base_url = os.getenv("NOUSE_TEACHER_BASE_URL", "https://models.inference.ai.azure.com")
+    token = os.getenv("GITHUB_TOKEN", "")
+    model = (os.getenv("NOUSE_TEACHER_MODEL") or "").strip() or "gpt-4o"
+    if not token:
+        return {"chain": [], "confidence": 0.0}
+
+    payload = {
         "model": model,
         "messages": [
             {"role": "system", "content": _BRIDGE_SYSTEM},
-            {"role": "user",   "content": prompt},
+            {"role": "user", "content": prompt},
         ],
         "temperature": 0.4,
         "max_tokens": 1500,
     }
-    if not _is_ollama:
-        _payload["response_format"] = {"type": "json_object"}
+    if "localhost:11434" not in base_url and "127.0.0.1:11434" not in base_url:
+        payload["response_format"] = {"type": "json_object"}
 
     try:
         async with httpx.AsyncClient(timeout=BRIDGE_LLM_TIMEOUT) as client:
@@ -407,28 +512,13 @@ async def _discover_bridge_via_llm(
                     "Authorization": f"Bearer {token}",
                     "Content-Type": "application/json",
                 },
-                json=_payload,
+                json=payload,
             )
             resp.raise_for_status()
-            raw = resp.json()["choices"][0]["message"]["content"] or ""
-            raw = raw.strip()
-            # Extrahera JSON om modellen wrappat det i markdown code blocks
-            if not raw.startswith("{"):
-                import re as _re
-                m = _re.search(r"```(?:json)?\s*(\{.*?\})\s*```", raw, _re.DOTALL)
-                if m:
-                    raw = m.group(1)
-                else:
-                    # Försök hitta första { ... } block
-                    m2 = _re.search(r"\{.*\}", raw, _re.DOTALL)
-                    if m2:
-                        raw = m2.group(0)
-            if not raw:
-                _log.debug("LLM bridge: tomt svar från modellen")
-                return {"chain": [], "confidence": 0.0}
-            return _json.loads(raw)
-    except Exception as e:
-        _log.warning("LLM bridge discovery misslyckades: %s", e)
+            raw = ((resp.json().get("choices") or [{}])[0].get("message") or {}).get("content") or ""
+            return _parse_bridge_response(raw)
+    except Exception as exc:
+        _log.warning("LLM bridge legacy fallback misslyckades: %s", exc)
         return {"chain": [], "confidence": 0.0}
 
 

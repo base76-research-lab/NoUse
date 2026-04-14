@@ -5,6 +5,7 @@ nouse relay — cross-model session handoff CLI.
   nouse relay list
   nouse relay show <session_id>
   nouse relay continue <session_id>
+  nouse relay handoff <session_id> --model minimax-m2.7:cloud
   nouse relay update <session_id> --decision "use brain.add()" --why "learn() broken"
   nouse relay close <session_id>
 """
@@ -21,17 +22,30 @@ def relay_open_cmd(
     goal: str = typer.Argument(..., help="What this session is trying to accomplish"),
     model: str = typer.Option("", "--model", "-m", help="Model starting the session"),
     session_id: Optional[str] = typer.Option(None, "--id", help="Custom session ID"),
+    linked_session_id: Optional[str] = typer.Option(
+        None,
+        "--session-id",
+        help="Link relay to an existing runtime session ID",
+    ),
 ) -> None:
     """Start a new relay session."""
     from nouse.session.relay import relay_open
     import os
 
     _model = model or os.getenv("NOUSE_RELAY_MODEL", "unknown")
-    relay = relay_open(goal, model=_model, session_id=session_id or None)
+    relay = relay_open(
+        goal,
+        model=_model,
+        session_id=session_id or None,
+        linked_session_id=linked_session_id or None,
+    )
     typer.echo(f"Relay opened: {relay['session_id']}")
     typer.echo(f"Goal: {relay['goal']}")
+    if relay.get("linked_session_id"):
+        typer.echo(f"Linked runtime session: {relay['linked_session_id']}")
     typer.echo(f"\nTo continue from another model:")
     typer.echo(f"  nouse relay continue {relay['session_id']}")
+    typer.echo(f"  nouse relay handoff {relay['session_id']} --model minimax-m2.7:cloud")
 
 
 @app.command(name="list")
@@ -81,7 +95,7 @@ def relay_continue_cmd(
     session_id: str = typer.Argument(..., help="Session ID to continue"),
     model: str = typer.Option("", "--model", "-m", help="Model picking up the session"),
 ) -> None:
-    """Print context block for the next model to pick up this session."""
+    """Print a compact resume block for the next model."""
     from nouse.session.relay import relay_continue
     import os
 
@@ -101,6 +115,11 @@ def relay_update_cmd(
     node: Optional[str] = typer.Option(None, "--node", "-n", help="NoUse node used"),
     summary: Optional[str] = typer.Option(None, "--summary", "-s", help="Current state summary"),
     model: str = typer.Option("", "--model", "-m"),
+    linked_session_id: Optional[str] = typer.Option(
+        None,
+        "--session-id",
+        help="Link relay to an existing runtime session ID",
+    ),
 ) -> None:
     """Update a relay session with new work context."""
     from nouse.session.relay import relay_update
@@ -117,6 +136,7 @@ def relay_update_cmd(
         node_used=node,
         summary=summary,
         model=_model,
+        linked_session_id=linked_session_id,
     )
     if not result:
         typer.echo(f"Session '{session_id}' not found.", err=True)
@@ -126,6 +146,49 @@ def relay_update_cmd(
         typer.echo(f"  Decision: {decision}")
     if summary:
         typer.echo(f"  Summary: {summary}")
+    if linked_session_id:
+        typer.echo(f"  Linked runtime session: {linked_session_id}")
+
+
+@app.command(name="handoff")
+def relay_handoff_cmd(
+    session_id: str = typer.Argument(..., help="Session ID to hand off"),
+    model: str = typer.Option("", "--model", "-m", help="Model taking over the work"),
+    summary: Optional[str] = typer.Option(None, "--summary", "-s", help="Current state summary"),
+    decision: Optional[str] = typer.Option(None, "--decision", "-d", help="Latest decision"),
+    why: str = typer.Option("", "--why", "-w", help="Why this decision"),
+    confidence: float = typer.Option(0.8, "--confidence", "-c"),
+    question: Optional[str] = typer.Option(None, "--question", "-q", help="Open question"),
+    file: Optional[str] = typer.Option(None, "--file", "-f", help="File touched"),
+    node: Optional[str] = typer.Option(None, "--node", "-n", help="Nous node used"),
+    linked_session_id: Optional[str] = typer.Option(
+        None,
+        "--session-id",
+        help="Link relay to an existing runtime session ID",
+    ),
+) -> None:
+    """Update relay, mark it handoff-ready, and print a resume block."""
+    from nouse.session.relay import relay_continue, relay_update
+    import os
+
+    _model = model or os.getenv("NOUSE_RELAY_MODEL", "unknown")
+    result = relay_update(
+        session_id,
+        decision=decision,
+        decision_why=why,
+        decision_confidence=confidence,
+        open_question=question,
+        file_touched=file,
+        node_used=node,
+        summary=summary,
+        status="relay_ready",
+        model=_model,
+        linked_session_id=linked_session_id,
+    )
+    if not result:
+        typer.echo(f"Session '{session_id}' not found.", err=True)
+        raise typer.Exit(1)
+    typer.echo(relay_continue(session_id, model=_model))
 
 
 @app.command(name="close")

@@ -1,5 +1,5 @@
 """
-nouse-mcp — MCP server exposing Nouse as a cognitive tool for any LLM agent.
+nouse-mcp — MCP server exposing Nous as a cognitive tool for any LLM agent.
 
 Exposes:
   nouse_query        — query the knowledge graph, returns structured context
@@ -17,7 +17,7 @@ mcp = FastMCP(
     name="nouse",
     instructions=(
         "Persistent domain memory for LLMs. "
-        "Query, learn from, and add knowledge to the Nouse knowledge graph."
+        "Query, learn from, and add knowledge to the Nous knowledge graph."
     ),
 )
 
@@ -37,7 +37,7 @@ def _get_brain():
 @mcp.tool()
 def nouse_query(question: str, top_k: int = 6) -> str:
     """
-    Query the Nouse knowledge graph with a question or concept.
+    Query the Nous knowledge graph with a question or concept.
 
     Returns a structured context block with relevant concepts, typed relations,
     and confidence scores — ready to inject into any LLM system prompt.
@@ -52,7 +52,7 @@ def nouse_query(question: str, top_k: int = 6) -> str:
     brain = _get_brain()
     result = brain.query(question, top_k=top_k)
     if not result.has_knowledge:
-        return f"[Nouse] No knowledge found for: {question!r}"
+        return f"[Nous] No knowledge found for: {question!r}"
     block = result.context_block()
     meta = (
         f"\n[confidence={result.confidence:.2f}, "
@@ -77,8 +77,8 @@ def nouse_recall(concept: str, top_k: int = 10) -> str:
     brain = _get_brain()
     axioms = brain.recall_axioms(concept, top_k=top_k)
     if not axioms:
-        return f"[Nouse] No axioms found for concept: {concept!r}"
-    lines = [f"[Nouse axioms for '{concept}']"]
+        return f"[Nous] No axioms found for concept: {concept!r}"
+    lines = [f"[Nous axioms for '{concept}']"]
     for a in axioms:
         lines.append(f"  {a.as_text()}")
     return "\n".join(lines)
@@ -89,7 +89,7 @@ def nouse_learn(prompt: str, response: str, source: str = "openclaw") -> str:
     """
     Extract and store knowledge from a prompt/response conversation pair.
 
-    Nouse will parse the exchange, extract typed relations between concepts,
+    Nous will parse the exchange, extract typed relations between concepts,
     and add them to the knowledge graph with Hebbian weighting.
 
     Call this after every significant exchange to grow the graph continuously.
@@ -102,9 +102,9 @@ def nouse_learn(prompt: str, response: str, source: str = "openclaw") -> str:
     brain = _get_brain()
     try:
         brain.learn(prompt, response, source=source)
-        return f"[Nouse] Learning complete. Source tagged as '{source}'."
+        return f"[Nous] Learning complete. Source tagged as '{source}'."
     except Exception as e:
-        return f"[Nouse] Learn failed: {e}"
+        return f"[Nous] Learn failed: {e}"
 
 
 @mcp.tool()
@@ -116,7 +116,7 @@ def nouse_add(
     evidence_score: float = 0.7,
 ) -> str:
     """
-    Directly add a typed relation to the Nouse knowledge graph.
+    Directly add a typed relation to the Nous knowledge graph.
 
     Use this to record a specific insight, decision, or fact that you want
     to persist in long-term memory.
@@ -129,24 +129,24 @@ def nouse_add(
         evidence_score: Confidence 0.0–1.0 (default 0.7).
 
     Example:
-        nouse_add("KuzuDB", "USED_BY", "Nouse", why="core graph store")
+        nouse_add("SQLite WAL", "USED_BY", "Nous", why="current graph persistence layer")
     """
     brain = _get_brain()
     try:
         brain.add(src, rel_type, tgt, why=why, evidence_score=evidence_score)
         return (
-            f"[Nouse] Added: {src} —[{rel_type}]→ {tgt}  "
+            f"[Nous] Added: {src} —[{rel_type}]→ {tgt}  "
             f"[ev={evidence_score:.2f}]"
             + (f"  why='{why}'" if why else "")
         )
     except Exception as e:
-        return f"[Nouse] Add failed: {e}"
+        return f"[Nous] Add failed: {e}"
 
 
 @mcp.tool()
 def nouse_status() -> str:
     """
-    Return statistics about the current state of the Nouse knowledge graph.
+    Return statistics about the current state of the Nous knowledge graph.
 
     Shows node count, relation count, and top domains.
     """
@@ -155,7 +155,7 @@ def nouse_status() -> str:
         stats = brain.stats()
         return json.dumps(stats, indent=2, ensure_ascii=False)
     except Exception as e:
-        return f"[Nouse] Status failed: {e}"
+        return f"[Nous] Status failed: {e}"
 
 
 # ── Entry point ───────────────────────────────────────────────────────────────

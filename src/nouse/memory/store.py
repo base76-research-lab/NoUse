@@ -8,9 +8,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from nouse.config.paths import path_from_env
 from nouse.field.surface import FieldSurface
 
-_DEFAULT_MEMORY_DIR = Path.home() / ".local" / "share" / "nouse" / "memory"
 _DIALOGUE_PROMOTION_MIN_SUPPORT = max(
     2,
     int(os.getenv("NOUSE_MEMORY_DIALOGUE_PROMOTION_MIN_SUPPORT", "2") or 2),
@@ -60,7 +60,7 @@ class MemoryStore:
         elif env_root:
             base = Path(env_root)
         else:
-            base = _DEFAULT_MEMORY_DIR
+            base = path_from_env("NOUSE_MEMORY_DIR", "memory")
         self.root = base
         self.root.mkdir(parents=True, exist_ok=True)
 

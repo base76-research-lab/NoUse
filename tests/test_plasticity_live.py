@@ -1,7 +1,7 @@
 """
 Live-integrationstest för Nouse plastisitet.
 
-Skapar en riktig KuzuDB-graf i /tmp, matar in micro-fakta
+Skapar en riktig SQLite/NetworkX-graf i /tmp, matar in micro-fakta
 och verifierar att P1-P5 faktiskt sker i grafen.
 
 Kör med:
@@ -37,12 +37,11 @@ def _get_strength(field: FieldSurface, src: str, tgt: str) -> float | None:
 
 def _get_granularity(field: FieldSurface, name: str) -> int | None:
     try:
-        r = field._conn.execute(
-            "MATCH (c:Concept {name:$n}) RETURN c.granularity AS g",
-            {"n": name}
-        )
-        rows = r.get_as_df().to_dict("records")
-        return rows[0]["g"] if rows else None
+        row = field._sql.execute(  # noqa: SLF001 - live smoke helper
+            "SELECT granularity AS g FROM concept WHERE name = ?",
+            (name,),
+        ).fetchone()
+        return int(row["g"]) if row and row.get("g") is not None else None
     except Exception:
         return None
 
@@ -66,10 +65,10 @@ def check(label: str, condition: bool, detail: str = "") -> None:
 def run():
     tmpdir = tempfile.mkdtemp(prefix="nouse_plasticity_test_")
     print(f"\n🧠 Nouse Plastisitetstest")
-    print(f"   KuzuDB: {tmpdir}\n")
+    print(f"   SQLite/NetworkX: {tmpdir}\n")
 
     try:
-        field = FieldSurface(db_path=Path(tmpdir) / "field.kuzu")
+        field = FieldSurface(db_path=Path(tmpdir) / "field.sqlite")
 
         # ── Scenario: havsforsknings-fakta ────────────────────────────────────
         # Simulerar det exakta use-case som triggade genombrottet:

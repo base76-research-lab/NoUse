@@ -362,12 +362,19 @@ async def detect_providers_async() -> list[DiscoveredProvider]:
 def detect_providers() -> list[DiscoveredProvider]:
     """Synkron wrapper runt detect_providers_async."""
     try:
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            # No running loop in this thread (normal for FastAPI worker threads).
+            return asyncio.run(detect_providers_async())
+
         if loop.is_running():
             import concurrent.futures
+
             with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
                 future = ex.submit(asyncio.run, detect_providers_async())
                 return future.result(timeout=15)
+
         return loop.run_until_complete(detect_providers_async())
     except Exception as e:
         _log.warning("detect_providers misslyckades: %s", e)

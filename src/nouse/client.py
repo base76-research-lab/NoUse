@@ -2,8 +2,8 @@
 b76.client — tunn HTTP-klient mot daemon-API
 ============================================
 Används av CLI-kommandon när daemon kör och har exklusivt
-grepp om KuzuDB. Alla b76-kommandon bör anropa `daemon_url()`
-för att avgöra om de ska prata med API:et eller öppna DB direkt.
+grepp om den lokala grafdatabasen. CLI-kommandon avgör via daemon-
+API om de ska prata över HTTP eller öppna lokal DB direkt.
 """
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ import time
 
 import httpx
 
-DAEMON_BASE = "http://127.0.0.1:8765"
+DAEMON_BASE = (os.getenv("NOUSE_DAEMON_BASE") or "http://127.0.0.1:8765").rstrip("/")
 _TIMEOUT    = 5.0
 BRAIN_DB_BASE = (os.getenv("NOUSE_BRAIN_DB_BASE") or "http://127.0.0.1:7676").rstrip("/")
 _BRAIN_TIMEOUT = max(
@@ -168,6 +168,32 @@ def get_status() -> dict:
     return r.json()
 
 
+def get_snapshot_list(limit: int = 50, timeout: float = 20.0) -> dict:
+    r = httpx.get(
+        f"{DAEMON_BASE}/api/snapshot/list",
+        params={"limit": int(limit)},
+        timeout=timeout,
+    )
+    r.raise_for_status()
+    return r.json()
+
+
+def post_snapshot_restore(
+    *,
+    snapshot: str,
+    create_backup: bool = True,
+    timeout: float = 60.0,
+) -> dict:
+    r = httpx.post(
+        f"{DAEMON_BASE}/api/snapshot/restore",
+        json={"snapshot": snapshot, "create_backup": bool(create_backup)},
+        timeout=timeout,
+    )
+    r.raise_for_status()
+    return r.json()
+
+
+
 def get_graph_center(timeout: float = 10.0) -> dict:
     r = httpx.get(f"{DAEMON_BASE}/api/graph/cc", timeout=timeout)
     r.raise_for_status()
@@ -236,6 +262,53 @@ def post_system_wake(
             "reason": reason,
             "context_key": context_key,
         },
+        timeout=timeout,
+    )
+    r.raise_for_status()
+    return r.json()
+
+
+def get_hitl_interrupts(
+    *,
+    status: str = "pending",
+    limit: int = 20,
+    timeout: float = 10.0,
+) -> dict:
+    r = httpx.get(
+        f"{DAEMON_BASE}/api/hitl/interrupts",
+        params={"status": status, "limit": limit},
+        timeout=timeout,
+    )
+    r.raise_for_status()
+    return r.json()
+
+
+def post_hitl_approve(
+    *,
+    interrupt_id: int,
+    reviewer: str = "cli",
+    note: str = "",
+    timeout: float = 10.0,
+) -> dict:
+    r = httpx.post(
+        f"{DAEMON_BASE}/api/hitl/approve",
+        json={"id": int(interrupt_id), "reviewer": reviewer, "note": note},
+        timeout=timeout,
+    )
+    r.raise_for_status()
+    return r.json()
+
+
+def post_hitl_reject(
+    *,
+    interrupt_id: int,
+    reviewer: str = "cli",
+    note: str = "",
+    timeout: float = 10.0,
+) -> dict:
+    r = httpx.post(
+        f"{DAEMON_BASE}/api/hitl/reject",
+        json={"id": int(interrupt_id), "reviewer": reviewer, "note": note},
         timeout=timeout,
     )
     r.raise_for_status()

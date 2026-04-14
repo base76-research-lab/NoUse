@@ -7,7 +7,9 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-SESSION_STATE_PATH = Path.home() / ".local" / "share" / "nouse" / "session_state.json"
+from nouse.config.paths import path_from_env
+
+SESSION_STATE_PATH = path_from_env("NOUSE_SESSION_STATE_PATH", "session_state.json")
 _LOCK = threading.Lock()
 
 

@@ -13,7 +13,7 @@ def test_start_me_routes_to_chat(monkeypatch):
 
     monkeypatch.setattr(client, "daemon_running", lambda: True)
 
-    def _fake_chat(*, session_id: str = "main"):  # noqa: ARG001
+    def _fake_chat(*, session_id: str = "main", **_kwargs):  # noqa: ARG001
         called["session_id"] = session_id
 
     import nouse.cli.main as main_mod

@@ -11,14 +11,20 @@
 </p>
 
 <p align="center">
+  <a href="https://discord.gg/Fbwmr7Vv"><img src="https://img.shields.io/badge/Discord-join-5865F2?logo=discord&logoColor=white" alt="Discord"></a>
   <a href="https://pypi.org/project/nouse/"><img src="https://img.shields.io/pypi/v/nouse" alt="PyPI"></a>
   <a href="https://github.com/base76-research-lab/Nous/actions/workflows/tests.yml"><img src="https://github.com/base76-research-lab/Nous/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
   <a href="https://github.com/base76-research-lab/Nous/wiki"><img src="https://img.shields.io/badge/wiki-nous-blue" alt="Wiki"></a>
 </p>
 
 <p align="center">
-  <a href="#the-architectural-inversion">Inversion</a> · <a href="#research-program">Research Program</a> · <a href="#reference-evidence">Evidence</a> · <a href="#research">Research</a> · <a href="#roadmap">Roadmap</a> · <a href="#integration-pattern">Integration</a>
+  <a href="#quick-start">Quick Start</a> · <a href="#the-architectural-inversion">Inversion</a> · <a href="#what-nous-is">What Nous Is</a> · <a href="#the-result">Evidence</a> · <a href="#research">Research</a> · <a href="#roadmap">Roadmap</a> · <a href="#community">Community</a>
+</p>
+
+<p align="center">
+  <img src="IMG/nouse-graph-growth.gif" alt="Nous knowledge graph growing — discovering concepts, substrates, gaps, and axioms" width="800">
 </p>
 
 ---
@@ -40,33 +46,24 @@ The model remains the expression system, the semantic surface, the larynx.
 
 ---
 
-## Research Program
+## Try Nous In 60 Seconds
 
-`Nous` should be read as a research program with a live implementation, not as a generic AI utility.
+```bash
+pip install nouse
+python - <<'PY'
+import nouse
 
-It stands on four linked claims:
+brain = nouse.attach()
+result = brain.query("What does this project know about epistemic grounding?")
 
-- language output is not identical with intelligence
-- a persistent epistemic substrate can supply what the output layer lacks
-- a different category of system requires different benchmarks and longitudinal metrics
-- these claims are testable because the repository contains a working substrate rather than only a paper argument
+print(result.context_block())
+print("confidence:", round(result.confidence, 2))
+PY
+```
 
-The fastest reading path is:
+If Nous already knows something relevant, you get back a grounded context block with validated relations, uncertainty, and explicit boundaries instead of a generic answer blob.
 
-- [The Larynx Problem](https://github.com/base76-research-lab/Nous/wiki/The-Larynx-Problem)
-- [Benchmark philosophy](https://github.com/base76-research-lab/Nous/wiki/Benchmark)
-- [Architecture](https://github.com/base76-research-lab/Nous/wiki/Architecture)
-- [Nous Strategic Doctrine](docs/NOUS_STRATEGIC_DOCTRINE.md)
-
----
-
-## Why Standard Benchmarks Do Not Apply
-
-Evaluating `Nous` with standard LLM benchmarks would be like measuring the sweetness of chocolate with a Scoville scale. The instrument is not merely inaccurate; it is measuring the wrong physical phenomenon entirely.
-
-Benchmarks such as MMLU, ARC, and HumanEval are valid instruments for language models. `Nous` is not merely a language model output surface. It is a persistent epistemic substrate.
-
-The relevant question is therefore not only whether a model produced the expected answer right now. It is whether the system knew what it knew, knew what it did not know, preserved consistency under contradiction, and changed structure coherently across time.
+If that output feels more useful than plain chat history or chunk retrieval, then the project is doing its job.
 
 ---
 
@@ -82,9 +79,9 @@ What is currently called AI is mostly semantic prediction.
 
 That changes agent behavior in the place that actually matters: when a model is close to hallucinating but still sounds fluent.
 
-## Reference Evidence
+## The Result
 
-One documented reference run is `run_20260403_094211` (see `eval/RESULTS_INDEX.md`).
+Reference run used for the claim below: `run_20260403_094211` (see `eval/RESULTS_INDEX.md`).
 
 ```text
 Model                               Score   Questions
@@ -94,19 +91,17 @@ llama-3.3-70b  (no memory)          47%     60
 llama3.1-8b  + Nous memory  →      96%     60
 ```
 
-On this domain-specific run, an 8B model with Nous grounding scored above a 70B baseline.
+**In this reference run, an 8B model with Nous outperformed a 70B baseline.**
 
 The effect is not retrieval. It is *epistemic grounding* — a small, precise knowledge signal
 redirects the model's existing priors onto the correct frame, with confidence and evidence attached.
-In the repo, this pattern is referred to as the **Intent Disambiguation Effect**.
-
-This is evidence for graph grounding. It is not, by itself, a general benchmark for intelligence or a complete measure of a cognitive substrate.
+We call this the **Intent Disambiguation Effect**.
 
 → Full benchmark details: [eval/RESULTS.md](eval/RESULTS.md) · [eval/RESULTS_INDEX.md](eval/RESULTS_INDEX.md) · [Run it yourself](#run-the-benchmark-yourself)
 
 ---
 
-## Architectural Properties
+## What You Get
 
 | Capability | What it does |
 | --- | --- |
@@ -120,7 +115,7 @@ This is evidence for graph grounding. It is not, by itself, a general benchmark 
 
 ## What Nous Is
 
-Nous (νοῦς, Gk. *mind* / *active intellect*) is a **persistent, self-growing epistemic substrate** that can attach to any LLM.
+Nous (νοῦς, Gk. *mind* / *active intellect*) is a **persistent, self-growing epistemic substrate** that attaches to any LLM.
 
 It is informed by brain-inspired plasticity, cognitive research, and the practical failure modes of LLM memory.
 
@@ -162,11 +157,11 @@ There is no retraining. No gradient descent. The graph grows — and the gaps be
 | **Claude Memory** | key-value | ✗ | ✗ | ✗ | ✗ |
 | **Nous** | typed relation + evidence | **✓** | **✓** | **✓** | **✓** |
 
-Nous does not try to replace the model. It treats the model as the larynx, and the substrate as the persistent epistemic layer behind it.
+Nous is not trying to replace the model. It gives the model a brain-like memory substrate it can query before speaking.
 
 ---
 
-## Integration Pattern
+## Quick start
 
 ```bash
 pip install nouse
@@ -188,7 +183,7 @@ print(result.strong_axioms())
 
 If the daemon is running, `attach()` connects over HTTP. Otherwise it falls back to direct local graph access. The same code works either way.
 
-Provider-specific examples follow below.
+Works with any provider — OpenAI, Anthropic, Groq, Cerebras, Ollama:
 
 ```python
 # You handle the LLM call. Nous handles the memory.
@@ -429,21 +424,6 @@ Contributions welcome — especially domain-specific question banks.
 
 ## Research
 
-The repo now stands on three linked claims:
-
-- **The Larynx Problem**: current AI discourse often mistakes the expression channel of intelligence for intelligence itself.
-- **FNC-Bench**: a different category of system needs a different benchmark, centered on epistemic structure rather than output fluency.
-- **Nous**: a local, persistent epistemic substrate is one concrete attempt to instantiate that missing category.
-
-If there is a paradigm-shift claim here, it lives in the relationship between those three layers.
-
-Further reading:
-
-- [The Larynx Problem (wiki)](https://github.com/base76-research-lab/Nous/wiki/The-Larynx-Problem)
-- [Benchmark philosophy (wiki)](https://github.com/base76-research-lab/Nous/wiki/Benchmark)
-- [Architecture (wiki)](https://github.com/base76-research-lab/Nous/wiki/Architecture)
-- [Nous Strategic Doctrine](docs/NOUS_STRATEGIC_DOCTRINE.md)
-- [Frontier Visibility Plan](docs/FRONTIER_VISIBILITY_PLAN.md)
 
 The theoretical foundation for Nous is described in:
 

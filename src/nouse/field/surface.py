@@ -6,7 +6,7 @@ Grafen lever mellan sessioner. Varje ny kant är permanent topologisk tillväxt.
 Kanternas styrka ökar Hebbiskt när stigar aktiveras.
 
 Backend: SQLite WAL (persistence, concurrent readers) + NetworkX (in-memory traversal).
-Migrerad från KuzuDB 2026-04-05.
+Nuvarande lagret är fullt SQLite/NetworkX.
 """
 from __future__ import annotations
 
@@ -22,7 +22,8 @@ import threading
 
 import networkx as nx
 
-_DEFAULT_DB = Path.home() / ".local" / "share" / "nouse" / "field.sqlite"
+from nouse.config.paths import path_from_env
+
 _STRONG_FACT_MIN_SCORE = float(os.getenv("NOUSE_STRONG_FACT_MIN_SCORE", "0.65"))
 
 
@@ -98,7 +99,7 @@ class FieldSurface:
     """Persistent kunskapsgraf — SQLite WAL + NetworkX."""
 
     def __init__(self, db_path: Path | str | None = None, read_only: bool = False):
-        path = Path(db_path) if db_path else _DEFAULT_DB
+        path = Path(db_path) if db_path else path_from_env("NOUSE_FIELD_DB", "field.sqlite")
         path.parent.mkdir(parents=True, exist_ok=True)
         self._db_path = path
         self._read_only = read_only
@@ -224,6 +225,25 @@ class FieldSurface:
         if ensure_knowledge:
             self.ensure_minimal_concept_knowledge(name, domain=domain, source=source)
 
+    def set_concept_domain(self, name: str, domain: str) -> bool:
+        """
+        Uppdatera domän för befintligt koncept (true om något ändrades).
+        """
+        target_name = str(name or "").strip()
+        target_domain = str(domain or "").strip()
+        if not target_name or not target_domain:
+            return False
+        with self._lock:
+            cur = self._sql.execute(
+                "UPDATE concept SET domain = ? WHERE name = ? AND (domain IS NULL OR domain != ?)",
+                (target_domain, target_name, target_domain),
+            )
+            self._sql.commit()
+            changed = bool(cur.rowcount and cur.rowcount > 0)
+        if changed and target_name in self._G:
+            self._G.nodes[target_name]["domain"] = target_domain
+        return changed
+
     def add_relation(self, src, rel_type, tgt, why="", strength=1.0,
                      source_tag="auto", evidence_score=None, assumption_flag=None,
                      domain_src="external", domain_tgt="external"):
@@ -246,16 +266,44 @@ class FieldSurface:
         self._nx_add_relation(row_id, src, tgt, rel_type, why, strength, ts, ev, af)
         self._enrich_nodes_from_relation(src, rel_type, tgt, why, source_tag)
 
-    def strengthen(self, src, tgt, delta=0.05):
+    def strengthen(self, src, tgt, delta=0.05, *, rel_type=None, ceiling=3.5):
+        safe_delta = max(0.0, float(delta))
+        safe_ceiling = max(0.05, float(ceiling))
+        params = [safe_ceiling, 0.05, safe_delta, src, tgt]
+        sql = (
+            "UPDATE relation SET strength = MIN(?, MAX(?, strength + ?)) "
+            "WHERE src = ? AND tgt = ?"
+        )
+        if rel_type is not None:
+            sql += " AND type = ?"
+            params.append(rel_type)
         with self._lock:
-            self._sql.execute(
-                "UPDATE relation SET strength = strength + ? WHERE src = ? AND tgt = ?",
-                (delta, src, tgt))
+            self._sql.execute(sql, params)
             self._sql.commit()
         if self._G.has_edge(src, tgt):
             for key in self._G[src][tgt]:
-                self._G[src][tgt][key]["strength"] = (
-                    self._G[src][tgt][key].get("strength", 1.0) + delta)
+                if rel_type is not None and self._G[src][tgt][key].get("type") != rel_type:
+                    continue
+                current = float(self._G[src][tgt][key].get("strength", 1.0) or 1.0)
+                self._G[src][tgt][key]["strength"] = min(safe_ceiling, max(0.05, current + safe_delta))
+
+    def weaken(self, src, tgt, delta=0.05, *, rel_type=None, floor=0.05):
+        safe_delta = max(0.0, float(delta))
+        safe_floor = max(0.0, float(floor))
+        params = [safe_floor, safe_delta, src, tgt]
+        sql = "UPDATE relation SET strength = MAX(?, strength - ?) WHERE src = ? AND tgt = ?"
+        if rel_type is not None:
+            sql += " AND type = ?"
+            params.append(rel_type)
+        with self._lock:
+            self._sql.execute(sql, params)
+            self._sql.commit()
+        if self._G.has_edge(src, tgt):
+            for key in self._G[src][tgt]:
+                if rel_type is not None and self._G[src][tgt][key].get("type") != rel_type:
+                    continue
+                current = float(self._G[src][tgt][key].get("strength", 1.0) or 1.0)
+                self._G[src][tgt][key]["strength"] = max(safe_floor, current - safe_delta)
 
     # ── Knowledge CRUD ───────────────────────────────────────────────────────
 
@@ -354,6 +402,114 @@ class FieldSurface:
             "min_score": float(min_score),
             "per_claim_supported": bool(claims) and len(strong) >= len(claims),
             "fully_classified": bool(evidence) and len(classified) == len(evidence),
+        }
+
+    def _drift_metrics(self):
+        rows = self._sql.execute(
+            "SELECT src, tgt, type, strength, evidence_score, assumption_flag FROM relation"
+        ).fetchall()
+        total_relations = len(rows)
+        if total_relations == 0:
+            return {
+                "relation_instability_score": 0.0,
+                "confidence_volatility": 0.0,
+                "contradiction_rate": 0.0,
+                "assumption_ratio": 0.0,
+                "relation_count": 0,
+                "triple_count": 0,
+                "contradictory_triples": 0,
+                "concept_uncertainty_std": 0.0,
+                "relation_evidence_std": 0.0,
+            }
+
+        triples: dict[tuple[str, str, str], dict[str, list[float] | set[bool]]] = {}
+        assumption_edges = 0
+        evidence_vals: list[float] = []
+        for row in rows:
+            src = str(row.get("src") or "")
+            rel = str(row.get("type") or "")
+            tgt = str(row.get("tgt") or "")
+            key = (src, rel, tgt)
+            bucket = triples.setdefault(key, {"evidence": [], "strength": [], "flags": set()})
+
+            ev = row.get("evidence_score")
+            if ev is not None:
+                try:
+                    ev_f = max(0.0, min(1.0, float(ev)))
+                    bucket["evidence"].append(ev_f)
+                    evidence_vals.append(ev_f)
+                except (TypeError, ValueError):
+                    pass
+            try:
+                bucket["strength"].append(float(row.get("strength") or 0.0))
+            except (TypeError, ValueError):
+                bucket["strength"].append(0.0)
+
+            flag = bool(row.get("assumption_flag"))
+            bucket["flags"].add(flag)
+            if flag:
+                assumption_edges += 1
+
+        contradictory_triples = 0
+        instability_parts: list[float] = []
+        for bucket in triples.values():
+            evs = list(bucket["evidence"])
+            strengths = list(bucket["strength"])
+            flags = set(bucket["flags"])
+
+            ev_span = (max(evs) - min(evs)) if len(evs) > 1 else 0.0
+            str_span = (max(strengths) - min(strengths)) if len(strengths) > 1 else 0.0
+            str_mean_abs = abs(sum(strengths) / len(strengths)) if strengths else 0.0
+            str_norm = str_span / (str_mean_abs + 1.0)
+            flip = 1.0 if len(flags) > 1 else 0.0
+            if flip > 0.0:
+                contradictory_triples += 1
+
+            part = (0.55 * min(1.0, ev_span)) + (0.30 * min(1.0, str_norm)) + (0.15 * flip)
+            if len(evs) > 1 or len(strengths) > 1 or flip > 0.0:
+                instability_parts.append(part)
+
+        assumption_ratio = assumption_edges / total_relations if total_relations else 0.0
+        if instability_parts:
+            relation_instability_score = sum(instability_parts) / len(instability_parts)
+        else:
+            relation_instability_score = min(1.0, assumption_ratio * 0.5)
+
+        # Confidence volatility = variation in concept uncertainty + relation evidence.
+        unc_rows = self._sql.execute(
+            "SELECT uncertainty FROM concept_knowledge WHERE uncertainty IS NOT NULL"
+        ).fetchall()
+        uncertainties = []
+        for row in unc_rows:
+            try:
+                uncertainties.append(max(0.0, min(1.0, float(row.get("uncertainty")))))
+            except (TypeError, ValueError):
+                continue
+
+        def _std(values: list[float]) -> float:
+            if len(values) <= 1:
+                return 0.0
+            mean = sum(values) / len(values)
+            var = sum((v - mean) ** 2 for v in values) / len(values)
+            return math.sqrt(var)
+
+        unc_std = _std(uncertainties)
+        ev_std = _std(evidence_vals)
+        unc_norm = min(1.0, unc_std / 0.5)
+        ev_norm = min(1.0, ev_std / 0.5)
+        confidence_volatility = (0.6 * unc_norm) + (0.4 * ev_norm)
+        contradiction_rate = contradictory_triples / max(1, len(triples))
+
+        return {
+            "relation_instability_score": round(max(0.0, min(1.0, relation_instability_score)), 4),
+            "confidence_volatility": round(max(0.0, min(1.0, confidence_volatility)), 4),
+            "contradiction_rate": round(max(0.0, min(1.0, contradiction_rate)), 4),
+            "assumption_ratio": round(max(0.0, min(1.0, assumption_ratio)), 4),
+            "relation_count": int(total_relations),
+            "triple_count": int(len(triples)),
+            "contradictory_triples": int(contradictory_triples),
+            "concept_uncertainty_std": round(max(0.0, unc_std), 4),
+            "relation_evidence_std": round(max(0.0, ev_std), 4),
         }
 
     def upsert_concept_knowledge(self, name, *, summary=None, claim=None, claims=None,
@@ -604,6 +760,7 @@ class FieldSurface:
                 "strong_facts": with_facts_strong / total if total else 1.0,
                 "complete": complete / total if total else 1.0,
             },
+            "drift_metrics": self._drift_metrics(),
             "missing": missing[:safe_limit],
         }
 
@@ -741,7 +898,7 @@ class FieldSurface:
 
     def query_all_relations_with_metadata(self, limit=5000, include_evidence=False):
         if include_evidence:
-            sql = (f"SELECT r.src, r.type AS rel, r.strength, r.created, "
+            sql = (f"SELECT r.src, r.type AS rel, r.why, r.strength, r.created, "
                    f"r.evidence_score, r.tgt FROM relation r LIMIT {int(limit)}")
         else:
             sql = (f"SELECT r.src, r.type AS rel, r.strength, r.created, r.tgt "

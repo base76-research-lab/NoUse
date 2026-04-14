@@ -1,5 +1,5 @@
 /**
- * Nouse City View — Isometrisk manga-stad
+ * Nous City View — Isometrisk manga-stad
  * Varje domän = kvarter, varje koncept = byggnad
  * Driven av systemklockan (dag/natt-cykel)
  */
@@ -44,6 +44,8 @@ const PHASES = [
   { start: 20, end: 29, name: 'night' }, // 29 = 5 nästa dag (wrap)
 ];
 
+const CITY_UI_FONT = "'Yu Mincho', 'Hiragino Mincho ProN', 'Noto Serif JP', Georgia, serif";
+
 // ── Hjälpare ──────────────────────────────────────────────────────
 function lerp(a, b, t) { return a + (b - a) * Math.clamp(t, 0, 1); }
 Math.clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
@@ -72,6 +74,125 @@ function getTimePhase(h) {
   // night: 20..5 (wrapping)
   const nightH = h24 >= 20 ? h24 - 20 : h24 + 4;
   return { phase: 'night', t: nightH / 9 };
+}
+
+function cityFallbackHumanize(value, fallback = 'Unknown') {
+  const raw = String(value || '').trim();
+  if (!raw) return fallback;
+  return raw
+    .replace(/^META::/i, 'Meta ')
+    .replace(/::/g, ' / ')
+    .replace(/[_.]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .split(' ')
+    .map(token => {
+      if (!token) return token;
+      if (/[0-9:/-]/.test(token)) return token;
+      return token.charAt(0).toUpperCase() + token.slice(1);
+    })
+    .join(' ');
+}
+
+function cityFormatDomainName(domain) {
+  if (typeof formatDomainName === 'function') return formatDomainName(domain);
+  return cityFallbackHumanize(domain, 'Unknown');
+}
+
+function cityFormatNodeName(id) {
+  if (typeof formatNodeName === 'function') return formatNodeName(id);
+  return cityFallbackHumanize(id, 'Unknown node');
+}
+
+function cityWrapLines(text, maxLen = 18, maxLines = 2) {
+  if (typeof wrapDisplayLines === 'function') return wrapDisplayLines(text, maxLen, maxLines);
+  const clean = String(text || '').replace(/\s+/g, ' ').trim();
+  if (!clean) return ['Unknown'];
+  const words = clean.split(' ');
+  const lines = [];
+  let current = '';
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word;
+    if (candidate.length <= maxLen) {
+      current = candidate;
+      continue;
+    }
+    if (current) lines.push(current);
+    current = word;
+    if (lines.length >= maxLines - 1) break;
+  }
+  if (current && lines.length < maxLines) lines.push(current);
+  return lines.slice(0, maxLines);
+}
+
+function cityRoundedRect(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
+
+function makeTextBadge(text, color, opts = {}) {
+  const {
+    maxLen = 18,
+    maxLines = 2,
+    fontSize = 26,
+    minWidth = 170,
+    maxWidth = 420,
+    opacity = 0.96,
+  } = opts;
+
+  const lines = cityWrapLines(text, maxLen, maxLines);
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = lines.length > 1 ? 132 : 104;
+  const ctx = canvas.getContext('2d');
+  const lineHeight = fontSize + 6;
+  const padX = 26;
+  const padY = 16;
+
+  ctx.font = `700 ${fontSize}px ${CITY_UI_FONT}`;
+  const widths = lines.map(line => ctx.measureText(line).width);
+  const cardWidth = Math.min(maxWidth, Math.max(minWidth, Math.max(...widths) + padX * 2));
+  const cardHeight = padY * 2 + lines.length * lineHeight;
+  const x = (canvas.width - cardWidth) / 2;
+  const y = (canvas.height - cardHeight) / 2;
+
+  ctx.save();
+  ctx.shadowColor = 'rgba(25, 17, 16, 0.28)';
+  ctx.shadowBlur = 20;
+  ctx.fillStyle = 'rgba(245, 236, 220, 0.96)';
+  ctx.strokeStyle = `#${color.toString(16).padStart(6, '0')}`;
+  ctx.lineWidth = 3;
+  cityRoundedRect(ctx, x, y, cardWidth, cardHeight, 20);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.fillStyle = '#1c1517';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = `700 ${fontSize}px ${CITY_UI_FONT}`;
+  lines.forEach((line, idx) => {
+    const ly = y + padY + lineHeight / 2 + idx * lineHeight + 2;
+    ctx.fillText(line, canvas.width / 2, ly);
+  });
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.minFilter = THREE.LinearFilter;
+  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, opacity });
+  const sprite = new THREE.Sprite(mat);
+  sprite.scale.set(lines.length > 1 ? 42 : 34, lines.length > 1 ? 10.5 : 8.2, 1);
+  sprite.renderOrder = 12;
+  sprite.userData.lineCount = lines.length;
+  return sprite;
 }
 
 // ── Gatsten-textur (cobblestone, varm medievalstil) ───────────────
@@ -332,6 +453,7 @@ class CityView {
     this.buildingMap = {};   // nodeId → THREE.Group
     this.lightMap = {};      // grupperad per distrikt
     this.streetLights = [];  // alla gatulyktor
+    this.districtLabels = [];
     this.ambientLight = null;
     this.dirLight = null;
     this.layout = null;
@@ -339,6 +461,8 @@ class CityView {
     this.mouse = new THREE.Vector2();
     this.dayNightInterval = null;
     this.arousal = 0.5;
+    this.hoveredNodeId = '';
+    this.hoverBadge = null;
 
     this._onMouseMove = this._onMouseMove.bind(this);
     this._onClick = this._onClick.bind(this);
@@ -381,6 +505,9 @@ class CityView {
     this.scene = null;
     this.buildingMap = {};
     this.streetLights = [];
+    this.districtLabels = [];
+    this.hoveredNodeId = '';
+    this.hoverBadge = null;
   }
 
   // ── Renderer ─────────────────────────────────────────────────
@@ -472,6 +599,18 @@ class CityView {
         this.scene.add(sl);
         this.streetLights.push(sl);
       });
+
+      const districtLabel = makeTextBadge(cityFormatDomainName(dom), color, {
+        fontSize: 24,
+        maxLen: 16,
+        maxLines: 2,
+        minWidth: 180,
+        maxWidth: 360,
+        opacity: 0.92,
+      });
+      districtLabel.position.set(x - offset, 20, z - offset);
+      this.scene.add(districtLabel);
+      this.districtLabels.push(districtLabel);
     });
 
     // Byggnader
@@ -492,6 +631,8 @@ class CityView {
       building.position.set(pos.x - offset, 0, pos.z - offset);
       building.userData.nodeId = n.id;
       building.userData.nodeData = n;
+      building.userData.labelY = h + (isMeta ? 22 : 14);
+      building.userData.baseScale = 1;
       building.castShadow = true;
       this.scene.add(building);
       this.buildingMap[n.id] = building;
@@ -698,6 +839,7 @@ class CityView {
   _onMouseMove(e) {
     this.mouse.x =  (e.clientX / window.innerWidth)  * 2 - 1;
     this.mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    this._updateHoverState();
   }
 
   _onClick(e) {
@@ -715,6 +857,58 @@ class CityView {
       }
     }
     if (typeof closeInspector === 'function') closeInspector();
+  }
+
+  _clearHoverBadge() {
+    if (!this.hoveredNodeId) return;
+    const current = this.buildingMap[this.hoveredNodeId];
+    if (current) {
+      current.scale.setScalar(1);
+      if (this.hoverBadge && this.hoverBadge.parent === current) {
+        current.remove(this.hoverBadge);
+      }
+    }
+    this.hoverBadge = null;
+    this.hoveredNodeId = '';
+  }
+
+  _applyHoverBadge(building) {
+    const nodeId = String((building.userData || {}).nodeId || '').trim();
+    if (!nodeId) return;
+    if (this.hoveredNodeId === nodeId) return;
+
+    this._clearHoverBadge();
+
+    const nodeData = building.userData.nodeData || {};
+    const color = this._domainColorHex(nodeData.group || 'unknown');
+    const label = makeTextBadge(cityFormatNodeName(nodeId), color, {
+      fontSize: 26,
+      maxLen: 18,
+      maxLines: 2,
+      minWidth: 190,
+      maxWidth: 380,
+      opacity: 0.98,
+    });
+    label.position.set(0, building.userData.labelY || 18, 0);
+    building.add(label);
+    building.scale.setScalar(1.05);
+    this.hoverBadge = label;
+    this.hoveredNodeId = nodeId;
+  }
+
+  _updateHoverState() {
+    if (!this.scene || !this.camera) return;
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    const hits = this.raycaster.intersectObjects(this.scene.children, true);
+    for (const hit of hits) {
+      let obj = hit.object;
+      while (obj && !obj.userData.nodeId) obj = obj.parent;
+      if (obj && obj.userData.nodeId) {
+        this._applyHoverBadge(obj);
+        return;
+      }
+    }
+    this._clearHoverBadge();
   }
 
   _onResize() {

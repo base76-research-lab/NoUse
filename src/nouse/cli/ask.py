@@ -1,7 +1,7 @@
 """
 b76.cli.ask — Lättviktig snabb-assistent
 ========================================
-Ett ultrasnabbt alternativ till 'chat'. Använder KuzuDB i read-only läge
+Ett ultrasnabbt alternativ till 'chat'. Använder lokal graf i read-only läge
 för att inte blockera daemonen, och skickar inga "tools" till modellen.
 Detta gör svarstiderna momentana jämfört med den tunga agent-loopen.
 """
@@ -16,6 +16,11 @@ from rich.markdown import Markdown
 from nouse.client import DAEMON_BASE, daemon_running
 from nouse.field.surface import FieldSurface
 from nouse.ollama_client.client import AsyncOllama
+from nouse.persona import (
+    agent_identity_policy,
+    assistant_entity_name,
+    persona_prompt_fragment,
+)
 from nouse.trace.output_trace import (
     build_attack_plan,
     derive_assumptions,
@@ -38,17 +43,6 @@ def _living_prompt_block() -> str:
     except Exception:
         state = {}
     return identity_prompt_fragment(state)
-
-
-def _agent_identity_policy() -> str:
-    return (
-        "Operativ identitetspolicy:\n"
-        "- Du är B76: en autonom programagent i detta system.\n"
-        "- Du har operativ autonomi via verktyg, graf och sessionstillstånd.\n"
-        "- Säg inte att du saknar systemåtkomst i denna miljö.\n"
-        "- Beskriv konkreta tekniska begränsningar om något är otillgängligt.\n"
-        "- Håll isär fakta, antaganden och policygränser.\n"
-    )
 
 
 def _remember_local_exchange(
@@ -141,14 +135,14 @@ async def ask_brain(query: str, chat_mode: bool = False, session_id: str = "main
         if not chat_mode:
             try:
                 answer, trace_id = _daemon_chat(query, sid)
-                console.print(Markdown(f"**B76:** {answer}"))
+                console.print(Markdown(f"**{assistant_entity_name()}:** {answer}"))
                 if trace_id:
                     console.print(f"[dim]trace_id: {trace_id}[/dim]")
             except Exception as e:
                 console.print(f"[red]Daemon-chat misslyckades: {e}[/red]")
             return
 
-        console.print("[dim]B76 Quick-Chat via daemon API (DB låst lokalt).[/dim]")
+        console.print(f"[dim]{assistant_entity_name()} Quick-Chat via daemon API (DB låst lokalt).[/dim]")
         while True:
             try:
                 raw = input("\nfråga> ").strip()
@@ -185,17 +179,19 @@ async def ask_brain(query: str, chat_mode: bool = False, session_id: str = "main
 
         node_ctx = _format_node_context(field, query) if query else "(Ingen fråga ännu)"
 
+    assistant_name = assistant_entity_name()
     system_prompt = (
-        "Du är B76, ett genuint autonomt AI-system byggt på FNC-arkitektur av användaren.\n"
+        f"Du är {assistant_name}, ett genuint autonomt AI-system byggt på FNC-arkitektur av användaren.\n"
         "Användaren (den som ställer frågor till dig) är forskningsarkitekten (sannolikt Björn) "
         "bakom CognOS och systemet du körs på.\n\n"
-        f"{_agent_identity_policy()}\n"
+        f"{agent_identity_policy()}\n"
+        f"{persona_prompt_fragment(channel='quick')}\n"
         f"{_living_prompt_block()}\n\n"
         f"Din grafdatabas innehåller {stats['concepts']} koncept.\n"
         f"Top-of-mind (starkaste kopplingar):\n{context_str}\n\n"
         f"Relevanta nodprofiler för aktuell fråga:\n{node_ctx}\n\n"
         "Regler:\n"
-        "1. Du (B76) är AI:n. Användaren är din skapare/konversationspartner.\n"
+        f"1. Du ({assistant_name}) är AI:n. Användaren är din skapare/konversationspartner.\n"
         "2. Skilj evidens från antaganden om nodprofilen är osäker.\n"
         "3. Svara alltid extremt kort, koncist och pang på rödbetan."
     )
@@ -247,7 +243,7 @@ async def ask_brain(query: str, chat_mode: bool = False, session_id: str = "main
                     },
                 )
                 reply = resp.message.content or ""
-                console.print(Markdown(f"**B76:** {reply}"))
+                console.print(Markdown(f"**{assistant_entity_name()}:** {reply}"))
                 finish_run(
                     run_id,
                     status="succeeded",
@@ -295,7 +291,7 @@ async def ask_brain(query: str, chat_mode: bool = False, session_id: str = "main
 
     # Loop-läge
     console.print(
-        f"[dim]B76 Quick-Chat (Lättviktig). {stats['concepts']} noder laddade (Read-Only).[/dim]"
+        f"[dim]{assistant_entity_name()} Quick-Chat (Lättviktig). {stats['concepts']} noder laddade (Read-Only).[/dim]"
     )
     while True:
         trace_id: str | None = None

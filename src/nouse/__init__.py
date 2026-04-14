@@ -5,7 +5,7 @@ The missing link to AGI: a persistent, plastic brain layer that gives any LLM
 the cognitive architecture of the human mind.
 
 Memory architecture: working → episodic → semantic → procedural
-Core innovation: KuzuDB knowledge graph + Residual Streams (w, r, u) per edge.
+Core innovation: SQLite WAL + NetworkX knowledge graph + Residual Streams (w, r, u) per edge.
 Plasticity: STDP + Hebbian learning, NightRun consolidation, DeepDive axiom-discovery.
 
 Quick start (high-level kernel API):
@@ -19,6 +19,10 @@ Quick start (knowledge graph API):
     field = FieldSurface()
     field.add_relation("ocean_current", "influences", "climate", why="heat transport")
 """
+from nouse.config.env import load_env_files as _load_env_files
+
+_load_env_files()
+
 from nouse.kernel import (
     Brain as Kernel,
     FieldEvent,
@@ -30,10 +34,17 @@ from nouse.kernel import (
     SCHEMA_VERSION,
 )
 
-from nouse.inject import attach, NouseBrain, Axiom, ConceptProfile, QueryResult
+from nouse.inject import attach, NouseBrain, Axiom, ConceptProfile, QueryResult, ContradictionResult
+from nouse.llm.wrapper import (
+    DEFAULT_SYSTEM_PREAMBLE,
+    WrappedLLMResponse,
+    build_system_prompt,
+    extract_response_text,
+    run_with_nouse,
+)
 from nouse.search.escalator import EscalationResult
 
-__version__ = "0.3.1"
+__version__ = "0.4.0"
 
 __all__ = [
     # Inject API — one-line entry point
@@ -42,6 +53,12 @@ __all__ = [
     "Axiom",
     "ConceptProfile",
     "QueryResult",
+    "ContradictionResult",
+    "DEFAULT_SYSTEM_PREAMBLE",
+    "WrappedLLMResponse",
+    "build_system_prompt",
+    "extract_response_text",
+    "run_with_nouse",
     # Escalation
     "EscalationResult",
     # Residual Stream kernel

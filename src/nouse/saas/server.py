@@ -1,5 +1,5 @@
 """
-nouse.saas.server — Nouse Cloud API (multi-tenant).
+nouse.saas.server — Nous Cloud API (multi-tenant).
 
 Starta:
     nouse-saas --port 8766
@@ -17,7 +17,7 @@ from nouse.saas.auth import validate_key
 from nouse.saas.tenant import db_path_for
 
 app = FastAPI(
-    title="Nouse Cloud API",
+    title="Nous Cloud API",
     version="1.0.0",
     description="Multi-tenant cognitive substrate API. Each API key maps to an isolated brain.",
 )
@@ -121,8 +121,8 @@ def main():
 
     @cli.command()
     def run(port: int = typer.Option(8766, "--port", "-p")):
-        """Starta Nouse Cloud API-server."""
-        typer.echo(f"Nouse SaaS API → http://0.0.0.0:{port}/v1/health")
+        """Starta Nous Cloud API-server."""
+        typer.echo(f"Nous SaaS API → http://0.0.0.0:{port}/v1/health")
         uvicorn.run("nouse.saas.server:app", host="0.0.0.0", port=port, reload=False)
 
     cli()

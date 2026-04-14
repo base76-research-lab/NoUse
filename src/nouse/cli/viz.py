@@ -436,7 +436,7 @@ def build_html_from_data(
 ) -> str:
     """
     Bygg HTML-graf från API-data (dict med 'nodes', 'edges', 'stats').
-    Ingen KuzuDB-access krävs — används när daemon kör.
+    Ingen direkt DB-access krävs — används när daemon kör.
     """
     from pyvis.network import Network
 

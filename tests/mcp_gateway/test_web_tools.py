@@ -7,6 +7,25 @@ import httpx
 from nouse.mcp_gateway import gateway
 
 
+def test_get_time_context_returns_local_and_utc_fields():
+    out = gateway.get_time_context("UTC")
+    assert out["source"] == "system_clock"
+    assert out["timezone"] == "UTC"
+    assert out["now_local"].endswith("+00:00")
+    assert out["now_utc"].endswith("+00:00")
+    assert len(str(out["date_local"])) == 10
+    assert len(str(out["time_local"])) == 8
+    assert out["weekday_local"]
+    assert out["weekday_local_en"]
+    assert isinstance(out["unix_ts"], int)
+
+
+def test_execute_mcp_tool_get_time_context_forwards_timezone():
+    out = gateway.execute_mcp_tool("get_time_context", {"timezone": "UTC"})
+    assert out["timezone"] == "UTC"
+    assert out["today_local"] == out["date_local"]
+
+
 def test_web_search_falls_back_to_duckduckgo_html(monkeypatch):
     class _BrokenDDGS:
         def __enter__(self):
@@ -159,3 +178,54 @@ def test_read_pdf_text_falls_back_to_extract_text_when_pdftotext_missing(
     out = gateway._read_pdf_text(pdf, max_chars=1000)
     assert out["content"] == "fallback pdf text"
     assert out["truncated"] is False
+
+
+def test_write_local_file_requires_trusted_local_runtime(monkeypatch, tmp_path: Path):
+    monkeypatch.delenv("NOUSE_TRUSTED_LOCAL_AUTONOMY", raising=False)
+    monkeypatch.delenv("NOUSE_LOCAL_FILE_WRITE_ENABLED", raising=False)
+
+    out = gateway.write_local_file(str(tmp_path / "note.txt"), "hej")
+    assert "disabled" in str(out.get("error") or "")
+
+
+def test_write_local_file_writes_when_enabled(monkeypatch, tmp_path: Path):
+    target = tmp_path / "notes" / "day.md"
+    monkeypatch.setenv("NOUSE_LOCAL_FILE_WRITE_ENABLED", "1")
+    monkeypatch.setenv("NOUSE_LOCAL_WRITE_ROOTS", str(tmp_path))
+
+    out = gateway.write_local_file(
+        str(target),
+        "# logg\n",
+        create_dirs=True,
+    )
+    assert out["ok"] is True
+    assert target.read_text(encoding="utf-8") == "# logg\n"
+
+
+def test_run_local_command_requires_trusted_local_runtime(monkeypatch):
+    monkeypatch.delenv("NOUSE_TRUSTED_LOCAL_AUTONOMY", raising=False)
+    monkeypatch.delenv("NOUSE_LOCAL_SHELL_ENABLED", raising=False)
+
+    out = gateway.run_local_command("pwd")
+    assert "disabled" in str(out.get("error") or "")
+
+
+def test_run_local_command_executes_when_enabled(monkeypatch, tmp_path: Path):
+    monkeypatch.setenv("NOUSE_LOCAL_SHELL_ENABLED", "1")
+    monkeypatch.setenv("NOUSE_LOCAL_EXEC_ROOTS", str(tmp_path))
+
+    out = gateway.run_local_command("pwd", workdir=str(tmp_path))
+    assert out["ok"] is True
+    assert str(tmp_path) in str(out.get("stdout") or "")
+
+
+def test_mcp_tool_enabled_reflects_trusted_local_env(monkeypatch):
+    monkeypatch.delenv("NOUSE_TRUSTED_LOCAL_AUTONOMY", raising=False)
+    monkeypatch.delenv("NOUSE_LOCAL_FILE_WRITE_ENABLED", raising=False)
+    monkeypatch.delenv("NOUSE_LOCAL_SHELL_ENABLED", raising=False)
+    assert gateway.mcp_tool_enabled("write_local_file") is False
+    assert gateway.mcp_tool_enabled("run_local_command") is False
+
+    monkeypatch.setenv("NOUSE_TRUSTED_LOCAL_AUTONOMY", "1")
+    assert gateway.mcp_tool_enabled("write_local_file") is True
+    assert gateway.mcp_tool_enabled("run_local_command") is True

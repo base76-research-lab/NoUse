@@ -29,7 +29,7 @@ async def generate_morning_report(field: FieldSurface) -> str:
     # Rätt sätt vore via en timestamp, men vi kan be field om de startaste kopplingarna
     
     # Eftersom "FieldSurface" just nu bara har `domains()`, `concepts()` och `relations` via query,
-    # kör vi en dedikerad Kuzu-query för att hitta de mest intressanta (starkaste) nyliga bryggorna
+    # kör vi en dedikerad graf-query för att hitta de mest intressanta (starkaste) nyliga bryggorna
     try:
         latest = field.top_relations_by_strength(10, threshold=0.5)
     except Exception as e:

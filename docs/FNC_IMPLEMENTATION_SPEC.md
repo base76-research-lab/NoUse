@@ -108,7 +108,7 @@ New stimulus → Enter working memory →
 
 ## Technical Implementation
 
-### Database Schema (Zulu DB / Kuzu)
+### Database Schema (SQLite WAL / graph substrate)
 
 **Nodes Table:**
 ```sql

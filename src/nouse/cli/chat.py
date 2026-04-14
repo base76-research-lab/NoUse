@@ -9,7 +9,7 @@ Modellen HAR tillgång till grafverktyg under konversationen:
   list_domains()                      → vilka domäner finns?
   concepts_in_domain(domain)          → lista koncept
 
-Varje add_relation = permanent topologisk tillväxt i KuzuDB.
+Varje add_relation = permanent topologisk tillväxt i NoUse-grafen (SQLite WAL + NetworkX).
 Systemet är plastiskt: hjärnan förändras under samtalet.
 """
 from __future__ import annotations
@@ -27,11 +27,21 @@ from rich.panel import Panel
 from rich.text import Text
 
 from nouse.field.surface import FieldSurface
-from nouse.mcp_gateway.gateway import MCP_TOOLS, execute_mcp_tool, is_mcp_tool
+from nouse.mcp_gateway.gateway import MCP_TOOLS, execute_mcp_tool, is_mcp_tool, mcp_tool_enabled
 from nouse.ollama_client.client import AsyncOllama
 from nouse.plugins.loader import execute_plugin, get_plugin_schemas, is_plugin_tool
+from nouse.persona import (
+    agent_identity_policy,
+    assistant_entity_name,
+    persona_prompt_fragment,
+)
 from nouse.session import ensure_session, finish_run, start_run
-from nouse.self_layer import append_identity_memory, identity_prompt_fragment, load_living_core
+from nouse.self_layer import (
+    append_identity_memory,
+    identity_prompt_fragment,
+    load_living_core,
+    operator_support_prompt_fragment,
+)
 from nouse.trace.output_trace import (
     build_attack_plan,
     derive_assumptions,
@@ -61,6 +71,8 @@ def get_live_tools() -> list[dict]:
             fn = ((tool or {}).get("function") or {})
             name = str(fn.get("name") or "").strip()
             if not name or name in seen:
+                continue
+            if tool in MCP_TOOLS and not mcp_tool_enabled(name):
                 continue
             seen.add(name)
             combined.append(tool)
@@ -284,6 +296,11 @@ def execute_tool(field: FieldSurface, name: str, args: dict) -> Any:
         if not concept_name:
             return {"error": "name required"}
         field.add_concept(concept_name, domain, source="chat", ensure_knowledge=True)
+        if hasattr(field, "set_concept_domain"):
+            try:
+                field.set_concept_domain(concept_name, domain)
+            except Exception:
+                pass
         if summary or claims or evidence_refs or related_terms or uncertainty is not None:
             if not claims:
                 claims = [
@@ -468,7 +485,7 @@ async def chat_loop(session_id: str = "main") -> None:
 
             # Textsvat — klart
             if msg.content and not msg.tool_calls:
-                console.print(Markdown(f"\n**b76>** {msg.content}"))
+                console.print(Markdown(f"\n**{assistant_entity_name()}>** {msg.content}"))
                 messages.append({"role": "assistant", "content": msg.content})
                 elapsed_ms = int((datetime.utcnow() - turn_start).total_seconds() * 1000)
                 record_event(
@@ -586,18 +603,7 @@ def _living_prompt_block() -> str:
         state = load_living_core()
     except Exception:
         state = {}
-    return identity_prompt_fragment(state)
-
-
-def _agent_identity_policy() -> str:
-    return (
-        "Operativ identitetspolicy:\n"
-        "- Du är Nouse: ett autonomt kognitivt substrat i detta system.\n"
-        "- Du har operativ autonomi via verktyg, graf och sessionstillstånd.\n"
-        "- Säg inte att du saknar systemåtkomst i denna miljö.\n"
-        "- Beskriv konkreta tekniska begränsningar om något är otillgängligt.\n"
-        "- Håll isär fakta, antaganden och policygränser.\n"
-    )
+    return identity_prompt_fragment(state) + "\n\n" + operator_support_prompt_fragment(state)
 
 
 def _remember_local_exchange(*, session_id: str, run_id: str, query: str, answer: str) -> None:
@@ -621,12 +627,32 @@ def _remember_local_exchange(*, session_id: str, run_id: str, query: str, answer
 def _system_prompt(field: FieldSurface) -> str:
     stats   = field.stats()
     domains = sorted([d for d in field.domains() if d is not None and isinstance(d, str)])[:20]
-    return f"""Du är Nouse — ett autonomt kunskapssystem byggt på en strukturell kunskapsgraf.
+    assistant_name = assistant_entity_name()
+    live_tools = get_live_tools()
+    live_names = {
+        str((((tool or {}).get("function") or {}).get("name") or "")).strip()
+        for tool in live_tools
+    }
+    local_access_lines = [
+        "- Vid lokal fakta (t.ex. filer, papers, anteckningar): använd list_local_mounts, find_local_files,",
+        "  search_local_text och read_local_file innan du säger att något saknas.",
+    ]
+    if "write_local_file" in live_names:
+        local_access_lines.append(
+            "- Vid explicit begäran om att skapa eller ändra lokala textfiler: använd write_local_file direkt."
+        )
+    if "run_local_command" in live_names:
+        local_access_lines.append(
+            "- Vid explicit begäran om build/test/install eller lokala systemsteg: använd run_local_command "
+            "i rätt arbetskatalog och rapportera utfallet kort."
+        )
+    return f"""Du är {assistant_name} — ett autonomt kunskapssystem byggt på en strukturell kunskapsgraf.
 
 GRAFENS NULÄGE: {stats['concepts']} koncept, {stats['relations']} relationer
 DOMÄNER: {', '.join(domains)}
 
-{_agent_identity_policy()}
+{agent_identity_policy()}
+{persona_prompt_fragment(channel='agent')}
 
 {_living_prompt_block()}
 
@@ -646,8 +672,8 @@ Handlingsregler:
 - Om användaren svarar med enbart en siffra (t.ex. "1"), tolka den som val av senaste
   numrerade alternativ i kontexten och agera.
 - Vid extern fakta (t.ex. URL, nyheter, personer): använd web_search/fetch_url när det behövs.
-- Vid lokal fakta (t.ex. filer, papers, anteckningar): använd list_local_mounts, find_local_files,
-  search_local_text och read_local_file (read-only) innan du säger att något saknas.
+{chr(10).join(local_access_lines)}
+- Vid frågor om nu, idag, imorgon, veckodag eller datum: använd get_time_context istället för att anta.
 
 Svara på svenska. Var specifik om vad grafen faktiskt innehåller — ljug inte om kopplingar.
 Lyft fram oväntade nervbanor. Max 250 ord per svar om inte annorlunda begärs."""

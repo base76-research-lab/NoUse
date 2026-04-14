@@ -15,6 +15,11 @@ import time
 import urllib.request
 
 from nouse.field.surface import FieldSurface
+from nouse.persona import (
+    agent_identity_policy,
+    assistant_entity_name,
+    persona_prompt_fragment,
+)
 from nouse.trace.output_trace import (
     build_attack_plan,
     derive_assumptions,
@@ -114,15 +119,18 @@ def _build_context() -> tuple[str, str]:
         domains = ", ".join(status.get("domains", [])[:12])
         lam = status.get("lambda", 0.5)
         stats = f"{status['concepts']} koncept · {status['relations']} relationer · λ={lam:.2f}"
+        assistant_name = assistant_entity_name()
 
         prompt = (
-            "Du är B76 — ett autonomt kognitivt system med en levande kunskapsgraf.\n"
+            f"Du är {assistant_name} — ett autonomt kognitivt system med en levande kunskapsgraf.\n"
             f"Graf just nu: {stats}\n"
             f"Domäner: {domains}\n\n"
             "Ditt korttidsminne (starkaste kopplingar):\n"
             f"{mem}\n\n"
+            f"{agent_identity_policy()}\n"
+            f"{persona_prompt_fragment(channel='quick')}\n"
             "Regler:\n"
-            "1. Du är B76. Svara utifrån grafen när det är relevant.\n"
+            f"1. Du är {assistant_name}. Svara utifrån grafen när det är relevant.\n"
             "2. Kort och direkt — max 3 meningar om inget annat efterfrågas.\n"
             "3. Säg 'vet inte ännu' om du saknar kontext i grafen.\n"
             "4. Skilj evidens från antaganden när osäkerhet är hög.\n"
@@ -131,8 +139,9 @@ def _build_context() -> tuple[str, str]:
         return prompt, stats
 
     except Exception:
+        assistant_name = assistant_entity_name()
         return (
-            "Du är B76 — ett autonomt AI-system. Daemon är ej aktiv.",
+            f"Du är {assistant_name} — ett autonomt AI-system. Daemon är ej aktiv.",
             "daemon ej aktiv",
         )
 
@@ -149,7 +158,7 @@ async def run_loop() -> None:
     except Exception:
         field_ro = None
 
-    print(f"\n{_BOLD}{_BLUE}◆ B76{_RST}  {_DIM}{stats}{_RST}")
+    print(f"\n{_BOLD}{_BLUE}◆ {assistant_entity_name()}{_RST}  {_DIM}{stats}{_RST}")
     print(f"{_DIM}{'─' * 52}{_RST}")
     print(f"{_DIM}/exit för att avsluta{_RST}\n")
 
@@ -186,7 +195,7 @@ async def run_loop() -> None:
             {"role": "user", "content": user_input},
         ]
 
-        print(f"{_BLUE}B76:{_RST} ", end="", flush=True)
+        print(f"{_BLUE}{assistant_entity_name()}:{_RST} ", end="", flush=True)
         try:
             record_event(
                 trace_id,

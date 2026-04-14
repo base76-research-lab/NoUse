@@ -19,8 +19,10 @@ from nouse.mcp_gateway.gateway import (
     kernel_write_episode,
     list_local_mounts,
     read_local_file,
+    run_local_command,
     search_local_text,
     web_search,
+    write_local_file,
 )
 
 try:
@@ -34,8 +36,12 @@ mcp = FastMCP("b76-kernel")
 
 
 @mcp.tool()
-def web_search_tool(query: str, max_results: int = 5) -> dict[str, Any]:
-    return web_search(query, max_results=max_results)
+def web_search_tool(
+    query: str,
+    max_results: int = 5,
+    provider: str = "auto",
+) -> dict[str, Any]:
+    return web_search(query, max_results=max_results, provider=provider)
 
 
 @mcp.tool()
@@ -86,6 +92,34 @@ def read_local_file_tool(
         max_chars=max_chars,
         start_line=start_line,
         end_line=end_line,
+    )
+
+
+@mcp.tool()
+def write_local_file_tool(
+    path: str,
+    content: str,
+    mode: str = "overwrite",
+    create_dirs: bool = False,
+) -> dict[str, Any]:
+    return write_local_file(
+        path,
+        content,
+        mode=mode,
+        create_dirs=create_dirs,
+    )
+
+
+@mcp.tool()
+def run_local_command_tool(
+    command: str,
+    workdir: str = "",
+    timeout_sec: int = 45,
+) -> dict[str, Any]:
+    return run_local_command(
+        command,
+        workdir=workdir or None,
+        timeout_sec=timeout_sec,
     )
 
 

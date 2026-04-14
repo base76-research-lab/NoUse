@@ -66,6 +66,7 @@ RELATION_TYPES = [
     "modulerar","orsakar","konsoliderar","är_del_av",
     "synkroniserar","reglerar","oscillerar","är_analogt_med",
     "stärker","försvagar","producerar","beskriver",
+    "motsäger","förnekar",
 ]
 _RELATION_TYPE_SET = set(RELATION_TYPES)
 
@@ -119,6 +120,15 @@ _RELATION_NORMALIZATION = {
     "oscillate": "oscillerar",
     "is_analogous_to": "är_analogt_med",
     "is analogous to": "är_analogt_med",
+    "contradicts": "motsäger",
+    "contradict": "motsäger",
+    "negates": "förnekar",
+    "negate": "förnekar",
+    "refutes": "motsäger",
+    "refute": "motsäger",
+    "opposes": "motsäger",
+    "oppose": "motsäger",
+    "motbevisar": "motsäger",
 }
 
 _HEURISTIC_PATTERNS: list[tuple[re.Pattern[str], str]] = [

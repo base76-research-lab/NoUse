@@ -1,5 +1,5 @@
 """
-nouse run — LLM-agnostisk REPL för Nouse.
+nouse run — LLM-agnostisk REPL för Nous.
 
 Fungerar med Ollama, Claude, OpenAI, GitHub Copilot eller valfri provider.
 Berikar varje fråga med kontext från kunskapsgrafen och lär sig av svaren.
@@ -41,7 +41,7 @@ _HELP_TEXT = """\
 
 def _build_system_prompt(stats: dict, domains: list[str]) -> str:
     top_domains = ", ".join(sorted(domains)[:15]) or "inga domäner ännu"
-    return f"""Du är Nouse — ett autonomt kognitivt substrat med en levande kunskapsgraf.
+    return f"""Du är Nous — ett autonomt kognitivt substrat med en levande kunskapsgraf.
 
 GRAFENS NULÄGE: {stats.get('concepts', 0)} koncept · {stats.get('relations', 0)} relationer
 DOMÄNER: {top_domains}
@@ -227,7 +227,7 @@ async def run_repl(
         f"[dim]LLM: [green]{model}[/green]  provider: [green]{provider_label}[/green][/dim]\n"
         f"[dim]'exit' för att avsluta · '/help' för kommandon[/dim]",
         border_style="cyan",
-        title="[bold]Nouse[/bold]",
+        title="[bold]Nous[/bold]",
     ))
 
     last_user: str = ""

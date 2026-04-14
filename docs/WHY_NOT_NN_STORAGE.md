@@ -103,7 +103,7 @@ Neuralt:      O(n) eller O(log n) — traversera graf,
   Neuralt:    Traverse 10,000 noder? Långsamt!
 ```
 
-**Lösning:** KuzuDB (grafindex) + Working Memory (cache)
+**Lösning:** SQLite WAL + NetworkX (grafindex) + Working Memory (cache)
 
 ### Problem 3: Odeterministisk
 
@@ -129,7 +129,7 @@ Neuralt:      Aktivera 1000 noder → beräkna →
 Laptop-batteri: Dör på 2 timmar istället för 10?
 ```
 
-**Lösning:** Rust (effektivt), Zulu DB (komprimerat), 
+**Lösning:** Rust (effektivt), kompakt lokal graph store, 
             lazy evaluation (beräkna bara vid behov)
 
 ---
@@ -183,7 +183,7 @@ Neuralt:      "Hitta konceptuellt liknande"  ← Snabbt!
 │  NOUSE HYBRID STORAGE                                   │
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
-│  LAYER 1: SYMBOLISK (Zulu DB)                           │
+│  LAYER 1: SYMBOLISK (SQLite WAL)                        │
 │    └── Exakta data: noder, kanter, metadata            │
 │    └── Fördel: Snabb, reliable, standard SQL           │
 │    └── Use case: "Ge mig node #4721"                   │

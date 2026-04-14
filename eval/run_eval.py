@@ -19,8 +19,10 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import hashlib
 import json
 import os
+import subprocess
 import sys
 import time
 from datetime import datetime
@@ -245,9 +247,75 @@ def _keyword_score(result: dict, question: dict) -> dict:
     }
 
 
-def _print_table(configs: list[dict], all_results: list[dict]) -> str:
+def _safe_git_commit() -> str:
+    try:
+        out = subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=str(Path(__file__).parent.parent),
+            stderr=subprocess.DEVNULL,
+            text=True,
+        ).strip()
+        return out or "unknown"
+    except Exception:
+        return "unknown"
+
+
+def _sha256_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _summarize_results(configs: list[dict], all_results: list[dict]) -> list[dict]:
+    by_cfg: list[dict] = []
+    for cfg in configs:
+        tag = cfg["tag"]
+        model = cfg["model"]
+        use_nouse = bool(cfg["use_nouse"])
+        rows = [
+            r for r in all_results
+            if str(r.get("model")) == str(model) and bool(r.get("use_nouse")) == use_nouse
+        ]
+        if not rows:
+            continue
+        scored = [r for r in rows if isinstance(r.get("score"), (int, float))]
+        avg_score = (sum(float(r["score"]) for r in scored) / len(scored)) if scored else 0.0
+        avg_pct = (avg_score / 3.0) * 100.0
+        timeout_count = sum(1 for r in rows if str(r.get("answer", "")).startswith("[TIMEOUT]"))
+        error_count = sum(
+            1 for r in rows
+            if str(r.get("answer", "")).startswith("[ERROR:")
+        )
+        by_cfg.append(
+            {
+                "tag": tag,
+                "model": model,
+                "use_nouse": use_nouse,
+                "n_questions": len(rows),
+                "avg_score_0_to_3": round(avg_score, 4),
+                "avg_pct": round(avg_pct, 2),
+                "timeout_count": timeout_count,
+                "error_count": error_count,
+            }
+        )
+    return by_cfg
+
+
+def _print_table(
+    configs: list[dict],
+    all_results: list[dict],
+    *,
+    run_id: str = "",
+    scoring_mode: str = "",
+) -> str:
     lines = ["# Nouse Eval Results\n"]
     lines.append(f"Genererad: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n")
+    if run_id:
+        lines.append(f"Run-ID: `{run_id}`\n")
+    if scoring_mode:
+        lines.append(f"Scoring: `{scoring_mode}`\n")
     lines.append("## Sammanfattning\n")
     lines.append("| Konfiguration | Modell | Nouse | Frågor | Avg Score | Halluc | Tid/q |\n")
     lines.append("|---|---|:---:|:---:|:---:|:---:|:---:|\n")
@@ -310,7 +378,7 @@ async def main(args):
 
     print(f"📋 {len(questions)} frågor laddade")
 
-    configs = [
+    defined_configs = [
         {"tag": "A — liten, ingen Nouse", "model": args.small, "use_nouse": False},
         {"tag": "B — liten + Nouse",      "model": args.small, "use_nouse": True},
         {"tag": "C — stor, ingen Nouse",  "model": args.large, "use_nouse": False},
@@ -329,7 +397,7 @@ async def main(args):
     all_results: list[dict] = []
 
     # Kör bara A och B om samma modell (undviker redundant C)
-    run_configs = configs[:2] if args.small == args.large else configs
+    run_configs = defined_configs[:2] if args.small == args.large else defined_configs
 
     async def run_config(cfg: dict) -> list[dict]:
         model = cfg["model"]
@@ -381,16 +449,48 @@ async def main(args):
     results_dir.mkdir(exist_ok=True)
 
     out_json = results_dir / f"run_{ts}.json"
+    scoring_mode = "keyword_no_judge" if bool(args.no_judge) else "llm_judge"
+    summary = _summarize_results(run_configs, scored_results)
+    q_hash = _sha256_file(q_path)
+    run_meta = {
+        "script": "eval/run_eval.py",
+        "generated_at_utc": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+        "git_commit": _safe_git_commit(),
+        "argv": list(sys.argv),
+        "models": {
+            "small": args.small,
+            "large": args.large,
+            "judge": args.judge,
+        },
+        "scoring_mode": scoring_mode,
+        "concurrency": int(args.concurrency),
+        "questions_file": str(q_path),
+        "questions_sha256": q_hash,
+        "n_questions_effective": len(questions),
+        "notes": [
+            "domain_specific_benchmark",
+            "not_universal_leaderboard_claim",
+        ],
+    }
     with open(out_json, "w", encoding="utf-8") as f:
         json.dump({
             "timestamp": ts,
-            "configs": configs,
+            "configs_defined": defined_configs,
+            "configs_executed": run_configs,
+            "configs": run_configs,  # backward compatible key
             "questions": len(questions),
+            "meta": run_meta,
+            "summary": summary,
             "results": scored_results,
         }, f, ensure_ascii=False, indent=2)
 
     # RESULTS.md
-    md = _print_table(configs, scored_results)
+    md = _print_table(
+        run_configs,
+        scored_results,
+        run_id=f"run_{ts}",
+        scoring_mode=scoring_mode,
+    )
     results_md = Path(__file__).parent / "RESULTS.md"
     with open(results_md, "w", encoding="utf-8") as f:
         f.write(md)

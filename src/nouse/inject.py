@@ -623,7 +623,6 @@ class NouseBrain:
     def log_contradiction_event(self, contradiction: ContradictionResult, query: str = "") -> None:
         """Write contradiction event to journal for tracking contradiction_catch_rate."""
         import logging
-        from nouse.daemon.journal import write_contradiction_event
         _log = logging.getLogger("nouse.contradiction")
         _log.info(
             "CONTRADICTION_EVENT query=%r severity=%.2f recommendation=%s "
@@ -634,13 +633,6 @@ class NouseBrain:
             len(contradiction.conflicts),
             len(contradiction.flagged_assertions),
             ",".join(contradiction.checked_concepts[:5]),
-        )
-        write_contradiction_event(
-            severity=contradiction.severity,
-            recommendation=contradiction.recommendation,
-            conflicts=len(contradiction.conflicts),
-            flagged=len(contradiction.flagged_assertions),
-            query=query[:120] if query else "",
         )
 
     # ── Session relay API ─────────────────────────────────────────────────────
@@ -861,19 +853,11 @@ class NouseBrainHTTP:
 
     def log_contradiction_event(self, contradiction: ContradictionResult, query: str = "") -> None:
         import logging
-        from nouse.daemon.journal import write_contradiction_event
         logging.getLogger("nouse.contradiction").info(
             "CONTRADICTION_EVENT query=%r severity=%.2f recommendation=%s",
             query[:80] if query else "",
             contradiction.severity,
             contradiction.recommendation,
-        )
-        write_contradiction_event(
-            severity=contradiction.severity,
-            recommendation=contradiction.recommendation,
-            conflicts=len(contradiction.conflicts),
-            flagged=len(contradiction.flagged_assertions),
-            query=query[:120] if query else "",
         )
 
     def learn(self, prompt: str, response: str, source: str = "conversation") -> None:

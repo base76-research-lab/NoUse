@@ -12,8 +12,10 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-_DB_PATH = Path.home() / ".local" / "share" / "nouse" / "field.sqlite"
-_MEMORY_DIR = Path.home() / ".local" / "share" / "nouse" / "memory"
+from nouse.config.paths import path_from_env
+
+_DB_PATH = path_from_env("NOUSE_FIELD_DB", "field.sqlite")
+_MEMORY_DIR = path_from_env("NOUSE_MEMORY_DIR", "memory")
 _DAEMON_URL = "http://127.0.0.1:8765/api/status"
 
 
@@ -198,7 +200,7 @@ def run_status(
     d = daemon_info(daemon_url)
 
     gap_part = f" · {graph['gaps']} gaps detected" if graph["gaps"] else ""
-    print(f"Nouse v{version}")
+    print(f"Nous v{version}")
     print(f"Graph:         {graph['nodes']} nodes · {graph['edges']} edges{gap_part}")
     print(
         f"Memory:        episodic={mem['episodic']}"

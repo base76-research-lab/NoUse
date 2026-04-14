@@ -150,7 +150,7 @@ async def escalate_query(
     Huvud-entry-point. Används från brain.escalate() och run_repl.py.
 
     brain = nouse.attach()
-    result = await escalate_query("vad är KuzuDB?", brain)
+    result = await escalate_query("vad är epistemisk grundning?", brain)
     print(result.context_block)   # injicera i LLM-prompt
     """
     graph_result = brain.query(query)

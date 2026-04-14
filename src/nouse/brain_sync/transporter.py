@@ -1,7 +1,7 @@
 """
 brain_sync — b76 → brain-db-core transport layer
 =================================================
-Bridges the semantic knowledge graph (b76 FieldSurface/KuzuDB)
+Bridges the semantic knowledge graph (b76 FieldSurface)
 to the abstract FNC substrate (brain-db-core).
 
 Each significant b76 event is translated to a brain-db-core FieldEvent
@@ -53,7 +53,7 @@ class EventType(Enum):
     METACOGNITION = "metacognition"      # self-observation / self-model update
     CONCEPT_CRYSTALLIZE = "concept_crystallize"  # high-evidence concept
     LIMBIC_SPIKE = "limbic_spike"       # high neuromodulator signal
-    FIELD_SURFACE_UPDATE = "field_surface_update"  # new strong relation in KuzuDB
+    FIELD_SURFACE_UPDATE = "field_surface_update"  # new strong relation in the graph layer
 
 
 @dataclass

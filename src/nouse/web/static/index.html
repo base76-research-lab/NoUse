@@ -3,17 +3,76 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>NoUse — FieldSurface Live</title>
+  <title>Nous — FieldSurface Live</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --font-ui: 'IBM Plex Sans', 'Aptos', 'Segoe UI', sans-serif;
+      --font-display: 'Yu Mincho', 'Hiragino Mincho ProN', 'Noto Serif JP', Georgia, serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      --scene-night: #120d18;
+      --scene-indigo: #20284f;
+      --scene-plum: #422537;
+      --scene-sun: #d88d3f;
+      --paper-main: rgba(244, 233, 214, 0.94);
+      --paper-strong: rgba(249, 241, 228, 0.98);
+      --paper-edge: rgba(255, 252, 244, 0.45);
+      --ink-main: #1c1517;
+      --ink-soft: #5a474a;
+      --ink-faint: #8b7678;
+      --accent-vermilion: #c9523c;
+      --accent-indigo: #334671;
+      --accent-gold: #d29c33;
+      --accent-plum: #7a4966;
+      --accent-jade: #43796d;
+      --accent-moss: #5d7b46;
+      --panel-border: rgba(49, 34, 32, 0.42);
+      --panel-line: rgba(60, 42, 38, 0.14);
+      --text-main: var(--ink-main);
+      --text-soft: var(--ink-soft);
+      --text-faint: var(--ink-faint);
+    }
+
     body {
-      background: #020814;
-      color: #c4d4f0;
-      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      background:
+        radial-gradient(circle at 18% 14%, rgba(216, 141, 63, 0.18), transparent 24%),
+        radial-gradient(circle at 84% 10%, rgba(122, 73, 102, 0.18), transparent 28%),
+        linear-gradient(155deg, rgba(32, 40, 79, 0.22), rgba(18, 13, 24, 0.04) 44%, rgba(66, 37, 55, 0.18)),
+        linear-gradient(180deg, #171221 0%, var(--scene-night) 56%, #0d0b12 100%);
+      color: var(--text-main);
+      font-family: var(--font-ui);
       overflow: hidden;
       height: 100vh;
       user-select: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      background:
+        radial-gradient(circle at 22% 20%, rgba(255, 245, 232, 0.05) 0 2px, transparent 2px 100%),
+        radial-gradient(circle at 74% 68%, rgba(255, 245, 232, 0.04) 0 1.5px, transparent 1.5px 100%);
+      background-size: 16px 16px, 18px 18px;
+      opacity: 0.22;
+      mix-blend-mode: screen;
+    }
+
+    body::after {
+      background:
+        linear-gradient(115deg, transparent 0 44%, rgba(255, 255, 255, 0.03) 44% 46%, transparent 46% 100%),
+        linear-gradient(160deg, transparent 0 58%, rgba(210, 156, 51, 0.05) 58% 61%, transparent 61% 100%);
+      opacity: 0.8;
     }
 
     #graph-container { position: fixed; inset: 0; }
@@ -23,13 +82,29 @@
     .hud {
       position: fixed;
       z-index: 100;
-      background: rgba(4, 14, 36, 0.82);
-      border: 1px solid rgba(78, 154, 241, 0.25);
-      border-radius: 10px;
-      backdrop-filter: blur(12px);
+      background:
+        linear-gradient(180deg, rgba(255, 252, 247, 0.15), transparent 18%),
+        var(--paper-main);
+      border: 1px solid var(--panel-border);
+      border-radius: 18px 6px 18px 6px;
+      box-shadow:
+        0 18px 38px rgba(9, 7, 10, 0.34),
+        inset 0 0 0 1px var(--paper-edge);
       padding: 12px 14px;
-      font-size: 11px;
+      font-size: 12px;
       pointer-events: auto;
+      overflow: hidden;
+    }
+
+    .hud::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(201, 82, 60, 0.08), transparent 34%),
+        radial-gradient(circle at 100% 0, rgba(210, 156, 51, 0.1), transparent 28%);
+      pointer-events: none;
+      z-index: -1;
     }
 
     #hud-stats {
@@ -51,26 +126,172 @@
       overflow: hidden;
     }
 
+    #hud-insights {
+      left: 50%;
+      right: auto;
+      bottom: 112px;
+      width: min(780px, 54vw);
+      min-width: 380px;
+      max-height: 280px;
+      overflow: hidden;
+      transition: transform 0.28s ease, opacity 0.28s ease;
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    #hud-insights.collapsed {
+      transform: translateX(-50%) translateY(34px);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #insights-toggle {
+      position: fixed;
+      z-index: 101;
+      left: 50%;
+      right: auto;
+      bottom: 98px;
+      transform: translateX(-50%);
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--panel-border);
+      background: var(--paper-main);
+      color: var(--accent-vermilion);
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 10px 28px rgba(9, 7, 10, 0.26);
+      transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    #insights-toggle:hover {
+      background: var(--paper-strong);
+      border-color: rgba(201, 82, 60, 0.55);
+      transform: translateX(-50%) translateY(-1px);
+    }
+
     #hud-inspector {
       bottom: 14px; right: 14px;
       width: 300px;
       display: none;
     }
 
+    #finding-flash {
+      position: fixed;
+      z-index: 90;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      width: min(860px, 58vw);
+      min-width: 420px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 249, 240, 0.14);
+      background: rgba(18, 13, 24, 0.12);
+      box-shadow: 0 14px 38px rgba(9, 7, 10, 0.18);
+      pointer-events: none;
+      opacity: 0.12;
+      transition: opacity 0.45s ease, background 0.45s ease, border-color 0.45s ease, transform 0.45s ease;
+    }
+
+    #finding-flash.is-active {
+      opacity: 0.94;
+      background:
+        linear-gradient(135deg, rgba(201, 82, 60, 0.12), transparent 40%),
+        rgba(18, 13, 24, 0.94);
+      border-color: rgba(210, 156, 51, 0.34);
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    #finding-flash.is-idle {
+      opacity: 0.07;
+    }
+
+    .finding-flash-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+      min-height: 20px;
+    }
+
+    .finding-flash-tier {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 2px 8px;
+    }
+
+    .finding-flash-kind {
+      font-size: 11px;
+      font-weight: 600;
+      color: #f5e7d4;
+    }
+
+    .finding-flash-meta {
+      font-size: 10px;
+      color: rgba(244, 233, 214, 0.62);
+      font-family: var(--font-mono);
+      margin-left: auto;
+    }
+
+    .finding-flash-text {
+      color: #f6ebdb;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 500;
+      text-wrap: balance;
+    }
+
+    .finding-flash-targets {
+      margin-top: 5px;
+      color: rgba(244, 233, 214, 0.68);
+      font-size: 10px;
+      line-height: 1.35;
+      font-family: var(--font-mono);
+    }
+
     #hud-controls {
-      top: 50%;
+      top: 250px;
       left: 14px;
-      transform: translateY(-50%);
-      width: 200px;
+      transform: none;
+      width: 220px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    #hud-models {
+      left: 14px;
+      top: 530px;
+      width: 220px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    #hud-chat-control {
+      left: 14px;
+      top: 810px;
+      width: 220px;
+      max-height: 240px;
+      overflow-y: auto;
     }
 
     .hud-title {
-      color: #4e9af1;
-      font-size: 13px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
+      color: var(--accent-vermilion);
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      margin-bottom: 10px;
       text-transform: uppercase;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--panel-line);
     }
 
     .stat-row {
@@ -78,27 +299,27 @@
       justify-content: space-between;
       align-items: center;
       padding: 2px 0;
-      border-bottom: 1px solid rgba(78, 154, 241, 0.07);
+      border-bottom: 1px solid var(--panel-line);
     }
 
-    .stat-label { color: #7a9bc4; }
+    .stat-label { color: var(--text-soft); }
 
     .stat-value {
-      color: #e0ebff;
-      font-weight: bold;
+      color: var(--ink-main);
+      font-weight: 700;
       transition: color 0.3s;
     }
 
-    .stat-value.flash { color: #4ef1e8; }
+    .stat-value.flash { color: var(--accent-vermilion); }
 
     /* Limbic bar */
     .limbic-bar-wrap {
       margin: 6px 0 2px;
     }
-    .limbic-label { color: #7a9bc4; font-size: 10px; margin-bottom: 3px; }
+    .limbic-label { color: var(--text-soft); font-size: 10px; margin-bottom: 3px; }
     .limbic-bar-bg {
       height: 4px;
-      background: rgba(255,255,255,0.08);
+      background: rgba(41, 27, 25, 0.12);
       border-radius: 2px;
       overflow: hidden;
       margin-bottom: 2px;
@@ -108,8 +329,8 @@
       border-radius: 2px;
       transition: width 0.8s ease;
     }
-    .bar-arousal .limbic-bar-fill { background: linear-gradient(90deg, #4e9af1, #4ef1e8); }
-    .bar-dopamine .limbic-bar-fill { background: linear-gradient(90deg, #f16b4e, #f1c44e); }
+    .bar-arousal .limbic-bar-fill { background: linear-gradient(90deg, var(--accent-indigo), var(--accent-plum)); }
+    .bar-dopamine .limbic-bar-fill { background: linear-gradient(90deg, var(--accent-vermilion), var(--accent-gold)); }
 
     /* Domain legend */
     .domain-row {
@@ -125,15 +346,23 @@
       width: 9px; height: 9px;
       border-radius: 50%;
       flex-shrink: 0;
-      box-shadow: 0 0 5px currentColor;
+      box-shadow: 0 0 0 2px rgba(28, 21, 23, 0.12);
     }
-    .domain-name { color: #c4d4f0; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .domain-count { color: #5a7aaa; }
+    .domain-name {
+      color: var(--text-main);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .domain-count { color: var(--text-faint); font-family: var(--font-mono); }
 
     /* Event feed */
     #event-list {
-      font-size: 10px;
-      line-height: 1.6;
+      font-size: 11px;
+      line-height: 1.55;
       overflow-y: auto;
       max-height: 170px;
     }
@@ -142,7 +371,7 @@
       display: flex;
       gap: 6px;
       padding: 2px 0;
-      border-bottom: 1px solid rgba(78, 154, 241, 0.06);
+      border-bottom: 1px solid var(--panel-line);
       animation: fadeIn 0.4s ease;
     }
 
@@ -151,65 +380,176 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .ev-time { color: #3a5a8a; flex-shrink: 0; }
+    .ev-time { color: var(--ink-faint); flex-shrink: 0; font-family: var(--font-mono); }
     .ev-icon { flex-shrink: 0; width: 14px; text-align: center; }
-    .ev-text { color: #b0c8e8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .ev-edge     .ev-icon { color: #4e9af1; }
-    .ev-synapse  .ev-icon { color: #4ef1c4; }
-    .ev-meta     .ev-icon { color: #ffd700; }
-    .ev-probe    .ev-icon { color: #b04ef1; }
+    .ev-text {
+      color: var(--ink-main);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+    .ev-edge     .ev-icon { color: var(--accent-indigo); }
+    .ev-synapse  .ev-icon { color: var(--accent-jade); }
+    .ev-meta     .ev-icon { color: var(--accent-gold); }
+    .ev-probe    .ev-icon { color: var(--accent-plum); }
+
+    #insight-list {
+      font-size: 11px;
+      line-height: 1.45;
+      overflow-y: auto;
+      max-height: 265px;
+      margin-top: 8px;
+      padding-right: 2px;
+    }
+
+    .insight-row {
+      padding: 6px 0;
+      border-bottom: 1px solid var(--panel-line);
+    }
+
+    .insight-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .insight-tier {
+      font-size: 9px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 3px;
+      padding: 1px 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tier-hypotes { color: var(--accent-gold); border-color: rgba(210, 156, 51, 0.45); }
+    .tier-indikation { color: var(--accent-indigo); border-color: rgba(51, 70, 113, 0.45); }
+    .tier-validerad { color: var(--accent-moss); border-color: rgba(93, 123, 70, 0.45); }
+
+    .insight-score { color: var(--ink-faint); font-size: 9px; font-family: var(--font-mono); }
+    .insight-text { color: var(--ink-main); margin-bottom: 4px; font-weight: 600; }
+    .insight-meta { color: var(--ink-faint); font-size: 9px; }
+    .insight-links {
+      margin-top: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .insight-link {
+      color: var(--accent-indigo);
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(51, 70, 113, 0.55);
+    }
+    .insight-link:hover { color: var(--accent-vermilion); border-bottom-color: var(--accent-vermilion); }
 
     /* Inspector */
     #inspector-name {
-      color: #4ef1e8;
-      font-size: 14px;
-      font-weight: bold;
+      color: var(--accent-vermilion);
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
       margin-bottom: 6px;
-      word-break: break-all;
+      word-break: break-word;
+      line-height: 1.2;
     }
-    #inspector-domain { color: #7a9bc4; margin-bottom: 8px; }
-    #inspector-rels { font-size: 10px; max-height: 200px; overflow-y: auto; }
+    #inspector-domain { color: var(--text-soft); margin-bottom: 8px; }
+    #inspector-rels { font-size: 11px; max-height: 200px; overflow-y: auto; }
     .rel-row {
       padding: 2px 0;
-      border-bottom: 1px solid rgba(78, 154, 241, 0.06);
+      border-bottom: 1px solid var(--panel-line);
     }
-    .rel-type { color: #4e9af1; }
-    .rel-tgt { color: #c4d4f0; }
-    .rel-ev { color: #5a7aaa; font-size: 9px; }
+    .rel-type { color: var(--accent-indigo); }
+    .rel-tgt { color: var(--ink-main); }
+    .rel-ev { color: var(--ink-faint); font-size: 9px; }
 
     /* Controls */
     .ctrl-input {
       width: 100%;
-      background: rgba(4, 14, 36, 0.6);
-      border: 1px solid rgba(78, 154, 241, 0.3);
-      border-radius: 4px;
-      color: #c4d4f0;
+      background: rgba(255, 251, 245, 0.72);
+      border: 1px solid rgba(60, 42, 38, 0.2);
+      border-radius: 8px;
+      color: var(--ink-main);
       padding: 5px 8px;
-      font-family: inherit;
-      font-size: 11px;
+      font-family: var(--font-ui);
+      font-size: 12px;
       margin-bottom: 6px;
     }
-    .ctrl-input:focus { outline: none; border-color: #4e9af1; }
+    .ctrl-input:focus {
+      outline: none;
+      border-color: rgba(201, 82, 60, 0.55);
+      box-shadow: 0 0 0 3px rgba(201, 82, 60, 0.12);
+    }
 
     .ctrl-btn {
       width: 100%;
-      background: rgba(78, 154, 241, 0.15);
-      border: 1px solid rgba(78, 154, 241, 0.3);
-      border-radius: 4px;
-      color: #c4d4f0;
+      background: linear-gradient(180deg, rgba(255, 249, 241, 0.96), rgba(237, 221, 198, 0.96));
+      border: 1px solid rgba(61, 39, 36, 0.28);
+      border-radius: 10px 4px 10px 4px;
+      color: var(--ink-main);
       padding: 5px 8px;
-      font-family: inherit;
-      font-size: 11px;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 600;
       cursor: pointer;
       margin-bottom: 4px;
-      transition: background 0.2s;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s, background 0.2s;
+      box-shadow: 0 4px 12px rgba(31, 20, 22, 0.08);
     }
-    .ctrl-btn:hover { background: rgba(78, 154, 241, 0.3); }
+    .ctrl-btn:hover {
+      background: linear-gradient(180deg, rgba(255, 251, 245, 1), rgba(243, 227, 206, 1));
+      border-color: rgba(201, 82, 60, 0.46);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(31, 20, 22, 0.14);
+    }
 
     .ctrl-sep {
       height: 1px;
-      background: rgba(78, 154, 241, 0.12);
+      background: var(--panel-line);
       margin: 8px 0;
+    }
+
+    .model-status {
+      font-size: 11px;
+      color: var(--ink-faint);
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    .model-provider-list {
+      margin-top: 6px;
+      max-height: 130px;
+      overflow-y: auto;
+      border-top: 1px solid var(--panel-line);
+      padding-top: 6px;
+    }
+
+    .model-provider-row {
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--panel-line);
+    }
+
+    .model-provider-title {
+      color: var(--ink-main);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .model-provider-meta {
+      color: var(--ink-faint);
+      font-size: 10px;
+      margin-top: 2px;
+    }
+
+    .model-provider-models {
+      color: var(--ink-soft);
+      font-size: 10px;
+      margin-top: 3px;
+      line-height: 1.35;
+      word-break: break-word;
     }
 
     /* Loading overlay */
@@ -217,15 +557,22 @@
       position: fixed; inset: 0;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      background: #020814;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(216, 141, 63, 0.16), transparent 18%),
+        linear-gradient(180deg, #171221, var(--scene-night));
       z-index: 9999;
       gap: 16px;
     }
-    #loading-text { color: #4e9af1; font-size: 13px; letter-spacing: 2px; }
+    #loading-text {
+      color: #f6e9d7;
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      font-family: var(--font-display);
+    }
     .loader-ring {
       width: 48px; height: 48px;
-      border: 2px solid rgba(78, 154, 241, 0.15);
-      border-top-color: #4e9af1;
+      border: 2px solid rgba(244, 233, 214, 0.12);
+      border-top-color: var(--accent-gold);
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
@@ -240,16 +587,16 @@
     /* Scrollbar */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(78,154,241,0.3); border-radius: 2px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(78,154,241,0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(69, 47, 45, 0.28); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(201, 82, 60, 0.44); }
 
     /* Close button */
     .close-btn {
       position: absolute; top: 8px; right: 10px;
       background: none; border: none;
-      color: #5a7aaa; cursor: pointer; font-size: 14px;
+      color: var(--ink-faint); cursor: pointer; font-size: 14px;
     }
-    .close-btn:hover { color: #c4d4f0; }
+    .close-btn:hover { color: var(--accent-vermilion); }
 
     /* View mode toggle */
     #hud-viewmode {
@@ -257,17 +604,25 @@
       display: flex; gap: 4px; padding: 6px 8px;
     }
     .view-btn {
-      background: rgba(78,154,241,0.1);
-      border: 1px solid rgba(78,154,241,0.25);
-      border-radius: 4px;
-      color: #7a9bc4; cursor: pointer;
-      padding: 4px 12px; font-family: inherit; font-size: 11px;
+      background: linear-gradient(180deg, rgba(255, 247, 235, 0.88), rgba(234, 214, 188, 0.88));
+      border: 1px solid rgba(62, 42, 38, 0.28);
+      border-radius: 999px;
+      color: var(--ink-soft); cursor: pointer;
+      padding: 5px 14px; font-family: var(--font-display); font-size: 12px;
+      letter-spacing: 0.06em;
       transition: all 0.2s; white-space: nowrap;
     }
-    .view-btn:hover { background: rgba(78,154,241,0.25); color: #c4d4f0; }
+    .view-btn:hover {
+      background: linear-gradient(180deg, rgba(255, 250, 242, 0.96), rgba(242, 222, 198, 0.96));
+      color: var(--ink-main);
+      border-color: rgba(201, 82, 60, 0.46);
+    }
     .view-btn.active {
-      background: rgba(78,154,241,0.3);
-      border-color: #4e9af1; color: #4e9af1; font-weight: bold;
+      background: linear-gradient(180deg, rgba(212, 156, 51, 0.92), rgba(201, 82, 60, 0.92));
+      border-color: rgba(255, 242, 224, 0.48);
+      color: #fff7ed;
+      font-weight: bold;
+      box-shadow: 0 10px 24px rgba(73, 24, 19, 0.26);
     }
 
     /* Path animator */
@@ -284,9 +639,9 @@
       padding: 3px 0;
       opacity: 0; animation: fadeIn 0.4s forwards;
     }
-    .path-hop-node { color: #4ef1c4; }
-    .path-hop-rel  { color: #4e9af1; font-size: 9px; }
-    .path-hop-arrow { color: #5a7aaa; }
+    .path-hop-node { color: var(--accent-jade); }
+    .path-hop-rel  { color: var(--accent-indigo); font-size: 9px; }
+    .path-hop-arrow { color: var(--ink-faint); }
   </style>
 </head>
 <body>
@@ -294,16 +649,16 @@
 <!-- Loading -->
 <div id="loading">
   <div class="loader-ring"></div>
-  <div id="loading-text">INITIALIZING FIELD SURFACE...</div>
+  <div id="loading-text">DRAWING THE FIELD...</div>
 </div>
 
 <!-- View mode toggle -->
 <div class="hud" id="hud-viewmode">
-  <button class="view-btn active" id="btn-concept"  onclick="setView('concept')">◉ Concept View</button>
-  <button class="view-btn"        id="btn-domain"   onclick="setView('domain')">⬡ Domain View</button>
-  <button class="view-btn"        id="btn-ripple"   onclick="setView('ripple')">◎ Ripple</button>
-  <button class="view-btn"        id="btn-path"     onclick="setView('path')">⟿ Path Search</button>
-  <button class="view-btn"        id="btn-city"     onclick="setView('city')">⛩ City</button>
+  <button class="view-btn active" id="btn-concept"  onclick="setView('concept')">◉ Concept Atlas</button>
+  <button class="view-btn"        id="btn-domain"   onclick="setView('domain')">⬡ Domain Blocks</button>
+  <button class="view-btn"        id="btn-ripple"   onclick="setView('ripple')">◎ Ripple Pulse</button>
+  <button class="view-btn"        id="btn-path"     onclick="setView('path')">⟿ Thread Path</button>
+  <button class="view-btn"        id="btn-city"     onclick="setView('city')">⛩ City Story</button>
 </div>
 
 <!-- Graph container -->
@@ -314,7 +669,7 @@
 
 <!-- Stats HUD -->
 <div class="hud" id="hud-stats">
-  <div class="hud-title">◈ NoUse Field</div>
+  <div class="hud-title">◈ Nous Field Atlas</div>
   <div class="stat-row">
     <span class="stat-label">Nodes</span>
     <span class="stat-value" id="st-concepts">—</span>
@@ -351,37 +706,149 @@
     </div>
   </div>
 
-  <div style="margin-top:10px; font-size:10px; color: #3a5a7a;">
+  <div style="margin-top:10px; font-size:10px; color: var(--ink-faint);">
     <span id="sse-status">● offline</span>
   </div>
 </div>
 
 <!-- Domain legend -->
 <div class="hud" id="hud-domains">
-  <div class="hud-title">Domains</div>
+  <div class="hud-title">Districts</div>
   <div id="domain-list"></div>
 </div>
 
 <!-- Controls -->
 <div class="hud" id="hud-controls">
-  <div class="hud-title">Search</div>
+  <div class="hud-title">Scene Search</div>
   <input id="search-input" class="ctrl-input" type="text" placeholder="Search node..." />
   <button class="ctrl-btn" onclick="focusNode()">Focus</button>
+  <button class="ctrl-btn" onclick="zoomInView()">Zoom in</button>
+  <button class="ctrl-btn" onclick="zoomOutView()">Zoom out</button>
   <div class="ctrl-sep"></div>
   <button class="ctrl-btn" onclick="resetCamera()">Reset view</button>
   <button class="ctrl-btn" onclick="togglePhysics()">Physics on/off</button>
   <button class="ctrl-btn" onclick="toggleLabels()">Labels on/off</button>
+  <div style="font-size:10px; color:var(--ink-faint); margin-top:8px; line-height:1.45">
+    Click a node to glide into focus. Drag to orbit, scroll to fine-zoom.
+  </div>
   <div class="ctrl-sep"></div>
-  <div style="font-size:10px; color:#5a7aaa; margin-bottom:4px">Filter domain</div>
+  <div style="font-size:10px; color:var(--ink-faint); margin-bottom:4px">Filter district</div>
   <select id="domain-filter" class="ctrl-input" onchange="filterDomain()">
     <option value="">All domains</option>
   </select>
+  <div class="ctrl-sep"></div>
+  <div style="font-size:10px; color:var(--ink-faint); margin-bottom:4px">CC Center</div>
+  <div id="cc-status" style="font-size:10px; color:var(--ink-faint); margin-bottom:6px">CC: not set</div>
+  <button class="ctrl-btn" onclick="setCenterFromUI()">Set CC</button>
+  <button class="ctrl-btn" onclick="focusCenterNode()">Focus CC</button>
+  <button class="ctrl-btn" onclick="clearCenterNode()">Clear CC</button>
+</div>
+
+<!-- Model switch -->
+<div class="hud" id="hud-models">
+  <div class="hud-title">Model Plane</div>
+  <div style="font-size:10px; color:var(--ink-faint); margin-bottom:4px">Workload</div>
+  <select id="model-workload" class="ctrl-input" onchange="refreshModelPanel()">
+    <option value="agent" selected>agent (nouse chat)</option>
+    <option value="chat">chat (/api/chat)</option>
+    <option value="extract">extract</option>
+    <option value="synthesize">synthesize</option>
+    <option value="bisoc">bisoc (bridge worker)</option>
+    <option value="curiosity">curiosity</option>
+  </select>
+  <div id="model-workload-hint" style="font-size:10px; color:var(--accent-moss); margin-bottom:8px">
+    nouse chat (terminal) uses workload: agent
+  </div>
+  <div style="font-size:10px; color:var(--ink-faint); margin-bottom:4px">Provider</div>
+  <select id="model-provider" class="ctrl-input" onchange="onModelProviderChanged()">
+    <option value="ollama">ollama</option>
+    <option value="codex">codex</option>
+    <option value="openai_compatible">openai_compatible</option>
+    <option value="openai">openai</option>
+    <option value="anthropic">anthropic</option>
+    <option value="copilot">copilot</option>
+  </select>
+  <div style="font-size:10px; color:var(--ink-faint); margin-bottom:4px">Candidates (csv)</div>
+  <input
+    id="model-candidates"
+    class="ctrl-input"
+    type="text"
+    placeholder="qwen3.5:latest, deepseek-r1:1.5b"
+  />
+  <div style="font-size:10px; color:var(--ink-faint); margin:4px 0 8px 0">
+    Tips: codex/openai_compatible → gpt-5-codex, gpt-4.1-mini · ollama → gemma4:e2b, qwen3.5:latest
+  </div>
+  <button class="ctrl-btn" onclick="applyModelPolicy()">Save model policy</button>
+  <button class="ctrl-btn" onclick="applyChatAgentPolicy()">Apply to chat + agent</button>
+  <button class="ctrl-btn" onclick="autodiscoverModels()">Autodiscover & apply</button>
+  <button class="ctrl-btn" onclick="refreshModelPanel()">Refresh models</button>
+  <div class="ctrl-sep"></div>
+  <div style="font-size:10px; color:var(--ink-faint); margin-bottom:4px">Auth key (selected provider)</div>
+  <input
+    id="auth-api-key"
+    class="ctrl-input"
+    type="password"
+    autocomplete="off"
+    placeholder="Paste API key..."
+  />
+  <button class="ctrl-btn" onclick="recordAuthKey()">Record auth key</button>
+  <button class="ctrl-btn" onclick="clearAuthInput()">Clear key field</button>
+  <div id="auth-status" class="model-status">Auth idle.</div>
+  <div id="model-status" class="model-status">Model panel idle.</div>
+  <div id="model-health" class="model-status">Runtime: unknown</div>
+  <div id="model-providers" class="model-provider-list"></div>
+</div>
+
+<div class="hud" id="hud-chat-control">
+  <div class="hud-title">Route Control</div>
+  <div style="font-size:10px; color:var(--ink-faint); margin-bottom:4px">Intent / route preview</div>
+  <input id="control-query" class="ctrl-input" type="text" placeholder="Tänkt fråga eller uppgift..." />
+  <div style="display:flex; gap:6px; flex-wrap:wrap; margin:8px 0 10px 0; font-size:10px; color:var(--ink-soft)">
+    <label><input id="control-needs-web" type="checkbox" /> web</label>
+    <label><input id="control-needs-files" type="checkbox" /> files</label>
+    <label><input id="control-needs-memory" type="checkbox" /> memory</label>
+    <label><input id="control-needs-action" type="checkbox" /> action</label>
+  </div>
+  <button class="ctrl-btn" onclick="refreshChatControlPanel()">Inspect route</button>
+  <button class="ctrl-btn" onclick="copySearchToChatControl()">Use search</button>
+  <div id="chat-control-status" class="model-status">Control plane idle.</div>
+  <div style="font-size:10px; color:var(--ink-faint); margin-top:8px; margin-bottom:4px">Skill</div>
+  <div id="chat-control-skill" class="model-provider-meta">-</div>
+  <div style="font-size:10px; color:var(--ink-faint); margin-top:8px; margin-bottom:4px">Workload / governance</div>
+  <div id="chat-control-workload" class="model-provider-meta">-</div>
+  <div style="font-size:10px; color:var(--ink-faint); margin-top:8px; margin-bottom:4px">Tools</div>
+  <div id="chat-control-tools" class="model-provider-models">-</div>
+  <div style="font-size:10px; color:var(--ink-faint); margin-top:8px; margin-bottom:4px">Top candidates</div>
+  <div id="chat-control-candidates" class="model-provider-models">-</div>
 </div>
 
 <!-- Live event feed -->
 <div class="hud" id="hud-events">
-  <div class="hud-title">⚡ Live Events</div>
+  <div class="hud-title">⚡ Live Ink</div>
   <div id="event-list"></div>
+</div>
+
+<!-- Findings / claims -->
+<div class="hud" id="hud-insights">
+  <div class="hud-title">Field Notes</div>
+  <button class="ctrl-btn" onclick="refreshInsightsPanel()">Refresh findings</button>
+  <div id="insight-list">
+    <div style="color:var(--ink-faint);font-size:10px">Loading findings...</div>
+  </div>
+</div>
+
+<button id="insights-toggle" type="button" onclick="toggleInsightsDock()">
+  Show findings
+</button>
+
+<div id="finding-flash" class="is-idle" aria-hidden="true">
+  <div class="finding-flash-head">
+    <span id="finding-flash-tier" class="finding-flash-tier">LIVE</span>
+    <span id="finding-flash-kind" class="finding-flash-kind">Ambient finding stream</span>
+    <span id="finding-flash-meta" class="finding-flash-meta">waiting</span>
+  </div>
+  <div id="finding-flash-text" class="finding-flash-text">Recent findings will surface here.</div>
+  <div id="finding-flash-targets" class="finding-flash-targets"></div>
 </div>
 
 <!-- Node inspector (shown on click) -->
@@ -403,12 +870,73 @@
 
 // ── Domänfärgpalett ────────────────────────────────────────────
 const PALETTE = [
-  '#4e9af1','#4ef1c4','#f16b4e','#f1c44e','#b04ef1',
-  '#4ef160','#f14eb0','#8af14e','#4ef1e8','#f14e4e',
-  '#f1a04e','#a04ef1','#4e4ef1','#f1f14e','#4e9af1',
+  '#334671','#43796d','#c9523c','#d29c33','#7a4966',
+  '#5d7b46','#a54f44','#6a8aa7','#567a8b','#8d5f32',
+  '#8e6a86','#4a5d8d','#7f814b','#b5723f','#51603f',
 ];
 const domainColors = {};
 let domainColorIdx = 0;
+const UI_FONT_STACK = "'IBM Plex Sans', 'Aptos', 'Segoe UI', sans-serif";
+const DISPLAY_FONT_STACK = "'Yu Mincho', 'Hiragino Mincho ProN', 'Noto Serif JP', Georgia, serif";
+const MONO_FONT_STACK = "'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace";
+const UI_THEME = Object.freeze({
+  paper: 'rgba(246, 237, 223, 0.96)',
+  paperSoft: 'rgba(251, 245, 235, 0.98)',
+  paperDark: 'rgba(235, 219, 197, 0.96)',
+  ink: '#1c1517',
+  soft: '#5a474a',
+  faint: '#8b7678',
+  accent: '#c9523c',
+  indigo: '#334671',
+  gold: '#d29c33',
+  success: '#5d7b46',
+  shadow: 'rgba(25, 17, 16, 0.22)',
+});
+const SMALL_TITLE_WORDS = new Set(['and', 'of', 'to', 'the', 'in', 'on', 'for', 'with', 'vs']);
+const UPPERCASE_TOKENS = new Set(['AI', 'AGI', 'API', 'ARC', 'CC', 'CSV', 'HTTP', 'LLM', 'OBS', 'SSE', 'UI', 'YT']);
+const DISPLAY_LABELS = Object.freeze({
+  'nouse': 'Nous',
+  'okänd': 'unknown',
+  'domän': 'domain',
+  'neurovetenskap': 'neuroscience',
+  'kommunikation': 'communication',
+  'forskning': 'research',
+  'dataintegrering': 'data integration',
+  'administrativ data': 'administrative data',
+  'kodstruktur': 'code structure',
+  'filsystem': 'file system',
+  'organisation': 'organization',
+  'sökning': 'search',
+  'maskininlärning': 'machine learning',
+  'är_del_av': 'part of',
+  'är_typ_av': 'type of',
+  'generaliseras_till': 'generalizes to',
+  'orsakar': 'causes',
+  'möjliggör': 'enables',
+  'begränsar': 'constrains',
+  'emergerar_ur': 'emerges from',
+  'är_analogt_med': 'is analogous to',
+  'delar_struktur_med': 'shares structure with',
+  'modulerar': 'modulates',
+  'implementerar': 'implements',
+  'är_förutsättning_för': 'is prerequisite for',
+  'är_konsekvens_av': 'is consequence of',
+  'samverkar_med': 'interacts with',
+  'är_isomorf_med': 'is isomorphic to',
+  'är_strukturellt_isomorf_med': 'is structurally isomorphic to',
+  'synkroniserar': 'synchronizes',
+  'reglerar': 'regulates',
+  'konsoliderar': 'consolidates',
+  'oscillerar': 'oscillates',
+  'stärker': 'strengthens',
+  'försvagar': 'weakens',
+  'producerar': 'produces',
+  'beskriver': 'describes',
+  'convergerar_i': 'converges into',
+  'validerad': 'validated',
+  'indikation': 'indication',
+  'hypotes': 'hypothesis',
+});
 
 function domainColor(domain) {
   if (!domain) return '#6a8aaa';
@@ -418,6 +946,252 @@ function domainColor(domain) {
     domainColorIdx++;
   }
   return domainColors[domain];
+}
+
+function normalizeDisplayKey(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function translatedLabel(value) {
+  return DISPLAY_LABELS[normalizeDisplayKey(value)] || '';
+}
+
+function titleCaseText(text) {
+  return String(text || '')
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((token, idx) => {
+      const clean = token.trim();
+      if (!clean) return clean;
+      const upper = clean.toUpperCase();
+      if (UPPERCASE_TOKENS.has(upper)) return upper;
+      if (/[0-9:/-]/.test(clean)) return clean;
+      const lower = clean.toLowerCase();
+      if (idx > 0 && SMALL_TITLE_WORDS.has(lower)) return lower;
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
+    })
+    .join(' ');
+}
+
+function humanizeDisplayValue(value, { titleCase = false, fallback = 'Unknown' } = {}) {
+  let text = String(value || '').trim();
+  if (!text) return fallback;
+
+  const translated = translatedLabel(text);
+  if (translated) {
+    text = translated;
+  } else {
+    text = text
+      .replace(/^META::/i, 'Meta ')
+      .replace(/::/g, ' / ')
+      .replace(/[_.]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  return titleCase ? titleCaseText(text) : text;
+}
+
+function formatNodeName(id) {
+  return humanizeDisplayValue(id, { titleCase: true, fallback: 'Unknown node' });
+}
+
+function formatDomainName(domain) {
+  return humanizeDisplayValue(domain, { titleCase: true, fallback: 'Unknown' });
+}
+
+function formatRelationName(rel) {
+  return humanizeDisplayValue(rel, { titleCase: false, fallback: 'related to' });
+}
+
+function formatTierName(tier) {
+  return humanizeDisplayValue(tier, { titleCase: true, fallback: 'Hypothesis' });
+}
+
+function formatAuxLabel(value, fallback = '-') {
+  return humanizeDisplayValue(value, { titleCase: false, fallback });
+}
+
+function maybeRawLabel(raw, display) {
+  const source = String(raw || '').trim();
+  const shown = String(display || '').trim();
+  if (!source || !shown) return '';
+  if (source === shown) return '';
+  return source;
+}
+
+function truncateWithEllipsis(text, maxLen = 20) {
+  const clean = String(text || '').trim();
+  if (clean.length <= maxLen) return clean;
+  return `${clean.slice(0, Math.max(1, maxLen - 1)).trim()}…`;
+}
+
+function wrapDisplayLines(text, maxLen = 18, maxLines = 2) {
+  const clean = String(text || '').replace(/\s+/g, ' ').trim();
+  if (!clean) return ['Unknown'];
+  const words = clean.split(' ');
+  const lines = [];
+  let current = '';
+
+  const pushCurrent = () => {
+    if (!current) return;
+    lines.push(current);
+    current = '';
+  };
+
+  for (const rawWord of words) {
+    let word = rawWord;
+    while (word.length > maxLen) {
+      const chunk = word.slice(0, maxLen - 1) + '…';
+      if (lines.length === maxLines - 1) return [...lines, chunk];
+      if (!current) {
+        lines.push(chunk);
+      } else {
+        pushCurrent();
+        lines.push(chunk);
+      }
+      word = word.slice(maxLen - 1);
+    }
+
+    const candidate = current ? `${current} ${word}` : word;
+    if (candidate.length <= maxLen) {
+      current = candidate;
+      continue;
+    }
+    pushCurrent();
+    current = word;
+    if (lines.length >= maxLines - 1 && current.length > maxLen) {
+      return [...lines, truncateWithEllipsis(current, maxLen)];
+    }
+    if (lines.length >= maxLines) break;
+  }
+
+  pushCurrent();
+  if (lines.length <= maxLines) return lines.slice(0, maxLines);
+  const kept = lines.slice(0, maxLines);
+  kept[maxLines - 1] = truncateWithEllipsis(kept[maxLines - 1], maxLen);
+  return kept;
+}
+
+function drawRoundedRect(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
+
+function buildNodeHoverLabel(node) {
+  const name = formatNodeName(node.id);
+  const raw = maybeRawLabel(node.id, name);
+  const domain = formatDomainName(node.group || 'unknown');
+  const evidence = Number(node.evidence || 0).toFixed(2);
+  return `<div style="font-family:${UI_FONT_STACK};font-size:12px;line-height:1.35;
+    min-width:220px;background:${UI_THEME.paper};padding:8px 10px;border-radius:12px 4px 12px 4px;
+    border:1px solid rgba(50,33,30,0.32);box-shadow:0 10px 24px ${UI_THEME.shadow};color:${UI_THEME.ink}">
+    <div style="font-family:${DISPLAY_FONT_STACK};font-size:13px;font-weight:700;color:${domainColor(node.group)}">${escapeHtml(name)}</div>
+    ${raw ? `<div style="margin-top:2px;font-size:10px;font-family:${MONO_FONT_STACK};color:${UI_THEME.faint}">${escapeHtml(raw)}</div>` : ''}
+    <div style="margin-top:6px;color:${UI_THEME.soft}">${escapeHtml(domain)}</div>
+    <div style="margin-top:4px;color:${UI_THEME.faint};font-family:${MONO_FONT_STACK}">ev=${evidence}</div>
+  </div>`;
+}
+
+function buildLinkHoverLabel(link) {
+  const relation = formatRelationName(link.label || link.rel || '');
+  const evidence = Number(link.evidence_score || 0).toFixed(2);
+  return `<span style="font-family:${UI_FONT_STACK};font-size:11px;color:${UI_THEME.paperSoft};background:rgba(18,13,24,0.74);padding:4px 8px;border-radius:999px;border:1px solid rgba(244,233,214,0.14)">${escapeHtml(relation)} · ev=${evidence}</span>`;
+}
+
+function summarizeFindingStatement(entry) {
+  const raw = String((entry || {}).statement || '')
+    .replace(/https?:\/\/\S+/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!raw) return 'Finding updated.';
+  return raw.length > 220 ? `${raw.slice(0, 217).trim()}…` : raw;
+}
+
+function collectFindingTargets(entry) {
+  const out = [];
+  const seen = new Set();
+  const push = (value) => {
+    const id = String(value || '').trim();
+    if (!id || seen.has(id)) return;
+    seen.add(id);
+    out.push(id);
+  };
+
+  push(entry.anchor);
+  const basis = entry && typeof entry.basis === 'object' ? entry.basis : {};
+  const sampleRows = Array.isArray(basis.sample_rows) ? basis.sample_rows : [];
+  sampleRows.forEach((row) => {
+    if (!row || typeof row !== 'object') return;
+    push(row.src);
+    push(row.tgt);
+  });
+  return out.slice(0, 6);
+}
+
+function findingTierColor(tier) {
+  const t = String(tier || '').trim().toLowerCase();
+  if (t === 'validated' || t === 'validerad') return UI_THEME.success;
+  if (t === 'indication' || t === 'indikation') return UI_THEME.indigo;
+  return UI_THEME.gold;
+}
+
+function pulseGraphNode(nodeId, color = UI_THEME.success) {
+  const id = String(nodeId || '').trim();
+  if (!id) return;
+  const node = graphData.nodes.find((n) => String((n || {}).id || '') === id);
+  if (!node || !node._mesh || !node._mesh.material) return;
+
+  const mesh = node._mesh;
+  const mat = mesh.material;
+  const hasEmissive = Object.prototype.hasOwnProperty.call(mat, 'emissive') && mat.emissive;
+  if (!node._findingPulseBase) {
+    node._findingPulseBase = {
+      scale: mesh.scale.clone(),
+      opacity: typeof mat.opacity === 'number' ? mat.opacity : 1,
+      emissive: hasEmissive ? mat.emissive.getHex() : null,
+      emissiveIntensity: typeof mat.emissiveIntensity === 'number' ? mat.emissiveIntensity : 0,
+    };
+  }
+  const base = node._findingPulseBase;
+
+  if (node._findingPulseTimer) clearTimeout(node._findingPulseTimer);
+
+  mesh.scale.setScalar(1.18);
+  mat.opacity = Math.min(1, base.opacity + 0.16);
+  if (hasEmissive) {
+    mat.emissive.set(color);
+    mat.emissiveIntensity = Math.max(base.emissiveIntensity, 0.95);
+  }
+
+  node._findingPulseTimer = setTimeout(() => {
+    mesh.scale.copy(base.scale);
+    mat.opacity = base.opacity;
+    if (hasEmissive && base.emissive !== null) {
+      mat.emissive.setHex(base.emissive);
+      mat.emissiveIntensity = base.emissiveIntensity;
+    }
+  }, 2800);
+}
+
+function pulseFindingTargets(entry) {
+  const targets = collectFindingTargets(entry);
+  targets.forEach((id, idx) => {
+    setTimeout(() => pulseGraphNode(id, findingTierColor(entry.tier)), idx * 140);
+    if (currentView === 'city' && typeof cityViewPulse === 'function') {
+      setTimeout(() => cityViewPulse(id), idx * 140);
+    }
+  });
+  return targets;
 }
 
 // ── View mode ─────────────────────────────────────────────────
@@ -472,24 +1246,32 @@ let activeDomain = '';
 let synapseCount = 0;
 let synapseWindow = [];
 const MAX_EVENTS = 120;
+let _lastLoadedModelPolicy = { provider: '', candidates: [] };
+let centerNodeId = '';
+let inspectorNodeId = '';
+let findingFlashEntries = [];
+let findingFlashIndex = 0;
+let findingFlashInterval = null;
+let findingFlashDecayTimer = null;
+let insightsDockOpen = false;
+const CAMERA_DEFAULTS = {
+  focusDuration: 1600,
+  zoomDuration: 720,
+  nearDistance: 140,
+  farDistance: 3800,
+};
 
 // ── Init graph ────────────────────────────────────────────────
 function initGraph(initialData) {
   const container = document.getElementById('graph-container');
 
   Graph = ForceGraph3D({ controlType: 'trackball' })(container)
-    .backgroundColor('#020814')
+    .backgroundColor('#120d18')
     .width(window.innerWidth)
     .height(window.innerHeight)
     // NODE rendering
     .nodeId('id')
-    .nodeLabel(node => `<div style="font-family:monospace;font-size:11px;
-      background:rgba(4,14,36,0.9);padding:4px 8px;border-radius:4px;
-      border:1px solid rgba(78,154,241,0.3);color:#c4d4f0">
-      <b style="color:${domainColor(node.group)}">${node.id}</b><br>
-      <span style="color:#5a7aaa">${node.group || 'unknown'}</span><br>
-      ev: ${(node.evidence || 0).toFixed(2)}
-    </div>`)
+    .nodeLabel(node => buildNodeHoverLabel(node))
     .nodeColor(node => {
       if (node.isMeta) return '#ffd700';
       if (node._new) return '#ffffff';
@@ -531,7 +1313,8 @@ function initGraph(initialData) {
       // Label sprite
       if (labelsEnabled) {
         const sprite = makeLabel(node.id, isMeta ? '#ffd700' : domainColor(node.group));
-        sprite.position.set(0, size + 4, 0);
+        const lift = sprite.userData.labelLineCount > 1 ? 8.2 : 6.4;
+        sprite.position.set(0, size + lift, 0);
         mesh.add(sprite);
       }
 
@@ -542,17 +1325,13 @@ function initGraph(initialData) {
     // LINK rendering
     .linkSource('source')
     .linkTarget('target')
-    .linkLabel(link => {
-      const l = link.label || link.rel || '';
-      const ev = (link.evidence_score || 0).toFixed(2);
-      return `<span style="font-family:monospace;font-size:10px;color:#7a9bc4">${l} (ev=${ev})</span>`;
-    })
+    .linkLabel(link => buildLinkHoverLabel(link))
     .linkColor(link => {
       const t = link.label || link.rel || '';
-      if (t.includes('isomorf')) return '#4ef1c4';
-      if (t.includes('meta') || t.includes('convergerar')) return '#ffd700';
-      if (t.includes('primitiv')) return 'rgba(200,220,255,0.5)';
-      return `rgba(78,154,241,${Math.max(0.15, Math.min(0.7, link.evidence_score || 0.3))})`;
+      if (t.includes('isomorf')) return '#43796d';
+      if (t.includes('meta') || t.includes('convergerar')) return '#d29c33';
+      if (t.includes('primitiv')) return 'rgba(214, 196, 168, 0.52)';
+      return `rgba(51, 70, 113, ${Math.max(0.18, Math.min(0.68, link.evidence_score || 0.3))})`;
     })
     .linkWidth(link => {
       if (link._hot) return 2.5;
@@ -568,19 +1347,33 @@ function initGraph(initialData) {
     .linkDirectionalParticleSpeed(0.005)
     .linkDirectionalParticleWidth(link => link._hot ? 2.5 : 1.5)
     .linkDirectionalParticleColor(link => {
-      if ((link.label || '').includes('convergerar')) return '#ffd700';
-      return '#4ef1c4';
+      if ((link.label || '').includes('convergerar')) return '#d29c33';
+      return '#43796d';
     })
     // Interaction
-    .onNodeClick(node => showInspector(node))
+    .onNodeClick(node => {
+      centerOnNode(node, CAMERA_DEFAULTS.focusDuration);
+      showInspector(node);
+    })
     .onBackgroundClick(() => closeInspector());
 
   // Ambient + directional light
   const scene = Graph.scene();
-  scene.add(new THREE.AmbientLight(0x404070, 2.5));
-  const dir = new THREE.DirectionalLight(0x8ab4f8, 1.5);
+  scene.add(new THREE.AmbientLight(0x5f4d52, 2.2));
+  const dir = new THREE.DirectionalLight(0xd8a15a, 1.35);
   dir.position.set(100, 200, 100);
   scene.add(dir);
+
+  const controls = Graph.controls && Graph.controls();
+  if (controls) {
+    controls.rotateSpeed = 1.35;
+    controls.zoomSpeed = 0.82;
+    controls.panSpeed = 0.6;
+    controls.staticMoving = false;
+    controls.dynamicDampingFactor = 0.11;
+    if (typeof controls.minDistance === 'number') controls.minDistance = 70;
+    if (typeof controls.maxDistance === 'number') controls.maxDistance = 5600;
+  }
 
   // Load data
   setGraphData(initialData.nodes, initialData.edges);
@@ -589,24 +1382,56 @@ function initGraph(initialData) {
 
   window.addEventListener('resize', () => {
     Graph.width(window.innerWidth).height(window.innerHeight);
+    layoutHudPanels();
   });
 
   document.getElementById('loading').style.display = 'none';
 }
 
 // ── Label sprite ──────────────────────────────────────────────
-function makeLabel(text, color = '#c4d4f0') {
+function makeLabel(text, color = UI_THEME.indigo) {
+  const displayText = formatNodeName(text);
+  const lines = wrapDisplayLines(displayText, 18, 2);
   const canvas = document.createElement('canvas');
-  canvas.width = 256; canvas.height = 40;
+  canvas.width = 512;
+  canvas.height = lines.length > 1 ? 132 : 104;
   const ctx = canvas.getContext('2d');
-  ctx.font = 'bold 22px monospace';
-  ctx.fillStyle = color;
+  const lineHeight = 34;
+  const paddingX = 28;
+  const paddingY = 16;
+
+  ctx.font = `700 30px ${UI_FONT_STACK}`;
+  const textWidths = lines.map(line => ctx.measureText(line).width);
+  const cardWidth = Math.min(432, Math.max(180, Math.max(...textWidths) + paddingX * 2));
+  const cardHeight = paddingY * 2 + lines.length * lineHeight;
+  const originX = (canvas.width - cardWidth) / 2;
+  const originY = (canvas.height - cardHeight) / 2;
+
+  ctx.save();
+  ctx.shadowColor = UI_THEME.shadow;
+  ctx.shadowBlur = 18;
+  ctx.fillStyle = UI_THEME.paper;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 3;
+  drawRoundedRect(ctx, originX, originY, cardWidth, cardHeight, 20);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.fillStyle = UI_THEME.ink;
   ctx.textAlign = 'center';
-  ctx.fillText(text.slice(0, 24), 128, 28);
+  ctx.textBaseline = 'middle';
+  ctx.font = `700 30px ${DISPLAY_FONT_STACK}`;
+  lines.forEach((line, idx) => {
+    const y = originY + paddingY + lineHeight / 2 + idx * lineHeight + 2;
+    ctx.fillText(line, canvas.width / 2, y);
+  });
   const tex = new THREE.CanvasTexture(canvas);
-  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, opacity: 0.85 });
+  tex.minFilter = THREE.LinearFilter;
+  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, opacity: 0.97 });
   const sprite = new THREE.Sprite(mat);
-  sprite.scale.set(20, 8, 1);
+  sprite.scale.set(lines.length > 1 ? 31 : 27, lines.length > 1 ? 8.4 : 6.8, 1);
+  sprite.userData.labelLineCount = lines.length;
   return sprite;
 }
 
@@ -776,15 +1601,15 @@ function buildDomainLegend() {
   list.innerHTML = sorted.map(([dom, cnt]) => `
     <div class="domain-row" onclick="filterDomainByName('${dom}')">
       <div class="domain-dot" style="background:${domainColor(dom)}"></div>
-      <span class="domain-name">${dom}</span>
+      <span class="domain-name">${escapeHtml(formatDomainName(dom))}</span>
       <span class="domain-count">${cnt}</span>
     </div>
   `).join('');
 
   const domainOptions = sorted
-    .map(([d]) => `<option value="${d}">${d}</option>`)
+    .map(([d]) => `<option value="${d}">${escapeHtml(formatDomainName(d))}</option>`)
     .join('');
-  filter.innerHTML = '<option value="">Alla domäner</option>' + domainOptions;
+  filter.innerHTML = '<option value="">All domains</option>' + domainOptions;
 }
 
 // ── Event feed ────────────────────────────────────────────────
@@ -811,6 +1636,185 @@ function pushEventRow(type, icon, className, text) {
   }
 }
 
+function setFindingFlashIdle() {
+  const box = document.getElementById('finding-flash');
+  if (!box) return;
+  box.classList.remove('is-active');
+  box.classList.add('is-idle');
+}
+
+function setInsightsDock(open) {
+  const panel = document.getElementById('hud-insights');
+  const toggle = document.getElementById('insights-toggle');
+  insightsDockOpen = Boolean(open);
+  if (panel) {
+    panel.classList.toggle('collapsed', !insightsDockOpen);
+  }
+  if (toggle) {
+    toggle.textContent = insightsDockOpen ? 'Hide findings' : 'Show findings';
+    toggle.setAttribute('aria-expanded', insightsDockOpen ? 'true' : 'false');
+  }
+}
+
+function toggleInsightsDock(force) {
+  if (typeof force === 'boolean') {
+    setInsightsDock(force);
+    return;
+  }
+  setInsightsDock(!insightsDockOpen);
+}
+
+function renderFindingFlash(entry, index = 0, total = 0) {
+  const box = document.getElementById('finding-flash');
+  const tierEl = document.getElementById('finding-flash-tier');
+  const kindEl = document.getElementById('finding-flash-kind');
+  const metaEl = document.getElementById('finding-flash-meta');
+  const textEl = document.getElementById('finding-flash-text');
+  const targetsEl = document.getElementById('finding-flash-targets');
+  if (!box || !tierEl || !kindEl || !metaEl || !textEl || !targetsEl) return;
+
+  const tier = formatTierName((entry || {}).tier || 'hypothesis');
+  const kind = titleCaseText(formatAuxLabel((entry || {}).kind || 'finding', 'finding'));
+  const score = Number((entry || {}).score || 0).toFixed(2);
+  const support = Number((entry || {}).support || 0);
+  const color = findingTierColor((entry || {}).tier || '');
+  const targets = pulseFindingTargets(entry).map(formatNodeName);
+
+  tierEl.textContent = tier;
+  tierEl.style.color = color;
+  tierEl.style.borderColor = `${color}99`;
+  kindEl.textContent = kind;
+  metaEl.textContent = `#${index + 1}${total ? ` / ${total}` : ''} · score=${score} · support=${support}`;
+  textEl.textContent = summarizeFindingStatement(entry);
+  targetsEl.textContent = targets.length ? `targets: ${targets.join(' · ')}` : '';
+
+  box.classList.remove('is-idle');
+  box.classList.add('is-active');
+
+  if (findingFlashDecayTimer) clearTimeout(findingFlashDecayTimer);
+  findingFlashDecayTimer = setTimeout(() => {
+    box.classList.remove('is-active');
+    box.classList.add('is-idle');
+  }, 3600);
+}
+
+function primeFindingFlash(entries) {
+  findingFlashEntries = Array.isArray(entries) ? entries.slice(0, 6) : [];
+  findingFlashIndex = 0;
+  if (findingFlashInterval) {
+    clearInterval(findingFlashInterval);
+    findingFlashInterval = null;
+  }
+
+  if (!findingFlashEntries.length) {
+    const textEl = document.getElementById('finding-flash-text');
+    const targetsEl = document.getElementById('finding-flash-targets');
+    const metaEl = document.getElementById('finding-flash-meta');
+    if (textEl) textEl.textContent = 'Recent findings will surface here.';
+    if (targetsEl) targetsEl.textContent = '';
+    if (metaEl) metaEl.textContent = 'waiting';
+    setFindingFlashIdle();
+    return;
+  }
+
+  renderFindingFlash(findingFlashEntries[0], 0, findingFlashEntries.length);
+  if (findingFlashEntries.length === 1) return;
+
+  findingFlashInterval = setInterval(() => {
+    findingFlashIndex = (findingFlashIndex + 1) % findingFlashEntries.length;
+    renderFindingFlash(
+      findingFlashEntries[findingFlashIndex],
+      findingFlashIndex,
+      findingFlashEntries.length,
+    );
+  }, 9000);
+}
+
+// ── Findings panel ────────────────────────────────────────────
+function insightTierClass(tier) {
+  const t = String(tier || '').trim().toLowerCase();
+  if (t === 'validated') return 'tier-validerad';
+  if (t === 'indication') return 'tier-indikation';
+  if (t === 'hypothesis') return 'tier-hypotes';
+  if (t === 'validerad') return 'tier-validerad';
+  if (t === 'indikation') return 'tier-indikation';
+  return 'tier-hypotes';
+}
+
+function renderInsightsPanel(payload) {
+  const list = document.getElementById('insight-list');
+  if (!list) return;
+
+  const entries = Array.isArray((payload || {}).entries) ? payload.entries : [];
+  if (!entries.length) {
+    primeFindingFlash([]);
+    list.innerHTML = '<div style="color:#8b7678;font-size:10px">No findings yet. Run `nouse research --annotate` or `nouse extract-insights`.</div>';
+    return;
+  }
+
+  primeFindingFlash(entries);
+
+  list.innerHTML = entries.map((entry, idx) => {
+    const tier = String(entry.tier || 'hypotes');
+    const tierClass = insightTierClass(tier);
+    const statement = escapeHtml(String(entry.statement || '(missing statement)'));
+    const tierLabel = escapeHtml(formatTierName(tier));
+    const kind = escapeHtml(formatAuxLabel(entry.kind, '-'));
+    const score = Number(entry.score || 0).toFixed(2);
+    const ev = Number(entry.mean_evidence || 0).toFixed(2);
+    const support = Number(entry.support || 0);
+    const basis = (entry && entry.basis && typeof entry.basis === 'object') ? entry.basis : {};
+    const method = escapeHtml(formatAuxLabel(basis.method, '-'));
+    const components = (basis.score_components && typeof basis.score_components === 'object')
+      ? basis.score_components
+      : {};
+    const cEv = Number(components.evidence || 0).toFixed(2);
+    const cSup = Number(components.support || 0).toFixed(2);
+    const cNov = Number(components.novelty || 0).toFixed(2);
+    const cAct = Number(components.actionability || 0).toFixed(2);
+    const links = Array.isArray(entry.links) ? entry.links : [];
+    const linksHtml = links.slice(0, 4).map((url, linkIdx) => {
+      const safeUrl = escapeHtml(String(url || ''));
+      if (!safeUrl) return '';
+      return `<a class="insight-link" href="${safeUrl}" target="_blank" rel="noopener noreferrer">link ${linkIdx + 1}</a>`;
+    }).join('');
+
+    return `
+      <div class="insight-row">
+        <div class="insight-head">
+          <span class="insight-tier ${tierClass}">${tierLabel}</span>
+          <span class="insight-score">#${idx + 1} · ${kind} · score=${score}</span>
+        </div>
+        <div class="insight-text">${statement}</div>
+        <div class="insight-meta">
+          ev=${ev} · support=${support} · method=${method}<br>
+          data(ev=${cEv}, sup=${cSup}, nov=${cNov}, act=${cAct})
+        </div>
+        ${linksHtml ? `<div class="insight-links">${linksHtml}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+async function refreshInsightsPanel() {
+  const list = document.getElementById('insight-list');
+  if (list) {
+    list.innerHTML = '<div style="color:#8b7678;font-size:10px">Refreshing findings...</div>';
+  }
+  try {
+    const resp = await fetch('/api/insights/recent?limit=14');
+    const data = await resp.json();
+    if (!resp.ok || !data.ok) {
+      throw new Error(data.error || `HTTP ${resp.status}`);
+    }
+    renderInsightsPanel(data);
+  } catch (err) {
+    if (list) {
+      list.innerHTML = `<div style="color:#c9523c;font-size:10px">Findings error: ${escapeHtml(err.message || String(err))}</div>`;
+    }
+  }
+}
+
 // ── SSE listener ──────────────────────────────────────────────
 function connectSSE() {
   const sse = new EventSource('/api/events');
@@ -818,7 +1822,7 @@ function connectSSE() {
 
   sse.onopen = () => {
     if (statusEl) {
-      statusEl.style.color = '#4ef160';
+      statusEl.style.color = UI_THEME.success;
       statusEl.textContent = '● live';
     }
   };
@@ -836,16 +1840,19 @@ function connectSSE() {
 
       case 'edge_added': {
         addEdge(data.src, data.tgt, data.rel, data.evidence_score, false);
+        pulseGraphNode(data.src, UI_THEME.indigo);
+        pulseGraphNode(data.tgt, UI_THEME.indigo);
         pushEventRow('edge', '→', 'edge',
-          `${data.src} → ${data.rel} → ${data.tgt} (ev=${(data.evidence_score||0).toFixed(2)})`
+          `${formatNodeName(data.src)} → ${formatRelationName(data.rel)} → ${formatNodeName(data.tgt)} (ev=${(data.evidence_score||0).toFixed(2)})`
         );
         break;
       }
 
       case 'growth_probe': {
         animateProbe(data.axiom);
+        pulseGraphNode(data.axiom, '#7a4966');
         pushEventRow('probe', '◎', 'probe',
-          `growth cone: ${data.axiom} [${data.domain}] skannar ${data.candidates} kandidater`
+          `growth cone: ${formatNodeName(data.axiom)} [${formatDomainName(data.domain)}] scanning ${data.candidates} candidates`
         );
         break;
       }
@@ -853,8 +1860,10 @@ function connectSSE() {
       case 'synapse_formed': {
         addEdge(data.src, data.tgt, 'är_strukturellt_isomorf_med', data.score, true);
         recordSynapse();
+        pulseGraphNode(data.src, '#43796d');
+        pulseGraphNode(data.tgt, '#43796d');
         pushEventRow('synapse', '⚡', 'synapse',
-          `synaps: ${data.src} ↔ ${data.tgt} (${(data.score||0).toFixed(3)}) [${data.domain_src}↔${data.domain_tgt}]`
+          `synapse: ${formatNodeName(data.src)} ↔ ${formatNodeName(data.tgt)} (${(data.score||0).toFixed(3)}) [${formatDomainName(data.domain_src)} ↔ ${formatDomainName(data.domain_tgt)}]`
         );
         break;
       }
@@ -864,8 +1873,11 @@ function connectSSE() {
         addEdge(data.src, data.name, 'convergerar_i', data.score, true);
         addEdge(data.tgt, data.name, 'convergerar_i', data.score, true);
         buildDomainLegend();
+        pulseGraphNode(data.src, '#d29c33');
+        pulseGraphNode(data.tgt, '#d29c33');
+        setTimeout(() => pulseGraphNode(data.name, '#d29c33'), 120);
         pushEventRow('meta', '✦', 'meta',
-          `META-AXIOM: ${data.name} ← ${data.src} + ${data.tgt}`
+          `META AXIOM: ${formatNodeName(data.name)} ← ${formatNodeName(data.src)} + ${formatNodeName(data.tgt)}`
         );
         break;
       }
@@ -885,8 +1897,8 @@ function connectSSE() {
 
   sse.onerror = () => {
     if (statusEl) {
-      statusEl.style.color = '#f16b4e';
-      statusEl.textContent = '● försöker igen...';
+      statusEl.style.color = UI_THEME.accent;
+      statusEl.textContent = '● reconnecting...';
     }
     sse.close();
     // Återanslut efter 5s
@@ -896,11 +1908,12 @@ function connectSSE() {
 
 // ── Node inspector ────────────────────────────────────────────
 async function showInspector(node) {
-  document.getElementById('inspector-name').textContent = node.id;
+  inspectorNodeId = String((node || {}).id || '').trim();
+  document.getElementById('inspector-name').textContent = formatNodeName(node.id);
   document.getElementById('inspector-domain').textContent =
-    `domän: ${node.group || 'okänd'} · grad: ${node._degree || 0}`;
+    `domain: ${formatDomainName(node.group || 'unknown')} · degree: ${node._degree || 0}`;
   document.getElementById('inspector-rels').innerHTML =
-    '<div style="color:#5a7aaa;font-size:10px">Laddar relationer...</div>';
+    '<div style="color:#8b7678;font-size:10px">Loading relations...</div>';
   document.getElementById('hud-inspector').style.display = 'block';
 
   try {
@@ -912,7 +1925,7 @@ async function showInspector(node) {
 
     if (!edges.length) {
       document.getElementById('inspector-rels').innerHTML =
-        '<div style="color:#5a7aaa;font-size:10px">Inga relationer.</div>';
+        '<div style="color:#8b7678;font-size:10px">No relations found.</div>';
       return;
     }
 
@@ -922,39 +1935,259 @@ async function showInspector(node) {
       const arrow = isOut ? '→' : '←';
       const ev = (e.evidence_score || 0).toFixed(2);
       return `<div class="rel-row">
-        <span class="rel-type">${arrow} ${e.label || e.rel || '?'}</span>
-        <span class="rel-tgt"> ${other}</span>
+        <span class="rel-type">${arrow} ${escapeHtml(formatRelationName(e.label || e.rel || '?'))}</span>
+        <span class="rel-tgt"> ${escapeHtml(formatNodeName(other))}</span>
         <span class="rel-ev"> ev=${ev}</span>
       </div>`;
     }).join('');
   } catch {
     document.getElementById('inspector-rels').innerHTML =
-      '<div style="color:#f16b4e;font-size:10px">Fel vid hämtning.</div>';
+      '<div style="color:#c9523c;font-size:10px">Fetch error.</div>';
   }
 }
 
 function closeInspector() {
+  inspectorNodeId = '';
   document.getElementById('hud-inspector').style.display = 'none';
 }
 
 // ── Controls ──────────────────────────────────────────────────
+function setCCStatus(text, color = UI_THEME.faint) {
+  const el = document.getElementById('cc-status');
+  if (!el) return;
+  el.textContent = text;
+  el.style.color = color;
+}
+
+function findNodeByQuery(query) {
+  const q = String(query || '').trim().toLowerCase();
+  if (!q) return null;
+  const exact = graphData.nodes.find(n => String((n || {}).id || '').toLowerCase() === q);
+  if (exact) return exact;
+  const exactDisplay = graphData.nodes.find(
+    n => formatNodeName((n || {}).id || '').toLowerCase() === q
+  );
+  if (exactDisplay) return exactDisplay;
+  const partialRaw = graphData.nodes.find(
+    n => String((n || {}).id || '').toLowerCase().includes(q)
+  );
+  if (partialRaw) return partialRaw;
+  return graphData.nodes.find(
+    n => formatNodeName((n || {}).id || '').toLowerCase().includes(q)
+  ) || null;
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function graphControlsTarget() {
+  const controls = Graph && Graph.controls ? Graph.controls() : null;
+  if (controls && controls.target) return controls.target;
+  return new THREE.Vector3(0, 0, 0);
+}
+
+function currentCameraDistance() {
+  if (!Graph || !Graph.camera) return CAMERA_DEFAULTS.nearDistance;
+  const camera = Graph.camera();
+  if (!camera || !camera.position) return CAMERA_DEFAULTS.nearDistance;
+  const target = graphControlsTarget();
+  return Math.max(1, camera.position.distanceTo(target));
+}
+
+function nodeFocusDistance(node) {
+  const degree = Math.max(1, Number(node?._degree || 1));
+  const sizeBias = degree * 8;
+  const current = currentCameraDistance();
+  const desired = clamp(Math.max(120, current * 0.42) + sizeBias, CAMERA_DEFAULTS.nearDistance, 320);
+  return desired;
+}
+
+function focusCameraPosition(node, distance = null) {
+  if (!Graph || !Graph.camera || !node) return null;
+  const camera = Graph.camera();
+  if (!camera || !camera.position) return null;
+  const target = new THREE.Vector3(
+    Number(node.x) || 0,
+    Number(node.y) || 0,
+    Number(node.z) || 0,
+  );
+  const direction = new THREE.Vector3().subVectors(camera.position, target);
+  if (direction.lengthSq() < 1e-6) direction.set(0.55, 0.3, 1);
+  direction.normalize();
+  const nextDistance = distance == null ? nodeFocusDistance(node) : distance;
+  const lift = Math.max(8, nextDistance * 0.06);
+  return target.clone().add(direction.multiplyScalar(nextDistance)).add(new THREE.Vector3(0, lift, 0));
+}
+
+function centerOnNode(node, duration = CAMERA_DEFAULTS.focusDuration) {
+  if (!Graph || !node) return;
+  const target = {
+    x: Number(node.x) || 0,
+    y: Number(node.y) || 0,
+    z: Number(node.z) || 0,
+  };
+  const nextPosition = focusCameraPosition(node);
+  if (!nextPosition) return;
+  Graph.cameraPosition(
+    { x: nextPosition.x, y: nextPosition.y, z: nextPosition.z },
+    target,
+    duration,
+  );
+}
+
 function focusNode() {
-  const q = document.getElementById('search-input').value.trim().toLowerCase();
-  if (!q || !Graph) return;
-  const node = graphData.nodes.find(n =>
-    (n.id || '').toLowerCase() === q ||
-    (n.id || '').toLowerCase().includes(q)
-  );
+  if (!Graph) return;
+  const q = document.getElementById('search-input').value.trim();
+  const node = findNodeByQuery(q);
   if (!node) return;
-  Graph.centerAt(
-    node.x, node.y, node.z, 1200
-  );
-  Graph.zoom(3.5, 1200);
+  centerOnNode(node, CAMERA_DEFAULTS.focusDuration);
   showInspector(node);
 }
 
+function zoomView(scale = 1, duration = CAMERA_DEFAULTS.zoomDuration) {
+  if (!Graph || !Graph.camera) return;
+  const camera = Graph.camera();
+  if (!camera || !camera.position) return;
+  const target = graphControlsTarget().clone();
+  const direction = new THREE.Vector3().subVectors(camera.position, target);
+  if (direction.lengthSq() < 1e-6) direction.set(0, 0, 1);
+  const controls = Graph.controls && Graph.controls();
+  const minDistance = controls && typeof controls.minDistance === 'number' ? controls.minDistance : CAMERA_DEFAULTS.nearDistance;
+  const maxDistance = controls && typeof controls.maxDistance === 'number' ? controls.maxDistance : CAMERA_DEFAULTS.farDistance;
+  const currentDistance = Math.max(1, direction.length());
+  const nextDistance = clamp(currentDistance * scale, minDistance, maxDistance);
+  direction.normalize();
+  const nextPosition = target.clone().add(direction.multiplyScalar(nextDistance));
+  Graph.cameraPosition(
+    { x: nextPosition.x, y: nextPosition.y, z: nextPosition.z },
+    { x: target.x, y: target.y, z: target.z },
+    duration,
+  );
+}
+
+function zoomInView() {
+  zoomView(0.76);
+}
+
+function zoomOutView() {
+  zoomView(1.32);
+}
+
+function centerCandidateFromUI() {
+  const typed = String((document.getElementById('search-input') || {}).value || '').trim();
+  if (typed) return typed;
+  return String(inspectorNodeId || '').trim();
+}
+
+async function refreshCenterPanel(prefetchedCenter = null) {
+  let payload = prefetchedCenter;
+  if (!payload) {
+    try {
+      const resp = await fetch('/api/graph/cc');
+      payload = await resp.json();
+    } catch (err) {
+      setCCStatus(`CC: could not read (${err.message || err})`, UI_THEME.accent);
+      return;
+    }
+  }
+
+  const configured = Boolean((payload || {}).configured);
+  if (!configured) {
+    centerNodeId = '';
+    setCCStatus('CC: not set', UI_THEME.faint);
+    return;
+  }
+
+  const node = String((payload || {}).node || '').trim();
+  centerNodeId = node;
+  if (!node) {
+    setCCStatus('CC: invalid node', UI_THEME.accent);
+    return;
+  }
+  if ((payload || {}).exists === false) {
+    setCCStatus(`CC missing from graph: ${formatNodeName(node)}`, UI_THEME.accent);
+    return;
+  }
+  setCCStatus(`CC: ${formatNodeName(node)}`, UI_THEME.success);
+}
+
+async function setCenterFromUI() {
+  const candidate = centerCandidateFromUI();
+  if (!candidate) {
+    setCCStatus('CC: search for a node first', UI_THEME.gold);
+    return;
+  }
+  setCCStatus('Setting CC...', UI_THEME.soft);
+  try {
+    const resp = await fetch('/api/graph/cc', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ node: candidate }),
+    });
+    const data = await resp.json();
+    if (!resp.ok || !data.ok) throw new Error(data.error || `HTTP ${resp.status}`);
+    centerNodeId = String(data.node || '').trim();
+    setCCStatus(`CC set: ${formatNodeName(centerNodeId)}`, UI_THEME.success);
+    await focusCenterNode();
+  } catch (err) {
+    setCCStatus(`CC error: ${err.message || err}`, UI_THEME.accent);
+  }
+}
+
+async function clearCenterNode() {
+  try {
+    const resp = await fetch('/api/graph/cc', { method: 'DELETE' });
+    const data = await resp.json();
+    if (!resp.ok || !data.ok) throw new Error(data.error || `HTTP ${resp.status}`);
+    centerNodeId = '';
+    setCCStatus('CC: cleared', UI_THEME.faint);
+  } catch (err) {
+    setCCStatus(`CC error: ${err.message || err}`, UI_THEME.accent);
+  }
+}
+
+async function focusCenterNode() {
+  if (!Graph) return;
+  if (!centerNodeId) {
+    await refreshCenterPanel();
+  }
+  const wanted = String(centerNodeId || '').trim();
+  if (!wanted) {
+    setCCStatus('CC: not set', UI_THEME.gold);
+    return;
+  }
+
+  let node = findNodeByQuery(wanted);
+  if (!node) {
+    try {
+      const resp = await fetch(
+        `/api/graph/focus?node_id=${encodeURIComponent(wanted)}&hops=2&limit=3000&edge_limit=8000`
+      );
+      const data = await resp.json();
+      if (resp.ok && data.ok && Array.isArray(data.nodes) && data.nodes.length) {
+        setGraphData(data.nodes, data.edges || []);
+        updateStats(data.stats || {});
+        buildDomainLegend();
+        node = findNodeByQuery(String(data.center_node || wanted));
+      }
+    } catch (err) {
+      setCCStatus(`CC error: ${err.message || err}`, UI_THEME.accent);
+      return;
+    }
+  }
+
+  if (!node) {
+    setCCStatus(`CC not found in graph: ${formatNodeName(wanted)}`, UI_THEME.accent);
+    return;
+  }
+  centerOnNode(node, CAMERA_DEFAULTS.focusDuration);
+  showInspector(node);
+  setCCStatus(`CC: ${formatNodeName(wanted)}`, UI_THEME.success);
+}
+
 function resetCamera() {
-  if (Graph) Graph.zoomToFit(800);
+  if (Graph) Graph.zoomToFit(1400, 80);
 }
 
 function togglePhysics() {
@@ -996,9 +2229,608 @@ function filterDomainByName(domain) {
   Graph.graphData(graphData);
 }
 
+function layoutHudPanels() {
+  const stats = document.getElementById('hud-stats');
+  const controls = document.getElementById('hud-controls');
+  const models = document.getElementById('hud-models');
+  const chatControl = document.getElementById('hud-chat-control');
+  const events = document.getElementById('hud-events');
+  if (!stats || !controls || !models || !chatControl || !events) return;
+
+  const gap = 12;
+  const statsRect = stats.getBoundingClientRect();
+  const eventsRect = events.getBoundingClientRect();
+
+  const controlsTop = Math.round(statsRect.bottom + gap);
+  const available = Math.floor(eventsRect.top - gap - controlsTop);
+  if (available <= 0) return;
+
+  let controlsH;
+  let modelsH;
+  let chatControlH;
+  if (available < 330) {
+    const third = Math.max(72, Math.floor((available - (gap * 2)) / 3));
+    controlsH = third;
+    modelsH = third;
+    chatControlH = Math.max(72, available - controlsH - modelsH - (gap * 2));
+  } else {
+    controlsH = Math.max(110, Math.min(180, Math.floor(available * 0.26)));
+    modelsH = Math.max(120, Math.min(220, Math.floor(available * 0.34)));
+    chatControlH = Math.max(120, available - controlsH - modelsH - (gap * 2));
+  }
+
+  const modelsTop = controlsTop + controlsH + gap;
+  const chatControlTop = modelsTop + modelsH + gap;
+
+  controls.style.top = `${controlsTop}px`;
+  controls.style.maxHeight = `${controlsH}px`;
+  models.style.top = `${modelsTop}px`;
+  models.style.maxHeight = `${modelsH}px`;
+  chatControl.style.top = `${chatControlTop}px`;
+  chatControl.style.maxHeight = `${chatControlH}px`;
+}
+
+// ── Model switch panel ───────────────────────────────────────
+function setModelStatus(text, color = UI_THEME.faint) {
+  const el = document.getElementById('model-status');
+  if (!el) return;
+  el.textContent = text;
+  el.style.color = color;
+}
+
+function setModelHealthStatus(text, color = UI_THEME.faint) {
+  const el = document.getElementById('model-health');
+  if (!el) return;
+  el.textContent = text;
+  el.style.color = color;
+}
+
+function setChatControlStatus(text, color = UI_THEME.faint) {
+  const el = document.getElementById('chat-control-status');
+  if (!el) return;
+  el.textContent = text;
+  el.style.color = color;
+}
+
+function copySearchToChatControl() {
+  const searchEl = document.getElementById('search-input');
+  const queryEl = document.getElementById('control-query');
+  if (!searchEl || !queryEl) return;
+  queryEl.value = String(searchEl.value || '').trim();
+  refreshChatControlPanel();
+}
+
+function renderChatControl(payload) {
+  const skillEl = document.getElementById('chat-control-skill');
+  const workloadEl = document.getElementById('chat-control-workload');
+  const toolsEl = document.getElementById('chat-control-tools');
+  const candidatesEl = document.getElementById('chat-control-candidates');
+  if (!skillEl || !workloadEl || !toolsEl || !candidatesEl) return;
+
+  if (!payload || !payload.ok) {
+    skillEl.textContent = '-';
+    workloadEl.textContent = '-';
+    toolsEl.textContent = '-';
+    candidatesEl.textContent = '-';
+    setChatControlStatus(`Control error: ${(payload && payload.error) || 'unknown'}`, UI_THEME.accent);
+    return;
+  }
+
+  const route = payload.route || {};
+  const counts = payload.counts || {};
+  const runtime = ((payload.runtime || {}).chosen_workload || {});
+  const skill = String(route.skill || '-');
+  const skillScore = Number(route.skill_score || 0);
+  const reasons = Array.isArray(route.skill_reasons) ? route.skill_reasons : [];
+  const tools = Array.isArray(route.tools) ? route.tools : [];
+  const topCandidates = Array.isArray(route.top_skill_candidates) ? route.top_skill_candidates : [];
+  const workload = String(route.workload || '-');
+  const provider = String(route.provider || '-');
+  const governance = String(route.governance || '-');
+  const runtimeLabel = String(runtime.label || runtime.status || 'unknown');
+
+  skillEl.innerHTML = `
+    <div class="model-provider-title">${escapeHtml(skill)}</div>
+    <div class="model-provider-meta">score ${skillScore.toFixed(2)}${reasons.length ? ` · ${escapeHtml(reasons.join(', '))}` : ''}</div>
+  `;
+  workloadEl.innerHTML = `
+    <div class="model-provider-meta">workload ${escapeHtml(workload)} · provider ${escapeHtml(provider)}</div>
+    <div class="model-provider-meta">governance ${escapeHtml(governance)} · runtime ${escapeHtml(runtimeLabel)}</div>
+    <div class="model-provider-meta">planes ${Number(counts.planes || 0)} · bridges ${Number(counts.bridges || 0)}</div>
+  `;
+  toolsEl.textContent = tools.length ? tools.join(', ') : '-';
+  candidatesEl.textContent = topCandidates.length
+    ? topCandidates.map(row => `${row.name}:${Number(row.score || 0).toFixed(2)}`).join(', ')
+    : '-';
+  setChatControlStatus(`Route ready for ${skill}`, UI_THEME.success);
+}
+
+async function refreshChatControlPanel() {
+  const queryEl = document.getElementById('control-query');
+  const webEl = document.getElementById('control-needs-web');
+  const filesEl = document.getElementById('control-needs-files');
+  const memoryEl = document.getElementById('control-needs-memory');
+  const actionEl = document.getElementById('control-needs-action');
+  if (!queryEl || !webEl || !filesEl || !memoryEl || !actionEl) return;
+
+  const params = new URLSearchParams();
+  params.set('query', String(queryEl.value || '').trim());
+  if (webEl.checked) params.set('needs_web', 'true');
+  if (filesEl.checked) params.set('needs_files', 'true');
+  if (memoryEl.checked) params.set('needs_memory_write', 'true');
+  if (actionEl.checked) params.set('needs_action', 'true');
+
+  setChatControlStatus('Inspecting route...', UI_THEME.soft);
+  try {
+    const resp = await fetch(`/api/chat/control?${params.toString()}`);
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || `HTTP ${resp.status}`);
+    renderChatControl(data);
+    layoutHudPanels();
+  } catch (err) {
+    renderChatControl({ ok: false, error: err.message || err });
+  }
+}
+
+function setAuthStatus(text, color = UI_THEME.faint) {
+  const el = document.getElementById('auth-status');
+  if (!el) return;
+  el.textContent = text;
+  el.style.color = color;
+}
+
+function splitCandidates(raw) {
+  const out = [];
+  const seen = new Set();
+  String(raw || '')
+    .split(',')
+    .map(x => x.trim())
+    .filter(Boolean)
+    .forEach(item => {
+      if (seen.has(item)) return;
+      seen.add(item);
+      out.push(item);
+    });
+  return out;
+}
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function updateWorkloadHint(workload) {
+  const hint = document.getElementById('model-workload-hint');
+  if (!hint) return;
+  if (workload === 'agent') {
+    hint.textContent = 'nouse chat (terminal) uses workload: agent';
+    hint.style.color = UI_THEME.success;
+    return;
+  }
+  if (workload === 'chat') {
+    hint.textContent = 'Note: terminal nouse chat ignores chat and uses agent.';
+    hint.style.color = UI_THEME.gold;
+    return;
+  }
+  if (workload === 'bisoc') {
+    hint.textContent = 'Bisoc runs cross-domain bridge discovery in the background.';
+    hint.style.color = UI_THEME.success;
+    return;
+  }
+  hint.textContent = 'Terminal chat uses agent. This workload is for background tasks.';
+  hint.style.color = UI_THEME.faint;
+}
+
+function defaultCandidatesForProvider(provider) {
+  const p = String(provider || '').trim().toLowerCase();
+  if (p === 'ollama') return ['gemma4:e2b', 'qwen3.5:latest'];
+  if (p === 'codex' || p === 'openai_compatible' || p === 'openai') {
+    return ['gpt-5-codex', 'gpt-4.1-mini'];
+  }
+  if (p === 'anthropic') return ['claude-sonnet-4'];
+  if (p === 'copilot') return ['gpt-5-codex'];
+  return [];
+}
+
+function onModelProviderChanged() {
+  const providerEl = document.getElementById('model-provider');
+  const candidatesEl = document.getElementById('model-candidates');
+  if (!providerEl || !candidatesEl) return;
+
+  const provider = String(providerEl.value || '').trim();
+  const current = splitCandidates(candidatesEl.value);
+  const loaded = Array.isArray(_lastLoadedModelPolicy.candidates)
+    ? _lastLoadedModelPolicy.candidates
+    : [];
+  const unchanged = current.join(',') === loaded.join(',');
+  const empty = current.length === 0;
+
+  // Autopopulate only when the field is empty or unchanged from last loaded policy.
+  if (!empty && !unchanged) return;
+
+  const defaults = defaultCandidatesForProvider(provider);
+  if (defaults.length === 0) return;
+  candidatesEl.value = defaults.join(', ');
+  setModelStatus(
+    `Provider ${provider} selected. Suggested candidates: ${defaults.join(', ')}`,
+    UI_THEME.soft
+  );
+  refreshAuthStatus();
+}
+
+function renderModelProviders(providers, detectError = '') {
+  const box = document.getElementById('model-providers');
+  if (!box) return;
+
+  if (detectError) {
+    box.innerHTML = `<div class="model-provider-meta" style="color:#f1a04e">Autodiscover warning: ${escapeHtml(detectError)}</div>`;
+    return;
+  }
+
+  if (!Array.isArray(providers) || providers.length === 0) {
+    box.innerHTML = '<div class="model-provider-meta">No providers detected yet.</div>';
+    return;
+  }
+
+  box.innerHTML = providers.map(provider => {
+    const models = Array.isArray(provider.available_models) ? provider.available_models : [];
+    const preview = models.length > 0
+      ? models.slice(0, 4).map(escapeHtml).join(', ') + (models.length > 4 ? ` (+${models.length - 4})` : '')
+      : 'no models listed';
+    const latency = Number(provider.latency_ms || 0);
+    const latencyText = latency > 0 ? `${latency.toFixed(1)}ms` : 'n/a';
+
+    return `
+      <div class="model-provider-row">
+        <div class="model-provider-title">${escapeHtml(provider.label || provider.kind)}</div>
+        <div class="model-provider-meta">
+          ${escapeHtml(provider.kind || 'unknown')} · ${models.length} models · latency ${latencyText}
+        </div>
+        <div class="model-provider-models">${preview}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function refreshModelHealth(workload) {
+  const wl = String(workload || 'agent').trim() || 'agent';
+  try {
+    const resp = await fetch(`/api/models/health?workload=${encodeURIComponent(wl)}`);
+    if (!resp.ok) {
+      setModelHealthStatus(`Runtime: unknown (HTTP ${resp.status})`, UI_THEME.soft);
+      return;
+    }
+    const data = await resp.json();
+    if (!data || !data.ok) {
+      setModelHealthStatus('Runtime: unknown', UI_THEME.soft);
+      return;
+    }
+    const status = String(data.status || '').trim().toLowerCase();
+    const label = String(data.label || status || 'unknown').trim();
+    const detail = String(data.detail || '').trim();
+    let color = UI_THEME.soft;
+    if (status === 'working') color = UI_THEME.success;
+    else if (status === 'degraded') color = UI_THEME.gold;
+    else if (status === 'not_working') color = UI_THEME.accent;
+    const suffix = detail ? ` · ${detail}` : '';
+    setModelHealthStatus(`Runtime: ${label}${suffix}`, color);
+  } catch (err) {
+    setModelHealthStatus(`Runtime: unknown (${err.message || err})`, UI_THEME.soft);
+  }
+}
+
+async function refreshModelPanel() {
+  const workloadEl = document.getElementById('model-workload');
+  const providerEl = document.getElementById('model-provider');
+  const candidatesEl = document.getElementById('model-candidates');
+  if (!workloadEl || !providerEl || !candidatesEl) return;
+
+  const workload = workloadEl.value || 'chat';
+  updateWorkloadHint(workload);
+  setModelStatus(`Loading policy for ${workload}...`, UI_THEME.soft);
+  layoutHudPanels();
+
+  try {
+    const policyResp = await fetch(`/api/models/policy?workload=${encodeURIComponent(workload)}`);
+    if (!policyResp.ok) throw new Error(`policy HTTP ${policyResp.status}`);
+
+    const policyData = await policyResp.json();
+    const policy = policyData.policy || {};
+
+    providerEl.value = policy.provider || 'ollama';
+    candidatesEl.value = Array.isArray(policy.candidates) ? policy.candidates.join(', ') : '';
+    _lastLoadedModelPolicy = {
+      provider: String(policy.provider || 'ollama'),
+      candidates: Array.isArray(policy.candidates) ? [...policy.candidates] : [],
+    };
+
+    let degraded = false;
+    try {
+      const catalogResp = await fetch('/api/models/catalog');
+      if (catalogResp.ok) {
+        const catalogData = await catalogResp.json();
+        renderModelProviders(catalogData.providers || [], catalogData.detect_error || '');
+      } else if (catalogResp.status === 404) {
+        degraded = true;
+        renderModelProviders([], 'Catalog endpoint missing in active daemon.');
+      } else {
+        degraded = true;
+        renderModelProviders([], `Catalog HTTP ${catalogResp.status}`);
+      }
+    } catch (catalogErr) {
+      degraded = true;
+      renderModelProviders([], String(catalogErr && catalogErr.message ? catalogErr.message : catalogErr));
+    }
+
+    if (degraded) {
+      setModelStatus(
+        `Policy ${workload} loaded, but the catalog is unavailable. Restart the daemon for full model switching.`,
+        UI_THEME.gold
+      );
+    } else {
+      const runtimeHint = workload === 'chat'
+        ? ' · terminal nouse chat uses agent'
+        : '';
+      setModelStatus(
+        `Policy ${workload}: ${policy.provider || 'unknown'} (${(policy.candidates || []).length} candidates)${runtimeHint}`,
+        UI_THEME.success
+      );
+    }
+    await refreshModelHealth(workload);
+    await refreshAuthStatus();
+    layoutHudPanels();
+  } catch (err) {
+    setModelStatus(`Model panel error: ${err.message || err}`, UI_THEME.accent);
+    await refreshModelHealth(workload);
+    await refreshAuthStatus();
+    layoutHudPanels();
+  }
+}
+
+async function refreshAuthStatus() {
+  const providerEl = document.getElementById('model-provider');
+  if (!providerEl) return;
+  const selected = String(providerEl.value || '').trim().toLowerCase();
+  if (!selected) return;
+
+  try {
+    const resp = await fetch('/api/auth/status');
+    if (resp.status === 404 || resp.status === 405) {
+      setAuthStatus('Auth endpoint missing in active daemon. Restart the daemon.', UI_THEME.gold);
+      return;
+    }
+    const data = await resp.json();
+    if (!resp.ok || !data.ok) {
+      setAuthStatus(`Auth status error: ${data.error || `HTTP ${resp.status}`}`, UI_THEME.accent);
+      return;
+    }
+
+    const rows = Array.isArray(data.providers) ? data.providers : [];
+    let row = rows.find(x => String((x && x.provider) || '').toLowerCase() === selected);
+    if (!row && (selected === 'openai' || selected === 'codex')) {
+      row = rows.find(x => String((x && x.canonical_provider) || '').toLowerCase() === 'openai_compatible');
+    }
+    if (!row) {
+      setAuthStatus(`No auth metadata for provider: ${selected}`, UI_THEME.soft);
+      return;
+    }
+    if (!row.requires_key) {
+      setAuthStatus(`${selected}: no API key required (local runtime).`, UI_THEME.success);
+      return;
+    }
+    if (row.configured) {
+      setAuthStatus(`${selected}: API key configured.`, UI_THEME.success);
+      return;
+    }
+    setAuthStatus(`${selected}: API key missing.`, UI_THEME.gold);
+  } catch (err) {
+    setAuthStatus(`Auth status failed: ${err.message || err}`, UI_THEME.accent);
+  }
+}
+
+function clearAuthInput() {
+  const keyEl = document.getElementById('auth-api-key');
+  if (!keyEl) return;
+  keyEl.value = '';
+  setAuthStatus('Auth key input cleared.', UI_THEME.soft);
+}
+
+async function recordAuthKey() {
+  const providerEl = document.getElementById('model-provider');
+  const keyEl = document.getElementById('auth-api-key');
+  if (!providerEl || !keyEl) return;
+
+  const provider = String(providerEl.value || '').trim() || 'openai_compatible';
+  const key = String(keyEl.value || '').trim();
+  if (!key) {
+    setAuthStatus('Paste API key before recording auth.', UI_THEME.accent);
+    keyEl.focus();
+    return;
+  }
+
+  setAuthStatus(`Saving auth for ${provider}...`, UI_THEME.soft);
+  try {
+    const resp = await fetch('/api/auth/record', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        provider,
+        api_key: key,
+        apply_autodiscover: true,
+      }),
+    });
+    if (resp.status === 404 || resp.status === 405) {
+      setAuthStatus('Auth save endpoint missing in active daemon. Restart the daemon.', UI_THEME.gold);
+      return;
+    }
+    const data = await resp.json();
+    if (!resp.ok || !data.ok) {
+      setAuthStatus(`Auth save failed: ${data.error || `HTTP ${resp.status}`}`, UI_THEME.accent);
+      return;
+    }
+
+    keyEl.value = '';
+    const chosen = data.chosen || {};
+    const chosenLabel = chosen.label || chosen.kind || '';
+    const suffix = chosenLabel ? ` · applied: ${chosenLabel}` : '';
+    setAuthStatus(`Auth saved for ${provider}${suffix}`, UI_THEME.success);
+    await refreshModelPanel();
+  } catch (err) {
+    setAuthStatus(`Auth save failed: ${err.message || err}`, UI_THEME.accent);
+  }
+}
+
+async function saveModelPolicyFor(workload, provider, candidates) {
+  const resp = await fetch('/api/models/policy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ workload, provider, candidates }),
+  });
+  if (resp.status === 404 || resp.status === 405) {
+    throw new Error('endpoint_missing');
+  }
+  const data = await resp.json();
+  if (!resp.ok || !data.ok) {
+    throw new Error(data.error || `HTTP ${resp.status}`);
+  }
+  return data.policy || {};
+}
+
+async function applyModelPolicy() {
+  const workloadEl = document.getElementById('model-workload');
+  const providerEl = document.getElementById('model-provider');
+  const candidatesEl = document.getElementById('model-candidates');
+  if (!workloadEl || !providerEl || !candidatesEl) return;
+
+  const workload = workloadEl.value || 'chat';
+  const provider = providerEl.value || 'ollama';
+  const candidates = splitCandidates(candidatesEl.value);
+  if (candidates.length === 0) {
+    setModelStatus('Enter at least one model candidate before saving.', UI_THEME.accent);
+    return;
+  }
+
+  setModelStatus(`Saving policy for ${workload}...`, UI_THEME.soft);
+  try {
+    const policy = await saveModelPolicyFor(workload, provider, candidates);
+    _lastLoadedModelPolicy = {
+      provider: String(policy.provider || provider),
+      candidates: Array.isArray(policy.candidates) ? [...policy.candidates] : [...candidates],
+    };
+    setModelStatus(
+      `Saved ${policy.workload || workload}: ${policy.provider || provider} (${(policy.candidates || []).length} candidates)`,
+      UI_THEME.success
+    );
+    await refreshModelPanel();
+  } catch (err) {
+    if (String(err && err.message ? err.message : err) === 'endpoint_missing') {
+      setModelStatus(
+        'Save endpoint missing in active daemon. Restart the daemon to enable model switching.',
+        UI_THEME.gold
+      );
+      return;
+    }
+    setModelStatus(`Save failed: ${err.message || err}`, UI_THEME.accent);
+  }
+}
+
+async function applyChatAgentPolicy() {
+  const providerEl = document.getElementById('model-provider');
+  const candidatesEl = document.getElementById('model-candidates');
+  if (!providerEl || !candidatesEl) return;
+
+  const provider = providerEl.value || 'ollama';
+  const candidates = splitCandidates(candidatesEl.value);
+  if (candidates.length === 0) {
+    setModelStatus('Enter at least one model candidate before saving.', UI_THEME.accent);
+    return;
+  }
+
+  setModelStatus('Saving policy for chat + agent...', UI_THEME.soft);
+  try {
+    const chatPolicy = await saveModelPolicyFor('chat', provider, candidates);
+    const agentPolicy = await saveModelPolicyFor('agent', provider, candidates);
+    _lastLoadedModelPolicy = {
+      provider: String(agentPolicy.provider || chatPolicy.provider || provider),
+      candidates: Array.isArray(agentPolicy.candidates)
+        ? [...agentPolicy.candidates]
+        : (Array.isArray(chatPolicy.candidates) ? [...chatPolicy.candidates] : [...candidates]),
+    };
+    setModelStatus(
+      `Saved chat+agent: ${agentPolicy.provider || chatPolicy.provider || provider} (${(agentPolicy.candidates || chatPolicy.candidates || candidates).length} candidates)`,
+      UI_THEME.success
+    );
+    await refreshModelPanel();
+  } catch (err) {
+    if (String(err && err.message ? err.message : err) === 'endpoint_missing') {
+      setModelStatus(
+        'Save endpoint missing in active daemon. Restart the daemon to enable model switching.',
+        UI_THEME.gold
+      );
+      return;
+    }
+    setModelStatus(`Save failed: ${err.message || err}`, UI_THEME.accent);
+  }
+}
+
+async function autodiscoverModels() {
+  const providerEl = document.getElementById('model-provider');
+  const providerChoice = providerEl ? String(providerEl.value || '').trim() : '';
+  const preferredKind = providerChoice === 'ollama' ? 'ollama' : '';
+
+  setModelStatus('Running autodiscover...', UI_THEME.soft);
+  try {
+    const resp = await fetch('/api/models/autodiscover', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ apply: true, preferred_kind: preferredKind }),
+    });
+    if (resp.status === 404 || resp.status === 405) {
+      setModelStatus(
+        'Autodiscover endpoint missing in active daemon. Restart the daemon for full support.',
+        UI_THEME.gold
+      );
+      return;
+    }
+    const data = await resp.json();
+    if (!resp.ok || !data.ok) throw new Error(data.error || `HTTP ${resp.status}`);
+
+    if (data.chosen) {
+      setModelStatus(
+        `Autodiscover applied: ${data.chosen.label || data.chosen.kind}`,
+        UI_THEME.success
+      );
+    } else {
+      setModelStatus('Autodiscover complete (no provider applied).', UI_THEME.gold);
+    }
+    renderModelProviders(data.providers || [], '');
+    await refreshModelPanel();
+  } catch (err) {
+    setModelStatus(`Autodiscover failed: ${err.message || err}`, UI_THEME.accent);
+  }
+}
+
+function focusAuthPanelIfRequested() {
+  const hash = String(window.location.hash || '').trim().toLowerCase();
+  if (hash !== '#auth') return;
+  const modelsHud = document.getElementById('hud-models');
+  if (modelsHud && typeof modelsHud.scrollIntoView === 'function') {
+    modelsHud.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  const keyEl = document.getElementById('auth-api-key');
+  if (keyEl && typeof keyEl.focus === 'function') {
+    setTimeout(() => keyEl.focus(), 120);
+  }
+}
+
 // ── Bootstrap ─────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   const loadingText = document.getElementById('loading-text');
+  setInsightsDock(false);
 
   try {
     loadingText.textContent = 'LOADING FIELD SURFACE...';
@@ -1011,6 +2843,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     initGraph(data);
     buildDomainLegend();
+    await refreshCenterPanel((data || {}).center || null);
+    await refreshInsightsPanel();
 
     // Connect SSE
     connectSSE();
@@ -1020,14 +2854,29 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (e.key === 'Enter') focusNode();
     });
 
-    // Initial fit
+    // Initial fit / focus
     setTimeout(() => {
-      if (Graph) Graph.zoomToFit(800, 50);
-    }, 2500);
+      if (centerNodeId) {
+        focusCenterNode();
+      } else if (Graph) {
+        Graph.zoomToFit(800, 50);
+      }
+    }, 1200);
+
+    layoutHudPanels();
+    refreshModelPanel();
+    refreshChatControlPanel();
+    setInterval(() => {
+      const workloadEl = document.getElementById('model-workload');
+      const wl = workloadEl ? String(workloadEl.value || 'agent') : 'agent';
+      refreshModelHealth(wl);
+    }, 15000);
+    setInterval(() => { refreshInsightsPanel(); }, 20000);
+    focusAuthPanelIfRequested();
 
   } catch (err) {
-    loadingText.textContent = `FEL: ${err.message}`;
-    loadingText.style.color = '#f16b4e';
+    loadingText.textContent = `ERROR: ${err.message}`;
+    loadingText.style.color = UI_THEME.accent;
     console.error('Init failed:', err);
   }
 });

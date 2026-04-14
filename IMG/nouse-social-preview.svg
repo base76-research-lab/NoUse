@@ -3,7 +3,7 @@
   <desc id="desc">A clean white social preview using the provided Nous wordmark style.</desc>
   <rect width="1280" height="640" fill="#FFFFFF"/>
 
-  <g transform="translate(426 356)">
+  <g transform="translate(426 340)">
     <text
       x="0"
       y="0"
@@ -23,4 +23,22 @@
       letter-spacing="-0.8"
     >AI</text>
   </g>
+
+  <text
+    x="640" y="460"
+    text-anchor="middle"
+    font-family="'Times New Roman', 'Georgia', serif"
+    font-size="26"
+    font-weight="400"
+    letter-spacing="4"
+    fill="#aaaaaa">PLASTIC COGNITIVE SUBSTRATE</text>
+
+  <text
+    x="640" y="510"
+    text-anchor="middle"
+    font-family="'Times New Roman', 'Georgia', serif"
+    font-size="20"
+    font-weight="400"
+    letter-spacing="1"
+    fill="#cccccc">github.com/base76-research-lab/Nous</text>
 </svg>

@@ -14,9 +14,12 @@ import json
 from pathlib import Path
 from typing import Iterable, Iterator
 
+from nouse.config.paths import path_from_env
 from nouse.daemon.file_text import extract_text
 
-_STATE_FILE = Path.home() / ".local" / "share" / "nouse" / "source_state.json"
+
+def _state_file() -> Path:
+    return path_from_env("NOUSE_SOURCE_STATE_FILE", "source_state.json")
 
 DEFAULT_INGEST_EXTENSIONS = frozenset({".md", ".txt", ".py", ".pdf"})
 DEFAULT_EXCLUDED_DIR_NAMES = frozenset(
@@ -46,14 +49,16 @@ DEFAULT_EXCLUDED_DIR_NAMES = frozenset(
 
 
 def _load_state() -> dict:
-    if _STATE_FILE.exists():
-        return json.loads(_STATE_FILE.read_text())
+    state_file = _state_file()
+    if state_file.exists():
+        return json.loads(state_file.read_text())
     return {}
 
 
 def _save_state(state: dict) -> None:
-    _STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    _STATE_FILE.write_text(json.dumps(state, indent=2))
+    state_file = _state_file()
+    state_file.parent.mkdir(parents=True, exist_ok=True)
+    state_file.write_text(json.dumps(state, indent=2))
 
 
 def is_path_excluded(
@@ -321,7 +326,8 @@ class ChromeHistorySource:
         _save_state(self._state)
 
 
-CAPTURE_QUEUE_DIR = Path.home() / ".local" / "share" / "nouse" / "capture_queue"
+def capture_queue_dir() -> Path:
+    return path_from_env("NOUSE_CAPTURE_QUEUE_DIR", "capture_queue")
 
 
 class CaptureQueueSource:
@@ -332,10 +338,10 @@ class CaptureQueueSource:
     """
 
     def __init__(self):
-        CAPTURE_QUEUE_DIR.mkdir(parents=True, exist_ok=True)
+        capture_queue_dir().mkdir(parents=True, exist_ok=True)
 
     def read_new(self) -> Iterator[tuple[str, dict]]:
-        for path in sorted(CAPTURE_QUEUE_DIR.glob("*.txt")):
+        for path in sorted(capture_queue_dir().glob("*.txt")):
             try:
                 text = path.read_text(encoding="utf-8", errors="ignore").strip()
                 if len(text) >= 20:

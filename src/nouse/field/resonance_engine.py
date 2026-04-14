@@ -2,7 +2,7 @@
 nouse.field.resonance_engine — FAISS-backed structural resonance search
 =======================================================================
 
-Bottleneck före: decompose() gör N × K KuzuDB-queries per resonanssökning.
+Bottleneck före: decompose() gör N × K DB-queries per resonanssökning.
   - 21k noder × 60 kandidater = 1 260 queries PER LEVEL
   - depth=3 × 10 principer × 3 levels = ~113 000 queries → ~336s i selftrain
 
@@ -17,7 +17,7 @@ Backend-prioritering (automatisk):
   numpy      → alltid tillgänglig, ~10x långsammare men funkar alltid
 
 Speedup (21k noder, K=20 resultat):
-  Innan: 1 260 KuzuDB-queries ≈ 12–30s per sökning
+  Innan: 1 260 DB-queries ≈ 12–30s per sökning
   Efter: 1 batch build (3s en gång) + FAISS-sökning (< 1ms)
 """
 from __future__ import annotations
@@ -106,12 +106,12 @@ class ResonanceEngine:
         """
         Batch-hämta alla nodsignaturer och bygg FAISS-index.
 
-        EN KuzuDB-query ersätter N × K individuella queries.
+        EN batch-query ersätter N × K individuella queries.
         Returnerar stats-dict: {nodes, dim, relation_types, backend, build_ms}
         """
         t0 = time.monotonic()
 
-        # 1. Batch-fetch: alla relationer i en KuzuDB-query
+        # 1. Batch-fetch: alla relationer i en enda query
         rows = self._batch_fetch_all_relations()
 
         # 2. Bygg per-nod signaturmappar

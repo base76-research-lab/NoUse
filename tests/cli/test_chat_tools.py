@@ -19,6 +19,10 @@ class _FakeField:
     def add_concept(self, name: str, domain: str, source: str = "auto", ensure_knowledge: bool = True):
         self.last_added = {"name": name, "domain": domain, "source": source, "ensure_knowledge": ensure_knowledge}
 
+    def set_concept_domain(self, name: str, domain: str):
+        self.last_domain_update = {"name": name, "domain": domain}
+        return True
+
     def upsert_concept_knowledge(self, name: str, **kwargs):
         self.last_knowledge = {"name": name, **kwargs}
 
@@ -61,6 +65,7 @@ def test_upsert_concept_creates_or_updates_node():
     assert out["concept"] == "Björn Wikström"
     assert out["summary_updated"] is True
     assert field.last_added["name"] == "Björn Wikström"
+    assert field.last_domain_update["domain"] == "user"
 
 
 def test_live_tools_include_web_and_upsert_concept():

@@ -6,7 +6,7 @@ from nouse.field.surface import FieldSurface
 
 
 def _mk_field(tmp_path: Path) -> FieldSurface:
-    return FieldSurface(db_path=tmp_path / "field_semantic.kuzu", read_only=False)
+    return FieldSurface(db_path=tmp_path / "field_semantic.sqlite", read_only=False)
 
 
 def test_domain_tda_profile_prefers_semantic_embeddings_when_available(tmp_path, monkeypatch):

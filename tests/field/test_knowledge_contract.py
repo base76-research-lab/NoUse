@@ -6,7 +6,7 @@ from nouse.field.surface import FieldSurface
 
 
 def _mk_field(tmp_path: Path) -> FieldSurface:
-    return FieldSurface(db_path=tmp_path / "field.kuzu", read_only=False)
+    return FieldSurface(db_path=tmp_path / "field.sqlite", read_only=False)
 
 
 def test_add_concept_seeds_minimal_context_and_facts(tmp_path):
@@ -71,3 +71,56 @@ def test_add_relation_legacy_mode_does_not_pass_unknown_params(tmp_path):
     stats = field.stats()
     assert stats["concepts"] >= 2
     assert stats["relations"] >= 1
+
+
+def test_knowledge_audit_exposes_drift_metrics(tmp_path):
+    field = _mk_field(tmp_path)
+    field.add_relation(
+        "Drift A",
+        "beskriver",
+        "Drift B",
+        why="first edge",
+        strength=0.2,
+        evidence_score=0.2,
+        assumption_flag=True,
+    )
+    field.add_relation(
+        "Drift A",
+        "beskriver",
+        "Drift B",
+        why="second edge",
+        strength=0.9,
+        evidence_score=0.9,
+        assumption_flag=False,
+    )
+    field.upsert_concept_knowledge(
+        "Drift A",
+        summary="A",
+        claims=["cA"],
+        evidence_refs=["source:a"],
+        uncertainty=0.1,
+    )
+    field.upsert_concept_knowledge(
+        "Drift B",
+        summary="B",
+        claims=["cB"],
+        evidence_refs=["source:b"],
+        uncertainty=0.9,
+    )
+
+    audit = field.knowledge_audit(limit=10, strict=False)
+    drift = audit["drift_metrics"]
+
+    assert set(drift.keys()) >= {
+        "relation_instability_score",
+        "confidence_volatility",
+        "contradiction_rate",
+        "assumption_ratio",
+        "relation_count",
+        "triple_count",
+        "contradictory_triples",
+    }
+    assert 0.0 <= drift["relation_instability_score"] <= 1.0
+    assert 0.0 <= drift["confidence_volatility"] <= 1.0
+    assert 0.0 <= drift["contradiction_rate"] <= 1.0
+    assert drift["contradictory_triples"] >= 1

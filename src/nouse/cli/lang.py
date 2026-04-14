@@ -19,7 +19,7 @@ LANG = detect_language()
 # Simple translation dict (expand as needed)
 STRINGS = {
     "en": {
-        "front_title": "Nouse Front Door",
+        "front_title": "Nous Front Door",
         "start": "Start",
         "conversation": "Conversation",
         "knowledge": "Knowledge & Learning",
@@ -34,7 +34,7 @@ STRINGS = {
         "quickstart": "Quickstart: nouse start me · Details: nouse <command> --help · Version: nouse -V",
     },
     "sv": {
-        "front_title": "Nouse Front Door",
+        "front_title": "Nous Front Door",
         "start": "Start",
         "conversation": "Konversation",
         "knowledge": "Kunskap & Inlärning",

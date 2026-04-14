@@ -16,9 +16,9 @@ def _memory() -> QueryResult:
         query="test query",
         concepts=[
             ConceptProfile(
-                name="NoUse",
+                name="Nous",
                 summary="Structured epistemic memory for LLMs.",
-                claims=["NoUse is the brain layer."],
+                claims=["Nous is the brain layer."],
                 evidence_refs=[],
                 related_terms=["memory", "epistemics"],
                 uncertainty=0.1,
@@ -28,7 +28,7 @@ def _memory() -> QueryResult:
         ],
         axioms=[
             Axiom(
-                src="NoUse",
+                src="Nous",
                 rel="IS",
                 tgt="brain layer",
                 evidence=0.84,
@@ -56,13 +56,13 @@ class _FakeBrain:
 
 def test_build_system_prompt_includes_context_and_metadata():
     prompt, memory = build_system_prompt(
-        "What is NoUse?",
+        "What is Nous?",
         brain=_FakeBrain(),
     )
 
     assert DEFAULT_SYSTEM_PREAMBLE.strip() in prompt
-    assert "[Nouse memory]" in prompt
-    assert "[NoUse meta]" in prompt
+    assert "[Nous memory]" in prompt
+    assert "[Nous meta]" in prompt
     assert "confidence=0.84" in prompt
     assert memory.has_knowledge is True
 
@@ -71,20 +71,20 @@ def test_run_with_nouse_calls_model_and_learns():
     brain = _FakeBrain()
 
     def _call_model(*, system_prompt: str, user_prompt: str, memory: QueryResult):
-        assert "[Nouse memory]" in system_prompt
-        assert user_prompt == "Explain NoUse"
+        assert "[Nous memory]" in system_prompt
+        assert user_prompt == "Explain Nous"
         assert memory.confidence == 0.84
-        return "NoUse is the brain layer for grounding."
+        return "Nous is the brain layer for grounding."
 
     result = run_with_nouse(
-        "Explain NoUse",
+        "Explain Nous",
         _call_model,
         brain=brain,
         source="test-wrapper",
         model="test-model",
     )
 
-    assert result.answer == "NoUse is the brain layer for grounding."
+    assert result.answer == "Nous is the brain layer for grounding."
     assert len(brain.learn_calls) == 1
     assert brain.learn_calls[0]["kwargs"]["source"] == "test-wrapper"
     assert brain.learn_calls[0]["kwargs"]["model"] == "test-model"

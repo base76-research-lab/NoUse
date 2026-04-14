@@ -15,12 +15,7 @@ def load_env_files(force: bool = False) -> None:
     if _LOADED and not force:
         return
 
-    candidates = [
-        Path.cwd() / ".env",
-        Path(__file__).resolve().parents[3] / ".env",  # repo root
-        Path.home() / ".env",
-    ]
-    candidates.extend(_extra_env_candidates())
+    candidates = _env_candidates()
 
     for path in candidates:
         _load_single_file(path)
@@ -77,4 +72,33 @@ def _extra_env_candidates() -> list[Path]:
             continue
         seen.add(key)
         out.append(p)
+    return out
+
+
+def _auto_profile_candidates() -> list[Path]:
+    """
+    Försök hålla CLI/daemon/journal på samma profil även när användaren inte
+    satt NOUSE_ENV_FILES i aktuell shell.
+
+    Prioritera .env.personal i cwd och repo root före vanliga .env-filer.
+    """
+    repo_root = Path(__file__).resolve().parents[3]
+    return [
+        Path.cwd() / ".env.personal",
+        repo_root / ".env.personal",
+        Path.cwd() / ".env",
+        repo_root / ".env",
+        Path.home() / ".env",
+    ]
+
+
+def _env_candidates() -> list[Path]:
+    out: list[Path] = []
+    seen: set[str] = set()
+    for path in [*_extra_env_candidates(), *_auto_profile_candidates()]:
+        key = str(path.expanduser())
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(path)
     return out

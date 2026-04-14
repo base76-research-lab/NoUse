@@ -202,7 +202,7 @@ Node C ←→ Node D ←→ [NEW NODE E born from query]
 (Free graph, organic growth)
 ```
 
-**Mechanism:** Kuzu graph database — arbitrary topology.
+**Mechanism:** SQLite WAL + NetworkX graph substrate — arbitrary topology with explicit local control.
 
 ---
 

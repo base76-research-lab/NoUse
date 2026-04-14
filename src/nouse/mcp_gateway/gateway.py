@@ -16,11 +16,12 @@ import re
 import shutil
 import subprocess
 import tempfile
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Iterator
 import warnings
 from urllib.parse import parse_qs, quote, unquote, urlparse
+from zoneinfo import ZoneInfo
 from bs4 import BeautifulSoup
 from nouse.config.env import load_env_files
 from nouse.daemon.file_text import extract_text
@@ -50,6 +51,8 @@ _MAX_FIND_RESULTS = max(5, int((os.getenv("NOUSE_LOCAL_FIND_MAX_RESULTS") or "80
 _MAX_SEARCH_RESULTS = max(5, int((os.getenv("NOUSE_LOCAL_SEARCH_MAX_RESULTS") or "120").strip()))
 _MAX_TEXT_FILE_BYTES = max(1024, int((os.getenv("NOUSE_LOCAL_TEXT_FILE_MAX_BYTES") or "4000000").strip()))
 _MAX_FILE_SCAN_BYTES = max(1024, int((os.getenv("NOUSE_LOCAL_SCAN_FILE_MAX_BYTES") or "2000000").strip()))
+_MAX_WRITE_CHARS = max(1000, int((os.getenv("NOUSE_LOCAL_WRITE_MAX_CHARS") or "200000").strip()))
+_MAX_CMD_OUTPUT_CHARS = max(1000, int((os.getenv("NOUSE_LOCAL_CMD_OUTPUT_MAX_CHARS") or "20000").strip()))
 
 _SKIP_DIR_NAMES = {
     ".git",
@@ -91,6 +94,28 @@ except ValueError:
 # ── Ollama Tool Definitions ──────────────────────────────────────────────────
 
 MCP_TOOLS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_time_context",
+            "description": (
+                "Hämta aktuell lokal tid, datum, veckodag och tidszon från systemklockan. "
+                "Använd för frågor om 'nu', 'idag', 'imorgon', veckodag, datum och säkra tidsstämplar."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "timezone": {
+                        "type": "string",
+                        "description": (
+                            "Valfri IANA-tidszon, t.ex. Europe/Stockholm eller UTC. "
+                            "Om tom används systemets lokala tidszon."
+                        ),
+                    },
+                },
+            },
+        },
+    },
     {
         "type": "function",
         "function": {
@@ -251,6 +276,51 @@ MCP_TOOLS = [
                     },
                 },
                 "required": ["path"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "write_local_file",
+            "description": (
+                "Skriv eller append till lokal textfil i trusted local runtime. "
+                "Använd när användaren uttryckligen vill skapa eller ändra filer på disk."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "Målfil att skriva till."},
+                    "content": {"type": "string", "description": "Textinnehåll som ska skrivas."},
+                    "mode": {
+                        "type": "string",
+                        "description": "overwrite eller append (default overwrite).",
+                    },
+                    "create_dirs": {
+                        "type": "boolean",
+                        "description": "Skapa parent-kataloger om de saknas.",
+                    },
+                },
+                "required": ["path", "content"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "run_local_command",
+            "description": (
+                "Kör ett lokalt shell-kommando i trusted local runtime. "
+                "Bra för build, test, listning och andra icke-destruktiva arbetsflöden."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "command": {"type": "string", "description": "Kommandot som ska köras via bash -lc."},
+                    "workdir": {"type": "string", "description": "Valfri arbetskatalog."},
+                    "timeout_sec": {"type": "integer", "description": "Timeout i sekunder (default 45)."},
+                },
+                "required": ["command"],
             },
         },
     },
@@ -1065,6 +1135,31 @@ def _safe_int(value: Any, default: int, *, minimum: int, maximum: int) -> int:
     return max(minimum, min(maximum, v))
 
 
+def _env_flag(name: str) -> bool:
+    return str(os.getenv(name, "")).strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _trusted_local_autonomy_enabled() -> bool:
+    return _env_flag("NOUSE_TRUSTED_LOCAL_AUTONOMY") or _env_flag("NOUSE_LOCAL_FULL_ACCESS")
+
+
+def _local_file_write_enabled() -> bool:
+    return _env_flag("NOUSE_LOCAL_FILE_WRITE_ENABLED") or _trusted_local_autonomy_enabled()
+
+
+def _local_shell_enabled() -> bool:
+    return _env_flag("NOUSE_LOCAL_SHELL_ENABLED") or _trusted_local_autonomy_enabled()
+
+
+def mcp_tool_enabled(name: str) -> bool:
+    tool_name = str(name or "").strip()
+    if tool_name == "write_local_file":
+        return _local_file_write_enabled()
+    if tool_name == "run_local_command":
+        return _local_shell_enabled()
+    return True
+
+
 def _normalize_ext(ext: str) -> str:
     e = str(ext or "").strip().lower()
     if not e:
@@ -1165,6 +1260,70 @@ def _resolve_roots(raw_roots: Any) -> list[Path]:
         if roots:
             return roots
     return _default_roots()
+
+
+def _resolve_trusted_roots(env_key: str) -> list[Path]:
+    raw = str(os.getenv(env_key) or "").strip()
+    if raw:
+        roots: list[Path] = []
+        for item in raw.split(","):
+            item = item.strip()
+            if not item:
+                continue
+            try:
+                roots.append(Path(item).expanduser().resolve(strict=False))
+            except Exception:
+                continue
+        if roots:
+            return roots
+
+    roots: list[Path] = [Path.home().resolve()]
+    for row in list_local_mounts().get("mounts", []):
+        if not isinstance(row, dict):
+            continue
+        mountpoint = str(row.get("mountpoint") or "").strip()
+        if not mountpoint:
+            continue
+        if mountpoint == "/":
+            continue
+        if mountpoint.startswith(("/media/", "/mnt/", "/Volumes/")):
+            try:
+                roots.append(Path(mountpoint).expanduser().resolve(strict=False))
+            except Exception:
+                continue
+
+    dedup: list[Path] = []
+    seen: set[str] = set()
+    for root in roots:
+        key = str(root)
+        if key in seen:
+            continue
+        seen.add(key)
+        dedup.append(root)
+    return dedup
+
+
+def _path_is_within_roots(path: Path, roots: list[Path]) -> bool:
+    try:
+        candidate = path.expanduser().resolve(strict=False)
+    except Exception:
+        candidate = path.expanduser()
+    for root in roots:
+        try:
+            root_resolved = root.expanduser().resolve(strict=False)
+        except Exception:
+            root_resolved = root.expanduser()
+        if candidate == root_resolved or root_resolved in candidate.parents:
+            return True
+    return False
+
+
+def _trusted_write_roots() -> list[Path]:
+    return _resolve_trusted_roots("NOUSE_LOCAL_WRITE_ROOTS")
+
+
+def _trusted_exec_roots() -> list[Path]:
+    return _resolve_trusted_roots("NOUSE_LOCAL_EXEC_ROOTS")
 
 
 def _walk_candidate_files(
@@ -1349,6 +1508,172 @@ def read_local_file(
     }
 
 
+def write_local_file(
+    path: str,
+    content: str,
+    *,
+    mode: str = "overwrite",
+    create_dirs: bool = False,
+) -> dict[str, Any]:
+    if not _local_file_write_enabled():
+        return {
+            "error": "local file writes disabled",
+            "requires": ["NOUSE_LOCAL_FILE_WRITE_ENABLED=1 or NOUSE_TRUSTED_LOCAL_AUTONOMY=1"],
+        }
+
+    try:
+        p = Path(str(path or "")).expanduser().resolve(strict=False)
+    except Exception:
+        return {"error": "invalid path"}
+    if not str(p).strip():
+        return {"error": "path required"}
+    if not _path_is_within_roots(p, _trusted_write_roots()):
+        return {
+            "error": "path outside trusted write roots",
+            "path": str(p),
+            "trusted_roots": [str(x) for x in _trusted_write_roots()],
+        }
+
+    safe_mode = str(mode or "overwrite").strip().lower()
+    if safe_mode not in {"overwrite", "append"}:
+        return {"error": "mode must be overwrite or append"}
+
+    text = str(content or "")
+    if len(text) > _MAX_WRITE_CHARS:
+        return {
+            "error": "content too large",
+            "max_chars": _MAX_WRITE_CHARS,
+            "provided_chars": len(text),
+        }
+
+    parent = p.parent
+    try:
+        if create_dirs:
+            parent.mkdir(parents=True, exist_ok=True)
+        elif not parent.exists():
+            return {"error": f"parent directory missing: {parent}"}
+        existed = p.exists()
+        if safe_mode == "append":
+            with p.open("a", encoding="utf-8") as handle:
+                handle.write(text)
+        else:
+            p.write_text(text, encoding="utf-8")
+    except Exception as e:
+        return {"error": f"write failed: {e}", "path": str(p)}
+
+    return {
+        "ok": True,
+        "path": str(p),
+        "mode": safe_mode,
+        "created": not existed,
+        "bytes_written": len(text.encode("utf-8")),
+        "chars_written": len(text),
+        "ts": _now_iso(),
+    }
+
+
+_DANGEROUS_COMMAND_PATTERNS: tuple[tuple[str, str], ...] = (
+    (r":\(\)\s*\{\s*:\|\:&\s*\};\s*:", "fork bomb"),
+    (r"\brm\s+-rf\s+/$", "destructive root delete"),
+    (r"\bsudo\s+rm\s+-rf\s+/", "destructive root delete"),
+    (r"\bmkfs(\.| )", "filesystem formatting"),
+    (r"\bdd\s+.*\bof=/dev/", "raw device write"),
+    (r"\b(shutdown|reboot|poweroff|halt)\b", "system power command"),
+    (r"\bsystemctl\s+(reboot|poweroff|halt)\b", "system power command"),
+    (r"\binit\s+0\b", "system power command"),
+)
+
+
+def _blocked_command_reason(command: str) -> str | None:
+    if _env_flag("NOUSE_LOCAL_SHELL_ALLOW_DANGEROUS"):
+        return None
+    text = str(command or "").strip()
+    for pattern, reason in _DANGEROUS_COMMAND_PATTERNS:
+        if re.search(pattern, text, flags=re.IGNORECASE):
+            return reason
+    return None
+
+
+def run_local_command(
+    command: str,
+    *,
+    workdir: str | None = None,
+    timeout_sec: int = 45,
+) -> dict[str, Any]:
+    if not _local_shell_enabled():
+        return {
+            "error": "local shell disabled",
+            "requires": ["NOUSE_LOCAL_SHELL_ENABLED=1 or NOUSE_TRUSTED_LOCAL_AUTONOMY=1"],
+        }
+
+    cmd = str(command or "").strip()
+    if not cmd:
+        return {"error": "command required"}
+
+    blocked_reason = _blocked_command_reason(cmd)
+    if blocked_reason:
+        return {"error": "command blocked", "reason": blocked_reason, "command": cmd}
+
+    if workdir:
+        try:
+            cwd = Path(str(workdir)).expanduser().resolve(strict=False)
+        except Exception:
+            return {"error": "invalid workdir"}
+    else:
+        default_cwd = str(os.getenv("NOUSE_LOCAL_EXEC_DEFAULT_CWD") or "").strip()
+        cwd = Path(default_cwd).expanduser().resolve(strict=False) if default_cwd else Path.home().resolve()
+
+    if not cwd.exists() or not cwd.is_dir():
+        return {"error": f"workdir not found: {cwd}"}
+    if not _path_is_within_roots(cwd, _trusted_exec_roots()):
+        return {
+            "error": "workdir outside trusted exec roots",
+            "workdir": str(cwd),
+            "trusted_roots": [str(x) for x in _trusted_exec_roots()],
+        }
+
+    safe_timeout = _safe_int(timeout_sec, 45, minimum=1, maximum=600)
+    try:
+        proc = subprocess.run(
+            ["bash", "-lc", cmd],
+            cwd=str(cwd),
+            capture_output=True,
+            text=True,
+            timeout=float(safe_timeout),
+            check=False,
+        )
+    except subprocess.TimeoutExpired:
+        return {
+            "error": "command timed out",
+            "command": cmd,
+            "workdir": str(cwd),
+            "timeout_sec": safe_timeout,
+        }
+    except Exception as e:
+        return {"error": f"command failed: {e}", "command": cmd, "workdir": str(cwd)}
+
+    stdout = proc.stdout or ""
+    stderr = proc.stderr or ""
+    truncated = False
+    if len(stdout) > _MAX_CMD_OUTPUT_CHARS:
+        stdout = stdout[:_MAX_CMD_OUTPUT_CHARS]
+        truncated = True
+    if len(stderr) > _MAX_CMD_OUTPUT_CHARS:
+        stderr = stderr[:_MAX_CMD_OUTPUT_CHARS]
+        truncated = True
+    return {
+        "ok": proc.returncode == 0,
+        "command": cmd,
+        "workdir": str(cwd),
+        "exit_code": int(proc.returncode),
+        "stdout": stdout,
+        "stderr": stderr,
+        "truncated": truncated,
+        "timeout_sec": safe_timeout,
+        "ts": _now_iso(),
+    }
+
+
 def _search_local_text_rg(query: str, roots: list[Path], *, max_results: int) -> list[dict[str, Any]]:
     rg_bin = shutil.which(_RG_BIN)
     if not rg_bin:
@@ -1440,15 +1765,92 @@ def search_local_text(
     }
 
 
+def _weekday_sv(index: int) -> str:
+    names = [
+        "måndag",
+        "tisdag",
+        "onsdag",
+        "torsdag",
+        "fredag",
+        "lördag",
+        "söndag",
+    ]
+    try:
+        return names[int(index)]
+    except Exception:
+        return ""
+
+
+def _format_offset(dt: datetime) -> str:
+    raw = dt.strftime("%z")
+    if len(raw) == 5:
+        return f"{raw[:3]}:{raw[3:]}"
+    return raw
+
+
+def _resolve_time_zone(timezone_name: str | None = None) -> tuple[Any, str, str]:
+    requested = str(timezone_name or "").strip()
+    if requested:
+        try:
+            return ZoneInfo(requested), requested, ""
+        except Exception:
+            pass
+
+    env_tz = str(os.getenv("NOUSE_TIMEZONE") or os.getenv("TZ") or "").strip()
+    if env_tz:
+        try:
+            return ZoneInfo(env_tz), env_tz, ""
+        except Exception:
+            pass
+
+    local_now = datetime.now().astimezone()
+    local_tz = local_now.tzinfo or timezone.utc
+    local_name = str(getattr(local_tz, "key", "") or getattr(local_tz, "zone", "") or local_tz)
+    warning = ""
+    if requested and requested != local_name:
+        warning = f"invalid timezone '{requested}', fell back to local timezone"
+    return local_tz, local_name, warning
+
+
+def get_time_context(timezone_name: str | None = None) -> dict[str, Any]:
+    tzinfo, zone_name, warning = _resolve_time_zone(timezone_name)
+    now_local = datetime.now(tzinfo)
+    now_utc = now_local.astimezone(timezone.utc)
+    tomorrow = now_local.date() + timedelta(days=1)
+    yesterday = now_local.date() - timedelta(days=1)
+    out = {
+        "source": "system_clock",
+        "timezone": zone_name,
+        "timezone_requested": str(timezone_name or "").strip() or None,
+        "utc_offset": _format_offset(now_local),
+        "now_local": now_local.isoformat(),
+        "date_local": now_local.date().isoformat(),
+        "time_local": now_local.strftime("%H:%M:%S"),
+        "weekday_local": _weekday_sv(now_local.weekday()),
+        "weekday_local_en": now_local.strftime("%A"),
+        "today_local": now_local.date().isoformat(),
+        "tomorrow_local": tomorrow.isoformat(),
+        "yesterday_local": yesterday.isoformat(),
+        "now_utc": now_utc.isoformat(),
+        "unix_ts": int(now_utc.timestamp()),
+    }
+    if warning:
+        out["warning"] = warning
+    return out
+
+
 def is_mcp_tool(name: str) -> bool:
     """Returnerar True om verktyget hanteras av denna gateway."""
     return name in (
+        "get_time_context",
         "web_search",
         "fetch_url",
         "list_local_mounts",
         "find_local_files",
         "search_local_text",
         "read_local_file",
+        "write_local_file",
+        "run_local_command",
         "kernel_get_identity",
         "kernel_get_working_context",
         "kernel_retrieve_memory",
@@ -1464,6 +1866,10 @@ def is_mcp_tool(name: str) -> bool:
 
 def execute_mcp_tool(name: str, args: dict[str, Any]) -> Any:
     """Kör MCP-verktyg och returnerar resultatet."""
+    if not mcp_tool_enabled(name):
+        return {"error": f"MCP-verktyg ej aktiverat i denna runtime: {name}"}
+    if name == "get_time_context":
+        return get_time_context(args.get("timezone"))
     if name == "web_search":
         provider = args.get("provider")
         if not str(provider or "").strip():
@@ -1501,6 +1907,19 @@ def execute_mcp_tool(name: str, args: dict[str, Any]) -> Any:
             max_chars=args.get("max_chars", _MAX_READ_CHARS),
             start_line=args.get("start_line", 1),
             end_line=args.get("end_line", 0),
+        )
+    if name == "write_local_file":
+        return write_local_file(
+            args["path"],
+            args["content"],
+            mode=args.get("mode", "overwrite"),
+            create_dirs=bool(args.get("create_dirs", False)),
+        )
+    if name == "run_local_command":
+        return run_local_command(
+            args["command"],
+            workdir=args.get("workdir"),
+            timeout_sec=args.get("timeout_sec", 45),
         )
     if name == "kernel_get_identity":
         return kernel_get_identity()

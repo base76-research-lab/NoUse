@@ -34,6 +34,8 @@ from typing import Any, Literal
 
 from nouse.config.paths import path_from_env
 
+from nouse.config.paths import path_from_env
+
 _log = logging.getLogger("nouse.nightrun")
 
 CONFIG_FILE  = path_from_env("NOUSE_NIGHTRUN_CONFIG_FILE", "nightrun_config.json")
