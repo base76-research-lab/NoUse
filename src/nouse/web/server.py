@@ -790,11 +790,14 @@ def get_nerv(domain_a: str, domain_b: str, max_hops: int = 8):
 
 
 @app.get("/api/bisoc")
-def get_bisoc(tau: float = 0.55, epsilon: float = 2.0, max_domains: int = 50):
+def get_bisoc(tau: float = 0.55, epsilon: float = 2.0, max_domains: int = 50,
+              priority_domains: str | None = None):
     """Bisociationskandidater via TDA."""
     field = get_field()
+    pd = priority_domains.split(",") if priority_domains else None
     candidates = field.bisociation_candidates(
-        tau_threshold=tau, max_epsilon=epsilon, max_domains=max_domains
+        tau_threshold=tau, max_epsilon=epsilon, max_domains=max_domains,
+        priority_domains=pd,
     )
     return {"candidates": candidates}
 
@@ -2279,6 +2282,48 @@ def get_system_events(limit: int = 20, session_id: str = ""):
 def get_brain_regions():
     from nouse.field.brain_topology import regions_as_dict
     return {"ok": True, "regions": regions_as_dict()}
+
+
+@app.get("/api/brain_regions/balance")
+def get_brain_regions_balance():
+    """Region balance report — slagsida diagnostic with concept counts per region."""
+    from nouse.field.brain_topology import region_report
+    report = region_report(get_field())
+    return {"ok": True, "balance": report}
+
+
+@app.get("/api/brain_regions/heat")
+def get_brain_regions_heat():
+    """Live region heatmap — which regions are currently 'active' based on recent events."""
+    from nouse.field.brain_topology import classify_domain, BRAIN_REGIONS
+    field = get_field()
+    if not field:
+        return {"ok": True, "heat": {}}
+
+    # Count concepts added per region (concept count as proxy for activity)
+    heat: dict[str, dict] = {}
+    for domain in field.domains():
+        region_name = classify_domain(domain)
+        if region_name not in heat:
+            region_name_br = BRAIN_REGIONS.get(region_name)
+            heat[region_name] = {
+                "label": region_name_br.label_sv if region_name_br else region_name,
+                "concept_count": 0,
+                "domain_count": 0,
+                "color": region_name_br.color_hex if region_name_br else "#888",
+                "position": list(region_name_br.position) if region_name_br else [0, 0, 0],
+                "intensity": 0.0,
+            }
+        n = len(field.concepts(domain=domain))
+        heat[region_name]["concept_count"] += n
+        heat[region_name]["domain_count"] += 1
+
+    # Normalize intensity to 0-1 (log scale for better visualization)
+    max_concepts = max((h["concept_count"] for h in heat.values()), default=1) or 1
+    for name, h in heat.items():
+        h["intensity"] = round(min(1.0, h["concept_count"] / max_concepts), 3)
+
+    return {"ok": True, "heat": heat}
 
 
 class ModelPolicySetRequest(BaseModel):

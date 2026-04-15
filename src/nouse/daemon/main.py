@@ -46,6 +46,23 @@ from nouse.brian2_bridge import Brian2Bridge
 from nouse.daemon.node_inbox import get_inbox
 from nouse.daemon.nightrun import NightRunScheduler
 from nouse.daemon.initiative import run_curiosity_burst
+from nouse.daemon.percolation import (
+    PercolationReport,
+    bridge_bisociation_search,
+    domain_density_report,
+    generate_ingestion_tasks,
+    identify_bridge_domains,
+    format_report as format_percolation_report,
+    sweet_spot_report,
+    format_sweet_spot_report,
+)
+from nouse.daemon.brain_atlas import (
+    region_report as atlas_region_report,
+    format_region_report as format_atlas_report,
+    classify_domain,
+)
+from nouse.daemon.camera import CameraWatcher
+from nouse.daemon.speech import SpeechListener, SpeechSpeaker
 from nouse.daemon.morning_report import generate_morning_report
 from nouse.daemon.research_queue import (
     approve_task_after_hitl,
@@ -526,6 +543,9 @@ async def brain_loop(
     stdp_bridge = Brian2Bridge(field)          # STDP-timing, delas av hela brain_loop
     inbox = get_inbox()                        # Arbetsminne (hippocampus)
     nightrun = NightRunScheduler()             # Konsolidering (sömn)
+    camera_watcher = CameraWatcher(field=field, interval=120)  # Occipital lobe (syn)
+    speech_listener = SpeechListener(field=field, interval=60)  # Temporal lobe (hörsel)
+    speech_speaker = SpeechSpeaker(field=field)                # Frontal lobe (tal/Broca)
 
     # Ladda in externa självskrivna plugins
     load_plugins()
@@ -1019,8 +1039,17 @@ async def brain_loop(
             found.sort(key=lambda x: x["novelty"], reverse=True)
 
             # ── 4b: TDA bisociationskandidater (Koestler Step B) ──────────────
+            # Hämta strategiska bryggregdomäner från percolation-modulen
+            _bridge_domains = []
             try:
-                candidates = field.bisociation_candidates(tau_threshold=0.55, max_domains=15)
+                _bridge_domains = [bd.name for bd in identify_bridge_domains(field)]
+            except Exception:
+                pass
+            try:
+                candidates = field.bisociation_candidates(
+                    tau_threshold=0.55, max_domains=50,
+                    priority_domains=_bridge_domains if _bridge_domains else None,
+                )
                 if candidates:
                     log.info(f"  TDA: {len(candidates)} bisociationskandidater")
                     for c in candidates[:3]:
@@ -1032,6 +1061,42 @@ async def brain_loop(
             except Exception as e:
                 candidates = []
                 log.warning(f"TDA bisociation_candidates: {e}")
+
+            # ── 4b2: Målinriktad bisociationssökning bland bryggregdomäner ─────
+            # Standard-sökningen missar små bryggregdomäner pga max_domains-filtrering.
+            # Denna riktade sökning garanterar att alla strategiska domäner analyseras.
+            bridge_candidates = []
+            if _bridge_domains:
+                try:
+                    bridge_candidates = bridge_bisociation_search(
+                        field, bridges=None,
+                        tau_threshold=0.55, max_epsilon=2.0,
+                    )
+                    if bridge_candidates:
+                        # Filtrera bort kandidater som redan finns i standard-resultatet
+                        standard_pairs = {
+                            (c["domain_a"], c["domain_b"]) for c in candidates
+                        } | {
+                            (c["domain_b"], c["domain_a"]) for c in candidates
+                        }
+                        novel = [
+                            bc for bc in bridge_candidates
+                            if (bc["domain_a"], bc["domain_b"]) not in standard_pairs
+                        ]
+                        if novel:
+                            log.info(
+                                f"  Bridge-bisoc: {len(novel)} nya kandidater "
+                                f"bland bryggregdomäner (totalt {len(bridge_candidates)})"
+                            )
+                            for bc in novel[:3]:
+                                log.info(
+                                    f"    τ={bc['tau']:.3f}  "
+                                    f"{bc['domain_a']} × {bc['domain_b']}"
+                                )
+                        # Lägg till nya kandidater i huvudlistan
+                        candidates.extend(novel)
+                except Exception as e:
+                    log.warning(f"  Bridge-bisociation search (non-fatal): {e}")
 
             # ── 4c: Autonom bridge discovery för toppkandidater ───────────────
             if candidates and not (stop_event and stop_event.is_set()):
@@ -1201,7 +1266,7 @@ async def brain_loop(
                     f"-{stats['nodes_pruned']} orphan-noder"
                 )
 
-            # ── 8: Autonom Curiosity Loop + gap-queue ─────────────────────────
+            # ── 8: Autonom Curiosity Loop + D3 Goal-Directed Execution ────────
             # Vi kör curiosity ca var 3:e cykel för att inte överlasta.
             if cycle % 3 == 0 and not (stop_event and stop_event.is_set()):
                 try:
@@ -1215,9 +1280,129 @@ async def brain_loop(
                                 mission_summary(mission_state),
                             )
 
+                    # ── 8a: D3 Goal weight decay + percolation goal generation ──
+                    # Decay goal weights from previous cycle, then apply fresh weights.
+                    if hasattr(field, "decay_goal_weights"):
+                        try:
+                            field.decay_goal_weights(rate=0.05)
+                        except Exception:
+                            pass
+
+                    # Generate percolation goals every 3rd cycle and apply weights
+                    if cycle % 6 == 0:
+                        try:
+                            from nouse.daemon.goal_generator import generate_from_percolation
+                            from nouse.daemon.goal_registry import active_goals
+                            perc_goals = generate_from_percolation(field, cycle, max_goals=5)
+                            if perc_goals:
+                                from nouse.daemon.goal_registry import save_goal
+                                for pg in perc_goals:
+                                    save_goal(pg)
+                                log.info(f"  D3: {len(perc_goals)} percolation-mål genererade")
+
+                            # Apply goal weights to field for collapse bias
+                            all_active = active_goals()
+                            if hasattr(field, "apply_goal_weights") and all_active:
+                                n_updated = field.apply_goal_weights(all_active)
+                                if n_updated:
+                                    log.info(f"  D3: goal_weights uppdaterade på {n_updated} noder")
+                        except Exception as d3_err:
+                            log.debug(f"  D3 percolation-goals (non-fatal): {d3_err}")
+
+                    # ── 8b: Gap detection + percolation ingestion (proper queue) ──
                     added_tasks = enqueue_gap_tasks(field, max_new=4, seed_tasks=seed_tasks)
                     if added_tasks:
                         log.info(f"  Gap-detektor: +{len(added_tasks)} nya research-taskar")
+
+                    # Percolation-aware ingestion — every 6th cycle, feed through proper queue
+                    if cycle % 6 == 0:
+                        try:
+                            perc_report = domain_density_report(field)
+                            log.info(
+                                f"  Percolation: readiness={perc_report.bisociation_readiness:.1%}, "
+                                f"thin={perc_report.domains_thin}, "
+                                f"deficit={perc_report.cross_domain_edge_deficit}, "
+                                f"single-domains={perc_report.single_concept_domains}"
+                            )
+                            if perc_report.bisociation_readiness < 0.5:
+                                perc_tasks = generate_ingestion_tasks(field, report=perc_report)
+                                if perc_tasks:
+                                    # Use proper enqueue for deduplication
+                                    perc_added = enqueue_gap_tasks(
+                                        field, max_new=10, seed_tasks=perc_tasks
+                                    )
+                                    if perc_added:
+                                        log.info(
+                                            f"  Percolation: +{len(perc_added)} riktade taskar "
+                                            f"(bridge_build + domain_expand)"
+                                        )
+                        except Exception as perc_err:
+                            log.warning(f"  Percolation-analys fel (non-fatal): {perc_err}")
+
+                    # ── 8c: D3 Meta-cognitive self-knowledge ────────────────────
+                    # Nous reports what it understands about its own gaps.
+                    try:
+                        from nouse.daemon.percolation import identify_loose_nodes as _find_loose
+                        loose = _find_loose(field, min_cross_domain_connections=1, max_nodes=50)
+                        n_isolated = sum(1 for n in loose if n["is_isolated"])
+                        n_loose = len(loose)
+                        target_domains = sorted(set(n["domain"] for n in loose[:8]))
+                        log.info(
+                            f"  Self-knowledge: {n_isolated} isolerade, {n_loose} lösa. "
+                            f"Targeting: {', '.join(target_domains[:5])}"
+                        )
+                    except Exception:
+                        pass
+
+                    # ── 8d: Sweet spot calibration (every 12th cycle) ────────────
+                    # Nervbana axion density + rigidity + Yerkes-Dodson curve.
+                    if cycle % 12 == 0:
+                        try:
+                            from nouse.daemon.percolation import sweet_spot_report as _sweet_spot
+                            ss = _sweet_spot(field, max_nervbanor=200)
+                            s = ss.get("summary", {})
+                            log.info(
+                                f"  Sweet spot: {s.get('n_isolated', 0)} isolerade, "
+                                f"{s.get('n_sweet', 0)} sweet, {s.get('n_rigid', 0)} rigida. "
+                                f"Density={s.get('avg_axion_density', 0):.4f}, "
+                                f"rigidity={s.get('avg_rigidity', 0):.3f}"
+                            )
+                        except Exception:
+                            pass
+
+                    # ── 8d2: Brain atlas region balance (every 24th cycle) ────────
+                    if cycle % 24 == 0:
+                        try:
+                            atlas_stats = atlas_region_report(field)
+                            # Summarize key regions (frontal, temporal, hippocampus, amygdala)
+                            key_regions = ["frontal_lobe", "temporal_lobe", "hippocampus", "amygdala"]
+                            region_summary = []
+                            for rname in key_regions:
+                                rs = atlas_stats.get(rname)
+                                if rs:
+                                    region_summary.append(f"{rs.name}={rs.concept_count}")
+                            log.info(
+                                f"  Brain atlas: {', '.join(region_summary)} | "
+                                f"total={sum(s.concept_count for s in atlas_stats.values())}"
+                            )
+                        except Exception:
+                            pass
+
+                    # ── 8e: Camera + Speech (sensorimotor loop) ────────────────
+                    try:
+                        cam_obs = camera_watcher.tick()
+                        if cam_obs:
+                            log.info(f"  Camera: {len(cam_obs.concepts)} concepts, "
+                                     f"confidence={cam_obs.confidence:.2f}")
+                    except Exception:
+                        pass
+                    try:
+                        speech_result = speech_listener.tick()
+                        if speech_result:
+                            log.info(f"  Heard: '{speech_result.text[:60]}' "
+                                     f"(lang={speech_result.language})")
+                    except Exception:
+                        pass
 
                     task = claim_next_task()
                     if not task:

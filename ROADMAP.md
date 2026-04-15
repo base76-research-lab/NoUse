@@ -1,17 +1,19 @@
 # Nous ROADMAP
 
 > Single source of truth for project state. Next LLM session: read THIS file + latest handoff, then start working.
-> Updated: 2026-04-14
+> Updated: 2026-04-15
 
 ---
 
 ## Current Focus
 
-**Daemon source loop fixed — running full cognitive cycles**
+**Brain atlas + sensorimotor loop + sweet spot calibration — targeting balanced topology**
 
-All fixar implementerade och daemonen når nu alla discovery-stadier. Varje cykel producerar nervbanor, curiosity loops och cycle reflections. Modellkonfiguration uppdaterad till `minimax-m2.7:cloud` som primär extraktionsmodell (5.8s response time).
+Daemon kör fulla kognitiva cykler med D3 goal-directed execution. Brain atlas avslöjar "slagsida": 88% av koncept i Parietal+Brainstem, <1% i Frontal/Hippocampus/Amygdala. Sweet spot calibration visar alla 200 nervbanor har k=1 mot k_min=8.6. Kamera (Occipital Lobe) + llava:7b fungerar. Speech-modul (Temporal+Frontal) byggd men TTS/STT inte aktiverad.
 
-Next: D3 (goal-directed execution), PDF ingestion for Stanford AI Index.
+D3 verified working in main loop: goal_weights applied to 39 nodes, self-knowledge logging active, curiosity directed toward bridge domains (philosophy of mind prio=0.93).
+
+Next: activate camera in daemon, use brain atlas for D3 goal prioritization (underrepresented regions), spatial embedding for signal decay.
 
 ---
 
@@ -19,13 +21,18 @@ Next: D3 (goal-directed execution), PDF ingestion for Stanford AI Index.
 
 | Check | Status |
 |-------|--------|
-| Daemon | active (running) since 2026-04-14 22:52, full cognitive cycles |
+| Daemon | active (running), D3 goal-directed execution verified in main loop |
+| Percolation module | `daemon/percolation.py` — density + bridge + sweet spot + nervbana axion density |
+| Brain atlas | `daemon/brain_atlas.py` — 8 regions, slagsida diagnostic, domain → region classifier |
+| Bisociation readiness | 6.0% (35,428 concepts, 4,648 domains, 36,887 edge deficit) |
+| Sweet spot | 0/200 nervbanor i sweet zone, alla i isolerad (k=1 vs k_min=8.6) |
+| Camera | `daemon/camera.py` — /dev/video0 + llava:7b, working |
+| Speech | `daemon/speech.py` — STT (Whisper) + TTS (Piper/edge-tts), built but not enabled |
+| Vision | `daemon/vision.py` — llava → Gemini → heuristic, JSON parsing fixed |
 | PyPI | v0.4.0 published |
 | Core imports | brain, surface, inject, limbic, mcp — OK |
-| Persona module | `nouse.persona` — stub created, all imports working |
-| Source loop | Fixed: 50 doc cap/cycle, 600s timeout, batched state saves, DOC_EVERY=20 |
-| Extract model | `minimax-m2.7:cloud` (primary), `gemma4:e2b`/`glm-5.1:cloud` (fallback) |
-| Test suite | 8 collection errors (web modules) — persona errors fixed |
+| Extract model | `gemma4:e2b` (primary), `minimax-m2.7:cloud`/`glm-5.1:cloud` (fallback) |
+| Test suite | 8 collection errors (web modules) |
 | Git remote | github.com/base76-research-lab/Nous.git |
 | Total commits | 90 |
 
@@ -52,10 +59,11 @@ Created `src/nouse/persona.py` stub with sensible defaults:
 - [x] D1 Goal Registry — `daemon/goal_registry.py` (419 lines)
 - [x] D2 Goal Generator — `daemon/goal_generator.py` (585 lines)
 - [ ] D3 Goal-Directed Execution — direct Ghost Q + curiosity toward active goals
-  - [ ] D3.1 goal-directed Ghost Q (ghost_q.py)
-  - [ ] D3.2 goal-directed curiosity (initiative.py)
-  - [ ] D3.3 goal_weight dynamics (brain.py)
-  - [ ] D3.4 NightRun integration
+  - [x] D3.1 goal-directed Ghost Q — goal_weight in brain.py collapse() (commit 8e30315)
+  - [x] D3.2 goal-directed curiosity (initiative.py) — D3 primary path with percolation awareness
+  - [x] D3.3 goal_weight dynamics (brain.py) — apply + decay_goal_weights per cycle
+  - [ ] D3.4 NightRun integration — generate_from_percolation in nightrun
+- [ ] D4 Satisfaction & Feedback — close the goal loop
 - [ ] D4 Satisfaction & Feedback — close the goal loop
   - [ ] D4.1 evaluate_satisfaction() in goal_registry.py
   - [ ] D4.2 CLI: `nouse goal add/list/status`
@@ -117,7 +125,8 @@ F_bisoc = prediction_error + lam * complexity_blend; threshold=0.45
 1. Ollama model `deepseek-r1:1.5b` not installed (404) — `minimax-m2.7:cloud` works as primary
 2. TruthfulQA benchmark — needs GPU time and lm-eval adapter (`src/nouse/eval/lm_eval_adapter.py` does not exist yet)
 3. Fas 0 (pytest clean) — web modules still have collection errors
-4. `bisoc_candidates=0` — TDA threshold not yet met, normal during growth phase
+4. `bisoc_candidates=0→164` — percolation threshold not met (6% readiness, ~37K edge deficit); D3 now drives curiosity toward thin/bridge domains; bridge_bisociation_search finds cross-domain pairs; **D3 goal_weights now active on FieldSurface** (was silently skipped because `hasattr(field, "decay_goal_weights")` returned False)
+5. LLM timeouts: `gemma4:e2b` and `glm-5.1:cloud` consistently timing out at 45s; `minimax-m2.7:cloud` works
 
 ---
 
@@ -125,12 +134,22 @@ F_bisoc = prediction_error + lam * complexity_blend; threshold=0.45
 
 | Date | Decision |
 |------|----------|
+| 2026-04-15 | Brain atlas: 8 regions (frontal, parietal, temporal, occipital, cerebellum, brainstem, hippocampus, amygdala) with spatial coordinates, domain → region classifier, slagsida diagnostic |
+| 2026-04-15 | Sweet spot calibration: nervbana axion density (k_min, k_sweet, k_rigid), domain rigidity metric, Yerkes-Dodson curve for knowledge graphs |
+| 2026-04-15 | Sensorimotor loop: camera module (Occipital Lobe) with llava:7b, speech module (Temporal+Frontal) with Whisper/Piper, vision module with JSON parsing |
+| 2026-04-15 | Slagsida diagnostic: 88% concepts in Parietal+Brainstem, <1% in Frontal/Hippocampus/Amygdala — structural cause of missing bisociation |
+| 2026-04-15 | Larynx Problem posted on LessWrong (rejected — AI detection flag, needs rewrite with concrete Nous results) |
 | 2026-04-14 | Fixed daemon source loop: 50 doc cap, 600s timeout, batched state saves, DOC_EVERY=20 |
 | 2026-04-14 | Created nouse.persona stub module (fixes 5-file import blocker) |
 | 2026-04-14 | Switched extraction model to minimax-m2.7:cloud (5.8s vs 26s for gemma4) |
 | 2026-04-14 | Reset model router state, daemon now reaches bridge_synthesis + curiosity stages |
 | 2026-04-14 | Added handoff system (ROADMAP.md + docs/handoffs/) |
 | 2026-04-14 | Added Stop hooks: handoff reminder + git push check |
+| 2026-04-15 | Percolation module: domain density monitoring, bridge domains, targeted ingestion tasks |
+| 2026-04-15 | Fixed bisociation detection: priority_domains param + KuzuDB 1-hop path fix + bridge_bisociation_search() |
+| 2026-04-15 | D3 goal-directed execution: identify_loose_nodes(), generate_from_percolation(), goal-directed curiosity primary path, goal_weight decay, meta-cognitive logging |
+| 2026-04-15 | Fixed D3 goal_weights: added apply_goal_weights() + decay_goal_weights() to FieldSurface (was silently skipped — only existed on Brain) |
+| 2026-04-15 | Research sweep: Sartori's Bidirectional Coherence Paradox validates Larynx Problem; Kim's SCL mirrors Nous; zero recent AI bisociation papers |
 | 2026-04-14 | Added MCP servers: nous-sqlite, arxiv, nouse-mcp |
 | 2026-04-14 | Scheduled morning research agent (weekdays 06:17) |
 | 2026-04-12 | Rename NoUse → Nous |

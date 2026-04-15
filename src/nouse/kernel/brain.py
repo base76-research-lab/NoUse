@@ -501,6 +501,27 @@ class Brain:
                         updated += 1
         return updated
 
+    def decay_goal_weights(self, rate: float = 0.05) -> int:
+        """
+        D3.3: Decay goal weights each cycle so satisfied goals fade.
+
+        Without decay, goal_weight only increases (apply_goal_weights uses max()).
+        This ensures that concepts whose goals are no longer active gradually
+        return to baseline, making room for new priorities.
+
+        Args:
+            rate: amount to subtract per call (default 0.05 → ~20 cycles to zero)
+
+        Returns:
+            Number of nodes that were decayed (had weight > 0 before decay).
+        """
+        decayed = 0
+        for node in self.nodes.values():
+            if node.goal_weight > 0.0:
+                node.goal_weight = max(0.0, node.goal_weight - rate)
+                decayed += 1
+        return decayed
+
     def save(self, path: str | Path) -> Path:
         out_path = Path(path)
         out_path.parent.mkdir(parents=True, exist_ok=True)

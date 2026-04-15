@@ -145,29 +145,66 @@ async def run_curiosity_burst(
     target_domain: str
     sample_concepts: list[str]
 
-    # D3: Goal-directed curiosity — om aktiva mål finns, prioritera dessa
+    # D3: Goal-directed curiosity — primary path, not fallback.
+    # Om aktiva mål finns, prioritera dessa framför H0/H1 gap-detektion.
+    # Detta är Nous självstyrda inlärning: "jag har 0 kopplingar till immunologi,
+    # jag måste forska om immunologi."
     goal_context: str = ""
     if not task:
         try:
-            from nouse.daemon.goal_registry import active_goals, KIND_CONTRADICTION_RESOLVE, KIND_DOMAIN_EXPAND
+            from nouse.daemon.goal_registry import (
+                active_goals,
+                KIND_CONTRADICTION_RESOLVE,
+                KIND_DOMAIN_EXPAND,
+                KIND_PERCOLATION,
+                KIND_EVIDENCE_GAP,
+                KIND_CRYSTALLIZATION,
+            )
             goals = active_goals()
-            # Välj högst prioriterade mål som är relevanta för curiosity
-            for g in goals[:3]:
-                if g.kind in (KIND_CONTRADICTION_RESOLVE, KIND_DOMAIN_EXPAND):
-                    if g.target_domain:
-                        task = {
-                            "domain": g.target_domain,
-                            "concepts": g.target_concepts[:4],
-                            "rationale": g.title,
-                            "query": f"Undersök: {g.title}",
-                            "id": g.id,
-                        }
-                        goal_context = f"\n[Drive-mål] {g.title} (prioritet={g.priority:.2f})"
-                        log.info(
-                            f"Curiosity goal-directed: mål {g.id} kind={g.kind} "
-                            f"domain={g.target_domain} prio={g.priority:.2f}"
-                        )
-                        break
+            # Goal kinds som kan styra curiosity — i prioritetsordning
+            goal_priority_kinds = [
+                KIND_PERCOLATION,       # "I have 0 connections HERE"
+                KIND_CONTRADICTION_RESOLVE,
+                KIND_EVIDENCE_GAP,
+                KIND_DOMAIN_EXPAND,
+                KIND_CRYSTALLIZATION,
+            ]
+            for g in goals[:10]:
+                if g.kind in goal_priority_kinds and g.target_domain:
+                    # För percolation-mål, berika med loose node-information
+                    extra_context = ""
+                    if g.kind == KIND_PERCOLATION:
+                        try:
+                            from nouse.daemon.percolation import identify_loose_nodes
+                            loose = identify_loose_nodes(field, max_nodes=20)
+                            domain_loose = [n for n in loose if n["domain"] == g.target_domain]
+                            if domain_loose:
+                                n_isolated = sum(1 for n in domain_loose if n["is_isolated"])
+                                extra_context = (
+                                    f"\n[Self-knowledge] {n_isolated} isolerade koncept "
+                                    f"och {len(domain_loose)} lösa noder i domänen '{g.target_domain}'. "
+                                    f"Systemet förstår att det saknar kopplingar här."
+                                )
+                        except Exception:
+                            pass
+
+                    task = {
+                        "domain": g.target_domain,
+                        "concepts": g.target_concepts[:4] or [g.target_domain],
+                        "rationale": g.title,
+                        "query": f"Undersök: {g.title}",
+                        "id": g.id,
+                        "kind": g.kind,
+                    }
+                    goal_context = (
+                        f"\n[Drive-mål] {g.title} (prioritet={g.priority:.2f})"
+                        f"{extra_context}"
+                    )
+                    log.info(
+                        f"Self-directed: targeting {g.target_domain} "
+                        f"(goal={g.kind}, urgency={g.priority:.2f})"
+                    )
+                    break
         except Exception as e:
             log.debug("Goal-directed curiosity lookup misslyckades (non-fatal): %s", e)
 

@@ -238,3 +238,63 @@ def regions_as_dict() -> dict:
         }
         for name, r in BRAIN_REGIONS.items()
     }
+
+
+# ---------------------------------------------------------------------------
+# Region balance / slagsida diagnostic
+# ---------------------------------------------------------------------------
+
+def region_report(field: Any = None) -> dict[str, dict]:
+    """Generate a region balance report from the live graph.
+
+    Shows how domains/concepts are distributed across brain regions,
+    identifying "slagsida" (lopsidedness) where some regions are
+    over- or under-represented.
+    """
+    import math as _math
+
+    if field is None:
+        return {}
+
+    region_data: dict[str, dict] = {name: {"domains": [], "concepts": 0, "domain_count": 0}
+                                    for name in BRAIN_REGIONS}
+
+    for domain in field.domains():
+        region_name = classify_domain(domain)
+        if region_name not in region_data:
+            region_data[region_name] = {"domains": [], "concepts": 0, "domain_count": 0}
+        n_concepts = len(field.concepts(domain=domain))
+        region_data[region_name]["domains"].append(domain)
+        region_data[region_name]["concepts"] += n_concepts
+        region_data[region_name]["domain_count"] = len(region_data[region_name]["domains"])
+
+    total_concepts = sum(d["concepts"] for d in region_data.values())
+    n_regions = len(BRAIN_REGIONS)
+    ideal_pct = 100.0 / max(1, n_regions)
+
+    # Add balance metrics
+    for name, data in region_data.items():
+        pct = 100.0 * data["concepts"] / max(1, total_concepts)
+        data["pct"] = round(pct, 1)
+        data["balance"] = "over" if pct > ideal_pct * 2.5 else "under" if pct < ideal_pct * 0.3 else "ok"
+        data["label"] = BRAIN_REGIONS[name].label_sv if name in BRAIN_REGIONS else name
+        data["color"] = BRAIN_REGIONS[name].color_hex if name in BRAIN_REGIONS else "#888"
+        data["position"] = list(BRAIN_REGIONS[name].position) if name in BRAIN_REGIONS else [0, 0, 0]
+
+    return region_data
+
+
+def region_distance(a: str, b: str) -> float:
+    """Euclidean distance between two brain regions in 3D space."""
+    ra = BRAIN_REGIONS.get(a)
+    rb = BRAIN_REGIONS.get(b)
+    if not ra or not rb:
+        return 200.0  # large default
+    return math.sqrt(
+        (ra.position[0] - rb.position[0]) ** 2 +
+        (ra.position[1] - rb.position[1]) ** 2 +
+        (ra.position[2] - rb.position[2]) ** 2
+    )
+
+
+import math

@@ -867,6 +867,49 @@ class FieldSurface:
         rows = self._sql.execute("SELECT DISTINCT domain FROM concept").fetchall()
         return [row["domain"] for row in rows]
 
+    # ── D3: Goal-weight methods (mirrors brain.py for NetworkX graph) ───────
+
+    def apply_goal_weights(self, goals: list) -> int:
+        """D3: Uppdatera goal_weight på noder baserat på aktiva mål.
+
+        Varje aktivt måls target_concepts får goal_weight = max(existerande, mål-prioritet).
+        Returnerar antal uppdaterade noder.
+        """
+        updated = 0
+        for goal in goals:
+            if getattr(goal, "status", "") != "active":
+                continue
+            priority = float(getattr(goal, "priority", 0.5))
+            for concept in getattr(goal, "target_concepts", []):
+                if concept in self._G:
+                    cur = float(self._G.nodes[concept].get("goal_weight", 0.0))
+                    new_gw = max(cur, priority)
+                    if new_gw != cur:
+                        self._G.nodes[concept]["goal_weight"] = min(1.0, new_gw)
+                        updated += 1
+        return updated
+
+    def decay_goal_weights(self, rate: float = 0.05) -> int:
+        """D3.3: Decay goal weights each cycle so satisfied goals fade.
+
+        Without decay, goal_weight only increases (apply_goal_weights uses max()).
+        This ensures that concepts whose goals are no longer active gradually
+        return to baseline, making room for new priorities.
+
+        Args:
+            rate: amount to subtract per call (default 0.05 → ~20 cycles to zero)
+
+        Returns:
+            Number of nodes that were decayed (had weight > 0 before decay).
+        """
+        decayed = 0
+        for node_name, data in self._G.nodes(data=True):
+            gw = float(data.get("goal_weight", 0.0))
+            if gw > 0.0:
+                self._G.nodes[node_name]["goal_weight"] = max(0.0, gw - rate)
+                decayed += 1
+        return decayed
+
     def stats(self):
         nc = self._sql.execute("SELECT count(*) AS n FROM concept").fetchone()
         nr = self._sql.execute("SELECT count(*) AS n FROM relation").fetchone()
@@ -1345,19 +1388,20 @@ class FieldSurface:
 
     def bisociation_candidates(self, tau_threshold=0.55, max_epsilon=2.0,
                                 semantic_similarity_max=_BISOC_SEMANTIC_SIM_MAX,
-                                max_domains=50):
+                                max_domains=50, priority_domains=None):
         try:
             from nouse.tda.bridge import topological_similarity
         except ImportError:
             return []
         all_domains = self.domains()
+        priority_set = set(priority_domains) if priority_domains else set()
         if max_domains and len(all_domains) > max_domains:
             domain_counts = {}
             for n, d in self._G.nodes(data=True):
                 dom = d.get("domain", "")
                 domain_counts[dom] = domain_counts.get(dom, 0) + 1
             sorted_doms = sorted(domain_counts, key=domain_counts.get, reverse=True)
-            top_set = set(sorted_doms[:max_domains])
+            top_set = set(sorted_doms[:max_domains]) | priority_set
             domains = [d for d in all_domains if d in top_set]
         else:
             domains = all_domains

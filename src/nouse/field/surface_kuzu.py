@@ -1594,16 +1594,20 @@ class FieldSurface:
         max_epsilon: float = 2.0,
         semantic_similarity_max: float = _BISOC_SEMANTIC_SIM_MAX,
         max_domains: int = 50,
+        priority_domains: list[str] | None = None,
     ) -> list[dict]:
         """
         Hitta domänpar med HÖG topologisk similaritet och LÅG semantisk likhet,
-        men INGEN direkt BFS-stig.
+        men INGEN direkt cross-domain kant.
 
         Dessa är genuina bisociationskandidater (Koestler 1964):
           - Låg semantisk koppling mellan domäncentroider
           - Hög strukturell likhet (τ ≥ tau_threshold)
-          - Ingen direkt topologisk väg mellan domänerna
+          - Ingen direkt cross-domain kant mellan domänerna
           → 1+1=3-potentialen är störst här.
+
+        priority_domains: domäner som ALLTID inkluderas, oavsett storlek.
+        Används för att garantera att strategiska bryggregdomäner analyseras.
 
         Returnerar lista med:
           {"domain_a", "domain_b", "tau", "semantic_similarity", "semantic_gap", "score", ...}
@@ -1615,15 +1619,17 @@ class FieldSurface:
             return []
 
         all_domains = self.domains()
+        priority_set = set(priority_domains) if priority_domains else set()
         if max_domains and len(all_domains) > max_domains:
-            # Välj de domäner med flest noder — de är mest meningsfulla för bisociation
+            # Välj de domäner med flest noder + alla priority_domains
             r = self._conn.execute(
                 "MATCH (c:Concept) RETURN c.domain AS domain, count(c) AS n "
                 "ORDER BY n DESC LIMIT $lim",
                 {"lim": max_domains},
             )
-            top = [row["domain"] for row in r.get_as_df().to_dict("records")]
-            domains = [d for d in all_domains if d in set(top)]
+            top = set(row["domain"] for row in r.get_as_df().to_dict("records"))
+            included = top | priority_set
+            domains = [d for d in all_domains if d in included]
         else:
             domains = all_domains
         profiles = {
@@ -1631,12 +1637,13 @@ class FieldSurface:
             for d in domains
         }
 
-        # En enda bulk-query ersätter N² find_path-anrop:
-        # Hitta alla domänpar som redan är anslutna (max 4 hopp)
+        # Hitta alla domänpar med DIREKTA cross-domain kanter.
+        # Not: endast 1-hopp (direkta relationer), inte multi-hopp paths.
+        # Multi-hopp connections är potentiella bisociationer, inte redan-utforskade.
         connected_pairs: set[tuple[str, str]] = set()
         try:
             r = self._conn.execute(
-                "MATCH (a:Concept)-[:Relation*1..4]->(b:Concept) "
+                "MATCH (a:Concept)-[:Relation]->(b:Concept) "
                 "WHERE a.domain IN $doms AND b.domain IN $doms AND a.domain <> b.domain "
                 "RETURN DISTINCT a.domain AS da, b.domain AS db",
                 {"doms": domains},

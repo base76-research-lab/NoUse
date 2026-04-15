@@ -15,6 +15,9 @@ Dated research notes, strategic documents, and external communications for the N
 
 | Date | Note | Format |
 |------|------|--------|
+| 2026-04-15 | [The Larynx Problem — LessWrong Post](2026-04-15-larynx-problem-lesswrong.md) | md |
+| 2026-04-15 | [Morning Research Sweep](2026-04-15-morning-research.md) | md |
+| 2026-04-14 | [The Percolation Problem in Autonomous Knowledge Graphs](2026-04-14-percolation-problem.md) | md |
 | 2026-04-14 | [Daemon Cognitive Cycle Fix](2026-04-14-daemon-cognitive-cycle-fix.md) | md |
 | 2026-04-14 | [Language Models Are the Larynx, Not the Mind](2026-04-14-language-models-are-the-larynx-not-the-mind.md) | md + [html](2026-04-14-language-models-are-the-larynx-not-the-mind.html) |
 | 2026-04-14 | [Larynx Problem — Substack Positioning Draft](2026-04-14-larynx-problem-substack-positioning.md) | md + [html](2026-04-14-larynx-problem-substack-positioning.html) + [pdf](2026-04-14-larynx-problem-substack-positioning.pdf) |

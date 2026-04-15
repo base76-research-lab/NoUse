@@ -36,6 +36,7 @@ KIND_CONTRADICTION_RESOLVE = "contradiction_resolve"
 KIND_CRYSTALLIZATION = "crystallization"
 KIND_DOMAIN_EXPAND = "domain_expand"
 KIND_OPERATOR_MISSION = "operator_mission"
+KIND_PERCOLATION = "percolation"
 
 VALID_KINDS = {
     KIND_EVIDENCE_GAP,
@@ -43,6 +44,7 @@ VALID_KINDS = {
     KIND_CRYSTALLIZATION,
     KIND_DOMAIN_EXPAND,
     KIND_OPERATOR_MISSION,
+    KIND_PERCOLATION,
 }
 
 # ── Status ──────────────────────────────────────────────────────────────────────

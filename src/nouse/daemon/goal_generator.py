@@ -28,6 +28,7 @@ from nouse.daemon.goal_registry import (
     KIND_CRYSTALLIZATION,
     KIND_DOMAIN_EXPAND,
     KIND_EVIDENCE_GAP,
+    KIND_PERCOLATION,
     active_goals,
     goals_by_kind,
     create_goal,
@@ -530,7 +531,138 @@ def generate_from_dangling(
     return new_goals
 
 
-# ── Huvudfunktion ─────────────────────────────────────────────────────────────────
+# ── Källa 5: Percolation (connection threshold) ──────────────────────────────────
+
+def generate_from_percolation(
+    field: Any,
+    cycle: int,
+    *,
+    report: Any | None = None,
+    max_goals: int = 5,
+) -> list[Goal]:
+    """
+    Generate goals from percolation analysis and loose node identification.
+
+    This is Nous's self-directed learning: "I have 0 connections to immunology,
+    I must research immunology." Bridge domains and isolated/loose concepts
+    become percolation goals with urgency-driven priority.
+
+    Sources:
+    - Bridge domains (high bridge_score) → KIND_PERCOLATION with high priority
+    - Isolated concepts (0 cross-domain connections) → KIND_PERCOLATION
+    - Loose concepts (1-2 connections) → KIND_PERCOLATION with lower priority
+    """
+    from nouse.daemon.percolation import (
+        PercolationReport,
+        domain_density_report,
+        identify_bridge_domains,
+        identify_loose_nodes,
+        MIN_DOMAIN_CONCEPTS,
+    )
+
+    new_goals: list[Goal] = []
+
+    # ── Bridge domain goals ──────────────────────────────────────────────
+    if report is None:
+        try:
+            report = domain_density_report(field)
+        except Exception as e:
+            _log.warning("generate_from_percolation: domain_density_report misslyckades: %s", e)
+            return new_goals
+
+    bridges = identify_bridge_domains(field, report)
+
+    for bridge in bridges[:max_goals]:
+        domain = bridge["domain"]
+        # Check if goal already exists for this domain
+        existing = goal_by_concepts([domain], kind=KIND_PERCOLATION)
+        if existing:
+            # Update priority if bridge score increased
+            if bridge["bridge_score"] > existing.priority:
+                existing.priority = min(1.0, bridge["bridge_score"])
+                existing.updated_cycle = cycle
+                save_goal(existing)
+            continue
+
+        concepts = [c["name"] for c in field.concepts(domain=domain)[:4]]
+        if not concepts:
+            concepts = [domain]
+
+        goal = create_goal(
+            title=f"Percolation: expand bridge domain '{domain}' ({bridge['concept_count']} concepts)",
+            kind=KIND_PERCOLATION,
+            priority=min(1.0, max(0.8, bridge["bridge_score"])),
+            target_concepts=concepts,
+            target_domain=domain,
+            source="percolation_bridge",
+            satisfaction_criteria={
+                "min_concepts": MIN_DOMAIN_CONCEPTS,
+                "min_cross_domain_connections": 2,
+                "current_concepts": bridge["concept_count"],
+                "current_connections": bridge.get("connected_domains", 0),
+            },
+        )
+        new_goals.append(goal)
+
+    # ── Loose node goals ─────────────────────────────────────────────────
+    try:
+        loose_nodes = identify_loose_nodes(field, min_cross_domain_connections=0, max_nodes=50)
+    except Exception as e:
+        _log.warning("generate_from_percolation: identify_loose_nodes misslyckades: %s", e)
+        loose_nodes = []
+
+    # Group loose nodes by domain — one goal per domain, not per node
+    domain_loose: dict[str, list[dict]] = {}
+    for node in loose_nodes:
+        domain = node["domain"]
+        if domain not in domain_loose:
+            domain_loose[domain] = []
+        domain_loose[domain].append(node)
+
+    # Prioritize domains with the most isolated concepts
+    domain_priority = sorted(
+        domain_loose.items(),
+        key=lambda kv: sum(1 for n in kv[1] if n["is_isolated"]),
+        reverse=True,
+    )
+
+    for domain, nodes in domain_priority[:max_goals]:
+        # Skip if already covered as a bridge domain goal
+        if any(g.target_domain == domain for g in new_goals):
+            continue
+
+        # Skip if goal already exists
+        existing = goal_by_concepts([domain], kind=KIND_PERCOLATION)
+        if existing:
+            continue
+
+        n_isolated = sum(1 for n in nodes if n["is_isolated"])
+        max_urgency = max(n["urgency"] for n in nodes)
+        sample_concepts = [n["node"] for n in nodes[:4]]
+
+        goal = create_goal(
+            title=f"Percolation: connect '{domain}' ({n_isolated} isolated, {len(nodes)} loose nodes)",
+            kind=KIND_PERCOLATION,
+            priority=max_urgency,
+            target_concepts=sample_concepts,
+            target_domain=domain,
+            source="percolation_loose",
+            satisfaction_criteria={
+                "min_cross_domain_connections": 2,
+                "current_isolated": n_isolated,
+                "current_loose": len(nodes),
+            },
+        )
+        new_goals.append(goal)
+
+    _log.info(
+        "generate_from_percolation: %d nya mål (%d bridge, %d loose) cycle=%d",
+        len(new_goals),
+        sum(1 for g in new_goals if g.source == "percolation_bridge"),
+        sum(1 for g in new_goals if g.source == "percolation_loose"),
+        cycle,
+    )
+    return new_goals
 
 def generate_goals(
     field: Any,
@@ -540,7 +672,7 @@ def generate_goals(
     max_total: int = 10,
 ) -> list[Goal]:
     """
-    Kör alla fyra målkällor och returnera nya mål.
+    Kör alla fem målkällor och returnera nya mål.
 
     Deduplicering sker automatiskt — existerande mål uppdateras istället
     för att skapas på nytt.
@@ -574,6 +706,13 @@ def generate_goals(
         new_goals.extend(goals_4)
     except Exception as e:
         _log.warning("generate_from_dangling misslyckades: %s", e)
+
+    # Källa 5: percolation (connection threshold)
+    try:
+        goals_5 = generate_from_percolation(field, cycle, max_goals=5)
+        new_goals.extend(goals_5)
+    except Exception as e:
+        _log.warning("generate_from_percolation misslyckades: %s", e)
 
     # Sortera efter prioritet och kapta
     new_goals.sort(key=lambda g: g.priority, reverse=True)
