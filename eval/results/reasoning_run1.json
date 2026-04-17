@@ -1,0 +1,1089 @@
+{
+  "timestamp": "2026-04-15T20:52:48.803125",
+  "model": "minimax-m2.7:cloud",
+  "judge_model": "minimax-m2.7:cloud",
+  "conditions": {
+    "bare": [
+      {
+        "id": "rr001",
+        "question": "If all A are B, and some B are C, can we conclude that some A are C? Explain why or why not.",
+        "brain_region": "frontal",
+        "condition": "bare",
+        "answer": "# No, we cannot conclude this.\n\n## Counterexample\n\n- **A** = Dogs\n- **B** = Mammals\n- **C** = Cats\n\n- All dogs are mammals. ✓\n- Some mammals are cats. ✓\n- Some dogs are cats? **No.** ✗\n\nThe premises are all true, yet the conclusion is false.\n\n## Why?\n\nThe premise \"some B are C\" tells us only that **B ∩ C is non-empty**, but it doesn't tell us *where* in B that intersection lies. It could be entirely outside of A:\n\n```\n    B\n ┌───────┐\n │   C   │   ← Intersection of B and C\n │   ◆   │\n └───────┘\n",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är korrekt och fullständigt med en träffsäker motexempel, rätt användning av delmängdsnotation (A⊂B), och identifierar precist det klassiska felet: partial overlap B∩C≠∅ garanterar inte A∩C≠∅ när A är en strikt delmängd av B."
+        },
+        "requires_cross_domain": false,
+        "difficulty": "easy",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr002",
+        "question": "If Sweden introduces a carbon tax and emissions decrease by 15%, can we conclude the tax caused the reduction? What additional evidence would strengthen this causal claim?",
+        "brain_region": "frontal",
+        "condition": "bare",
+        "answer": "# Causal Inference Problem\n\n**Short answer:** No. The 15% reduction occurring *after* the tax doesn't prove the tax *caused* it. This is the classic post hoc fallacy.\n\n## Confounders to Consider\n- Economic recession or structural shifts\n- Other concurrent regulations\n- Independent technology adoption\n- Global energy price changes\n- \"Green\" consumer trends\n\n## Evidence That Would Strengthen Causality\n\n| Method | What It Shows |\n|--------|---------------|\n| **Difference-in-differences** | Compare ",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret identifierar korrekt kausalitetsproblemet, nämner confounders och föreslår både difference-in-differences och synthetic control (counterfactual) men saknar explicit instrumental variable som nämndes i facit-hinten och är något vagare kring pre-trend-analys."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr003",
+        "question": "A doctor must choose between a treatment that saves 400 of 600 patients (framings: 'saves 400' vs '400 die'). Explain why these framings lead to different choices despite being logically equivalent.",
+        "brain_region": "frontal",
+        "condition": "bare",
+        "answer": "## Framing Effect Explained\n\nThis is a classic **framing effect** from Prospect Theory (Kahneman & Tversby, 1979).\n\n### Why the difference occurs:\n\n1. **Loss aversion**: Losses psychologically hurt more than equivalent gains feel good. \"400 die\" triggers stronger emotional response than \"400 survive.\"\n\n2. **Risk preference flip**:\n   - **Gain frame** (\"saves 400\") → people become **risk-averse**, choosing the certain option\n   - **Loss frame** (\"400 die\") → people become **risk-seeking**, gambli",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 1,
+          "reason": "Svaret nämner korrekt framing effect, prospect theory och loss aversion med välgrundade förklaringar, men saknar den specifika detaljen om reference point och den kvantifierade 2.5x-vikningen som finns i facit-hinten."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr004",
+        "question": "Can a system of linear equations with more unknowns than equations always be solved? Under what conditions does a unique solution exist?",
+        "brain_region": "frontal",
+        "condition": "bare",
+        "answer": "No.  A system with \\(m\\) equations and \\(n\\) unknowns (\\(m<n\\)) is **solvable only when it is consistent** – i.e., the right‑hand side vector lies in the column space of the coefficient matrix.  If it is consistent, the rank \\(r\\) of the matrix satisfies \\(r\\le m\\), so the nullspace has dimension \\(n-r>0\\); the solution set then contains infinitely many points (free variables).\n\nA unique solution would require a **full column rank** \\(r=n\\).  But \\(r\\le m<n\\), so full column rank is impossible w",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är korrekt och fullständigt: det identifierar en underdetermined system, förklarar konsistenskrav, kopplar rank till nullrumsdimension, och konstaterar att full kolumnrank (r=n) är omöjligt när m<n – vilket direkt korresponderar mot facits understrykande av linjär oberoende och lösningsrum."
+        },
+        "requires_cross_domain": false,
+        "difficulty": "easy",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr005",
+        "question": "A test for a rare disease (prevalence 0.1%) has 99% sensitivity and 95% specificity. If you test positive, what is the probability you actually have the disease? Explain the calculation.",
+        "brain_region": "frontal",
+        "condition": "bare",
+        "answer": "**Predictive value (PPV)** – the chance you truly have the disease given a positive test – is found with Bayes’ theorem.\n\nLet  \n\n* \\(D\\) = disease,  \\(Prevalence = P(D)=0.001\\)  \n* \\(\\neg D\\) = no disease,  \\(P(\\neg D)=0.999\\)  \n* Sensitivity = \\(P(+\\mid D)=0.99\\)  \n* False‑positive rate = \\(P(+\\mid \\neg D)=1‑Specificity = 0.05\\)\n\n\\[\n\\begin{aligned}\nP(D\\mid +) &=\n\\frac{P(+\\mid D)\\,P(D)}\n     {P(+\\mid D)\\,P(D) + P(+\\mid \\neg D)\\,P(\\neg D)} \\\\[4pt]\n&= \\frac{0.99\\times0.001}\n        {0.99\\times0.00",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är korrekt med fullständig tillämpning av Bayes' sats, korrekt PPV-beräkning (≈2%) som matchar facit, tydlig intuition om varför basräntan är avgörande."
+        },
+        "requires_cross_domain": false,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr006",
+        "question": "What is the difference between mathematical proof by contradiction (reductio ad absurdum) and proof by contrapositive? Give an example where one is more natural than the other.",
+        "brain_region": "frontal",
+        "condition": "bare",
+        "answer": "**Proof by contradiction (reductio ad absurdum)**  \nAssume the statement you want to prove is false. Derive an explicit absurdity—a contradiction such as “\\(P\\) and \\(\\neg P\\)”—and conclude that the original statement must be true.\n\n**Proof by contrapositive**  \nUse the logical equivalence  \n\\[\nP\\to Q\\;\\equiv\\;\\neg Q\\to\\neg P .\n\\]  \nInstead of proving \\(P\\to Q\\) directly, you prove the contrapositive \\(\\neg Q\\to\\neg P\\).\n\n**Key difference**  \nBoth are indirect, but contrapositive is a direct log",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret definierar korrekt båda bevismetoderna, förklarar deras logiska relation (contrapositiv är direkt transformation medan motsägelse är indirekt), och ger lämpliga exempel där respektive metod är mer naturlig."
+        },
+        "requires_cross_domain": false,
+        "difficulty": "medium",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr007",
+        "question": "Is the statement 'This statement is false' true or false? What does this reveal about self-referential systems?",
+        "brain_region": "frontal",
+        "condition": "bare",
+        "answer": "# The Liar Paradox\n\nThis statement is **neither consistently true nor false** — it's paradoxical.\n\n**Analysis:**\n- If it's TRUE → it must be false (since it claims to be false)\n- If it's FALSE → it must be true (since it accurately describes itself)\n\nThis creates an infinite logical loop with no stable truth value.\n\n---\n\n## What This Reveals About Self-Referential Systems\n\n1. **Limits of classical logic** — Our true/false framework breaks down with certain self-referential statements.\n\n2. **Cons",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 1,
+          "reason": "Svaret identifierar korrekt Liar-paradoxen, förklarar den självrefererande logiska loop紧绷ningen, och kopplar den precist till Gödel's ofullständighetsteorem, Russells paradox och haltingproblemet — samtliga relevanta domäner som belyser självreferensens begränsningar."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "counterfactual"
+      },
+      {
+        "id": "rr008",
+        "question": "In the Monty Hall problem, why does switching doors give you a 2/3 probability of winning, and why is this counterintuitive?",
+        "brain_region": "frontal",
+        "condition": "bare",
+        "answer": "When you pick a door, your chance of getting the car is 1⁄3. The two doors you didn’t pick together therefore hold a 2⁄3 chance. The host (who knows what’s behind each door) always opens a door that hides a goat, never the door you chose. This action *redistributes* the 2⁄3 probability onto the single unopened door that remains, because the host’s choice eliminates the goat but cannot move the car.\n\nSwitching therefore gives you a 2⁄3 chance of winning, versus a 1⁄3 chance if you stay.\n\nWhy it f",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är korrekt och förklarar Monty Hall-resonemanget väl med rätt siffror (1/3 vs 2/3), men saknar explicit användning av facit-termerna 'prior vs posterior' och 'conditional probability', och förklaringsgraden är något förenklad snarare än tekniskt rigorös."
+        },
+        "requires_cross_domain": false,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr009",
+        "question": "What is the difference between statistical significance (p < 0.05) and practical significance? Why can a result be statistically significant but practically meaningless?",
+        "brain_region": "frontal",
+        "condition": "bare",
+        "answer": "## Statistical vs. Practical Significance\n\n**Statistical significance** answers: *\"Is this result unlikely to occur by chance?\"* It depends on sample size, variability, and effect size. A tiny effect in a large sample can easily reach p < 0.05.\n\n**Practical significance** asks: *\"Does this effect actually matter in the real world?\"* It concerns effect size and real-world relevance.\n\n### Why They Diverge\n\n1. **Large samples detect tiny effects** — With n=10,000, even a 0.1% difference between gro",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret täcker alla facit-koncept (statistisk signifikans, praktisk signifikans, effektstorlek, stickprovsstorlek) med korrekta förklaringar och meningsfulla exempel som bl.a. visar hur stora stickprov kan ge statistisk signifikans för triviala effekter."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "easy",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr010",
+        "question": "If 'all ravens are black' is equivalent to 'all non-black things are non-ravens', does observing a green apple constitute evidence that ravens are black? Explain the paradox.",
+        "brain_region": "frontal",
+        "condition": "bare",
+        "answer": "# Hempel's Paradox of Confirmation\n\n## The Core Issue\n\nYes, under strict logical analysis, observing a green apple *does* count as evidence that all ravens are black.\n\n**Why?** The statements are logically equivalent (contrapositives):\n- S₁: \"All ravens are black\"\n- S₂: \"All non-black things are non-ravens\"\n\nA green apple is a non-black thing that is also not a raven — it satisfies S₂. Since S₁ ≡ S₂, it should confirm S₁.\n\n## Why This Feels Wrong\n\nOur intuition rebels because we expect evidence ",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 0,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret identifierar korrekt paradoxen och förklarar logiska ekvivalensen via kontrapositionsprincipen, men saknar den avgörande Bayesianska analysen som facit-hintenexplicit pekar på — nämligen att det intuitivt förvånande resultaget förklaras av att sannolikheten för icke-svarta icke-koltras är så hög att observationen av en grön äpple knappt påverkar posterior sannolikheten."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "counterfactual"
+      },
+      {
+        "id": "rr011",
+        "question": "How does a feedback loop in a thermostat maintain temperature stability, and what happens when the feedback gain is too high or too low?",
+        "brain_region": "parietal",
+        "condition": "bare",
+        "answer": "En termostat fungerar som en sluten reglerloop: en temperatursensor mäter rummets temperatur, jämför med önskad setpunkt och beräknar felet (skillnaden). En regulator (ofta proportionell) multiplicerar felet med en gain Kp och styr värme/kyla därefter. Denna återkoppling håller temperaturen nära setpunkten.  \n\n- **För hög gain** → regleringen blir aggressiv, systemet överreagerar, ger översläng och kan oscillerera (hunting).  \n- **För låg gain** → responsen blir slö, felkorrigeringen otillräckli",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret förklarar feedbackloopen korrekt med regulator och gain, och beskriver konsekvenserna av för hög och för låg gain väl, men nämner inte explicit facit-koncepten 'negative feedback' och 'homeostasis' och är något vagare kring 'drift' vid låg gain."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "easy",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr012",
+        "question": "In a causal DAG (directed acyclic graph) where X→M→Y, what does it mean to 'control for' the mediator M, and why does this block the causal effect of X on Y?",
+        "brain_region": "parietal",
+        "condition": "bare",
+        "answer": "## Controlling for a Mediator\n\n**What it means:** To \"control for\" M means to condition on it—stratify, adjust, or statistically hold it fixed. In practice, you include M as a covariate in a regression model.\n\n**Why it blocks the effect:**\n\nThe path X→M→Y is a *chain* (mediated pathway). The causal mechanism flows:\n\n```\nX → M → Y\n```\n\nWhen you control for M, you ask: *\"Within each level of M, is X still associated with Y?\"*\n\nSince M fully mediates X's effect on Y, variation in X can only influen",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är korrekt och komplett: det definierar kontroll för M som betingning, förklarar mekanismen varför kedjan X→M→Y blockeras när M hålls fix, nämner alla facit-koncept (mediator, collider, d-separation/blockering, DAG) och inkluderar rätt distinktion mot confounders och colliders."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr013",
+        "question": "Why does a spinning gyroscope resist changes to its orientation? Connect this to both angular momentum conservation and the concept of precession.",
+        "brain_region": "parietal",
+        "condition": "bare",
+        "answer": "A spinning gyroscope has a large **angular‑momentum vector L** aligned with its spin axis (L = I ω). To tilt that axis you must change the direction of **L**, which requires an applied torque **τ** (τ = dL/dt). Because **L** is huge, the torque produces only a tiny change in **L** each instant, so the axis does not simply fall over; instead **L** rotates perpendicular to the torque, giving rise to **precession**.  \n\nThe precession angular speed is  \n\n\\[\n\\Omega_{\\text{p}} = \\frac{\\tau}{L} = \\frac",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret förklarar korrekt hur bevarad angular momentum (via τ = dL/dt) gör gyroskopet styvt, och kopplar specifikt ihop hur applicerat vridmoment orsakar precession vinkelrätt mot momentet, med korrekt formel för precessionshastighet."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr014",
+        "question": "What structural property makes a scale-free network resilient to random failures but vulnerable to targeted attacks? How does this differ from a random network?",
+        "brain_region": "parietal",
+        "condition": "bare",
+        "answer": "The key property is a **heterogeneous degree distribution**: a few nodes (hubs) have very high degree, while most nodes have low degree. Random failures usually hit low‑degree nodes, which contribute little to overall connectivity, so the network remains functional. Targeted attacks that remove hubs break many short paths, rapidly fragmenting the network.  \n\nIn a random (e.g., Erdős‑Rényi) network the degree distribution is narrow (roughly Poisson), so every node has similar connectivity. Conseq",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Answer correctly identifies the heterogeneous (power-law) degree distribution as the structural property, explains how random failures hit low-degree nodes while targeted attacks remove hubs causing fragmentation, and contrasts this with random networks' narrow degree distribution making random and targeted attacks similar in effect."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr015",
+        "question": "How does the Yerkes-Dodson law explain why moderate stress improves performance but extreme stress degrades it? What neural mechanism underlies this inverted-U curve?",
+        "brain_region": "parietal",
+        "condition": "bare",
+        "answer": "Yerkes‑Dodson‑lagen säger att prestationsförmågan stiger med ökad fysiologisk aktivering till en optimal nivå och sedan sjunker om aktiveringen blir för hög. Måttlig stress ökar frisättningen av noradrenalin från locus coeruleus och ger en lagom dos kortisol, vilket höjer den excitatoriska gain i hjärnbarken, förbättrar uppmärksamhet och arbetsminne – därav bättre resultat. Vid extrem stress svämmar noradrenalin, kortisol och amygdalaaktivitet över, vilket hämmar prefrontal cortex och hippocampu",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är korrekt och komplett – det förklarar Yerkes-Dodsons lag med den inverterade U-kurvan, nämner prefrontal cortex, beskriver måttlig aktivering som optimerar signaltillbrus-förhållandet via noradrenalin från locus coeruleus, och förklarar hur extrem stress överväldigar prefrontal cortex och hippocampus vilket stämmer överens med facit."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr016",
+        "question": "Why can't you comb a hairy sphere flat without creating a cowlick? What topological theorem explains this, and what does it imply about vector fields on spheres?",
+        "brain_region": "parietal",
+        "condition": "bare",
+        "answer": "Combing a sphere flat would mean giving each point a direction that varies continuously—a non‑vanishing tangent vector field. On a 2‑sphere such a field cannot exist. This is the **Hairy‑Ball Theorem**, a special case of the Poincaré‑Hopf index theorem. The theorem states that any continuous tangent vector field on a compact manifold must have zeros, and the sum of the indices of those zeros equals the manifold’s Euler characteristic χ. For \\(S^2\\), χ = 2, so the total index is 2, forcing at lea",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret identifierar korrekt det ljushåriga-boll-teoremet, förklarar relationen till Euler-karakteristiken χ(S²)=2 som tvingar fram minst en singularitet (cowlick), och nämner till och med Poincaré-Hopf indexsatsen som generalisering."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr017",
+        "question": "What is the relationship between emergence and reductionism? Can a system's emergent properties always be predicted from its components' properties?",
+        "brain_region": "parietal",
+        "condition": "bare",
+        "answer": "Emergence and reductionism are complementary perspectives. Reductionism seeks to explain a system by dissecting it into its parts and their interactions, assuming that lower‑level laws determine higher‑level behavior. Emergence highlights that some properties of the whole arise spontaneously and cannot be straightforwardly inferred from the parts alone—think of wetness from H₂O molecules or consciousness from neurons. The predictability of emergent properties depends on the strength of emergence",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret definierar korrekt reductionism och emergence, förklarar svag vs stark emergence med lämpliga exempel, och besvarar förutsägbarhetsfrågan korrekt enligt facit."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "counterfactual"
+      },
+      {
+        "id": "rr018",
+        "question": "How does the concept of percolation in graph theory relate to the spread of information in social networks? At what threshold does information percolate through the entire network?",
+        "brain_region": "parietal",
+        "condition": "bare",
+        "answer": "Percolation in graph theory models how a process—such as an idea, rumor, or meme—can propagate along the edges of a network.  Each edge is “open” (information can pass) with probability p, and closed otherwise.  As p grows, isolated clusters merge until a *giant component* appears; this instant is the percolation threshold p_c.  Below p_c only small, local clusters exist, so information reaches only a few people.  Above p_c a macroscopic component spans the network, allowing information to casca",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret förklarar korrekt sambandet mellan perkolation och informationsspridning, identifierar giant component som tröskelpunkten, ger rätt formel p_c ≈ 1/⟨k⟩, nämner information cascade, och inkluderar relevanta detaljer om skalningsfria nätverk utan att tillföra felaktig information."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr019",
+        "question": "In what way is the Navier-Stokes existence and smoothness problem related to the physical behavior of turbulence? Why is this a Millennium Prize problem?",
+        "brain_region": "parietal",
+        "condition": "bare",
+        "answer": "The Navier–Stokes equations describe incompressible fluid motion.  \nThe Millennium problem asks whether, given any smooth initial data, a solution remains globally smooth or can develop a finite‑time singularity (“blow‑up”).  \n\nTurbulence is the chaotic, high‑frequency regime that appears when flow becomes highly unstable and vorticity concentrates. If a singularity were to exist, the equations would predict unbounded velocity gradients—potentially the mathematical onset of turbulent breakdown. ",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är korrekt och specifikt: det identifierar Navier-Stokes, den centrala existens-/singularitetsfrågan, och kopplar den logiskt till turbulence (singularitet → obegränsade gradienter = turbulent brytning; ingen singularitet → glatta lösningar underbygger statistiska turbulensteorier), samt förklarar Millennium Prize-relevansen."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "counterfactual"
+      },
+      {
+        "id": "rr020",
+        "question": "Explain how power laws appear in both city size distributions and earthquake magnitudes. What common mechanism produces scale-free distributions in these very different systems?",
+        "brain_region": "parietal",
+        "condition": "bare",
+        "answer": "Both city‑size rankings and earthquake catalogs exhibit **power‑law** (scale‑free) tails:\n\n* **Cities:** The Zipf‑law form \\(N(>S)\\sim S^{-\\beta}\\) means that the number of cities larger than a given size falls off as a power of that size.  \n* **Earthquakes:** The Gutenberg‑Richter law \\(N(>M)\\sim 10^{-bM}\\) gives a logarithmic‑linear decline in the number of events with magnitude, which is also a power‑law in the released energy.\n\nThe **common generative mechanism** is **positive feedback in a ",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret nämner korrekt power laws (Zipf/Gutenberg-Richter) och preferential attachment för städer, men missar att explicit namnge självorganiserad kritikalitet för jordbävningar och beskriver den gemensamma mekanismen som 'positiv feedback' snarare än att erkänna att de verkar genom olika mekanismer enligt facit."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      }
+    ],
+    "rag": [
+      {
+        "id": "rr001",
+        "question": "If all A are B, and some B are C, can we conclude that some A are C? Explain why or why not.",
+        "brain_region": "frontal",
+        "condition": "rag",
+        "answer": "**Nej, slutsatsen följer inte av nödvändighet.**\n\n**Exempel som visar att slutsatsen kan vara falsk:**\n\n- A = \"kvadrater\"\n- B = \"rektanglar\"\n- C = \"röda former\"\n\n1. Alla A är B — *Alla kvadrater är rektanglar.* ✓\n2. Några B är C — *Några rektanglar är röda.* ✓\n3. Men: Inga A är C — *Inga kvadrater är röda.* ✗\n\nSlutsatsen \"några A är C\" är alltså falsk i detta fall.\n\n**Varför?**  \n\"Alla A är B\" placerar hela A inom B, men vi vet inte *var* i B de befinner sig. \"Några B är C\" garanterar endast att",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Responset identifierar korrekt syllogismen som ogiltig och förklarar varför delmängdsrelationen A⊂B kombinerat med partiell överlapp B∩C≠∅ inte garanterar A∩C≠∅, med ett träffande motexempel som visar att den överlappande delen kan ligga helt utanför A."
+        },
+        "requires_cross_domain": false,
+        "difficulty": "easy",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr002",
+        "question": "If Sweden introduces a carbon tax and emissions decrease by 15%, can we conclude the tax caused the reduction? What additional evidence would strengthen this causal claim?",
+        "brain_region": "frontal",
+        "condition": "rag",
+        "answer": "## Kan vi dra slutsatsen att skatten orsakade minskningen?\n\n**Nej, inte utan ytterligare bevis.** Ett 15% fall i utsläpp efter en koldioxidskatt visar *korrelation*, inte nödvändigtvis *kausalitet*. Andra faktorer kan ha bidragit: konjunkturella nedgångar, teknikspridning, eller förändrad europeisk politik.\n\n## Hur stärker vi det kausala anspråket?\n\nEnligt principen om **\"strengthening validated claims\"** bör du söka kompletterande bevis:\n\n1. **Tidpunktseffekt**: Sker minskningen *exakt* vid ska",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret identifierar korrekt kausalitetsproblemet och nämner kontrollgrupp och före-efter-jämförelse, men saknar de specifika metodologiska termerna difference-in-differences, instrumental variable och counterfactual som nämns i facit."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr003",
+        "question": "A doctor must choose between a treatment that saves 400 of 600 patients (framings: 'saves 400' vs '400 die'). Explain why these framings lead to different choices despite being logically equivalent.",
+        "brain_region": "frontal",
+        "condition": "rag",
+        "answer": "## Framing Effects in Medical Decision-Making\n\nThis scenario illustrates **Tversky och Kahnemans** klassiska \"Asian Disease\"-experiment och visar hur verbal formulering påverkar beslut.\n\n### Varför valen skiljer sig:\n\n**Grundproblemet:** Båda framställningarna beskriver samma utfall (200 dog, 400 överlevde), men väcker olika känslor.\n\n**Mekanismen – förlustaversion:**\n- **\"Räddar 400\"** = fokuserar på vinst. Vissa väljer det säkra alternativet.\n- **\"400 dör\"** = fokuserar på förlust. Flertalet v",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret identifierar korrekt framing effect och förlustaversion med Tversky/Kahneman som ursprung, och förklarar mekanismen väl, men är något ofullständigt då det inteexplicit kopplar till prospect theorys referenspunkt och den specifika 2,5x-viktningsfaktorn som facit-hinten anger."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr004",
+        "question": "Can a system of linear equations with more unknowns than equations always be solved? Under what conditions does a unique solution exist?",
+        "brain_region": "frontal",
+        "condition": "rag",
+        "answer": "A system  \n\n\\[\nAx=b,\\qquad A\\in\\mathbb{R}^{m\\times n},\\;b\\in\\mathbb{R}^{m},\n\\]\n\nwith more unknowns than equations (\\(n>m\\)) need **not** have a solution.  \nA solution exists iff the augmented matrix \\([A\\mid b]\\) has the same rank as the coefficient matrix:\n\n\\[\n\\operatorname{rank}A=\\operatorname{rank}[A\\mid b].\n\\]\n\nIf this condition fails the system is inconsistent.\n\nWhen the ranks agree the system is consistent, but because \\(\\operatorname{rank}A\\le m<n\\) the null‑space of \\(A\\) is non‑trivial:",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är korrekt och fullständigt: det förklarar att konsistens kräver rankvillkor, att unika lösningar är omöjliga när n > m eftersom rank A ≤ m < n, och nämner underdetermined system, unique solution och ker A med korrekt relation."
+        },
+        "requires_cross_domain": false,
+        "difficulty": "easy",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr005",
+        "question": "A test for a rare disease (prevalence 0.1%) has 99% sensitivity and 95% specificity. If you test positive, what is the probability you actually have the disease? Explain the calculation.",
+        "brain_region": "frontal",
+        "condition": "rag",
+        "answer": "## Probability of Having Disease After Positive Test\n\nThis is a classic application of **Bayes' theorem**. The answer is approximately **2%** — surprisingly low despite the test seeming accurate.\n\n### Given Information\n- **Prevalence**: 0.1% (1 in 1,000 have the disease)\n- **Sensitivity**: 99% (correctly identifies those with disease)\n- **Specificity**: 95% (correctly identifies those without disease)\n\n### Calculation\n\n**Step 1:** Calculate P(Positive) — total chance of a positive result:\n\n$$P(\\",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 1,
+          "reason": "Svaret är korrekt och fullständigt med rätt beräkning av Bayes' sats, identifierar PPV som ~2%, och förklarar varför låg prevalens (base rate fallacy) gör att false positives dominerar."
+        },
+        "requires_cross_domain": false,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr006",
+        "question": "What is the difference between mathematical proof by contradiction (reductio ad absurdum) and proof by contrapositive? Give an example where one is more natural than the other.",
+        "brain_region": "frontal",
+        "condition": "rag",
+        "answer": "## Proof by Contradiction vs. Proof by Contrapositive\n\n**Proof by Contradiction** assumes the negation of the statement, derives a logical absurdity, and concludes the original must be true. Formally: to prove P, assume ¬P and derive Q ∧ ¬Q.\n\n**Proof by Contrapositive** exploits the equivalence: \"P → Q\" is logically identical to \"¬Q → ¬P\". To prove an implication, you instead prove its contrapositive directly.\n\n---\n\n### Example: √2 is Irrational\n\n**Via contradiction** (standard textbook proof): ",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret definierar korrekt båda metoderna med formell precision, förklarar logisk ekvivalens för contrapositive, och ger väl valda exempel (√2 för contradiction, grafteori för contrapositive) som visar när varje metod är mest naturlig."
+        },
+        "requires_cross_domain": false,
+        "difficulty": "medium",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr007",
+        "question": "Is the statement 'This statement is false' true or false? What does this reveal about self-referential systems?",
+        "brain_region": "frontal",
+        "condition": "rag",
+        "answer": "## The Liar Paradox\n\n**The statement \"This statement is false\" is neither true nor false—it creates an irresolvable logical loop.**\n\n**Why:** If the statement is true, then it must be false (as it claims). But if it's false, then its content is accurate, making it true. This creates an infinite paradox with no stable truth value.\n\n**What this reveals about self-referential systems:**\n\n1. **Logical instability** — Self-reference can break classical true/false logic entirely\n2. **Limits of formal ",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är korrekt och välgrundat med rätt identifiering av Liar-paradoxen, självreferens och koppling till Gödel/Tarski, men det sista stycket om verbose-flaggor verkar vara bortklippt eller förvirrat innehåll som inte tillför något relevant."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "counterfactual"
+      },
+      {
+        "id": "rr008",
+        "question": "In the Monty Hall problem, why does switching doors give you a 2/3 probability of winning, and why is this counterintuitive?",
+        "brain_region": "frontal",
+        "condition": "rag",
+        "answer": "**Why switching gives 2/3 probability:**\n\nWhen you initially choose a door, you have a 1/3 chance of picking the car and a 2/3 chance of picking a goat. The host then *must* reveal a goat from the remaining doors—this is crucial.\n\n- If your original pick was the car (1/3 of the time), both remaining doors are goats, so switching loses.\n- If your original pick was a goat (2/3 of the time), the host reveals the other goat, leaving the car behind the *other* door. Switching wins.\n\nThus, switching w",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret förklarar korrekt den 1/3 vs 2/3-fördelningen, identifierar Monty Hall-regeln (värden MÅSTE öppna en gett) som den kritiska begränsningen, och kopplar intuitivt mot conditional probability utan att göra felaktiga påståenden."
+        },
+        "requires_cross_domain": false,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr009",
+        "question": "What is the difference between statistical significance (p < 0.05) and practical significance? Why can a result be statistically significant but practically meaningless?",
+        "brain_region": "frontal",
+        "condition": "rag",
+        "answer": "## Statistisk vs. praktisk signifikans\n\n**Statistisk signifikans** (p < 0,05) handlar om sannolikheten att ett resultat inte beror på slump. Det säger bara: *\"Detta resultat är osannolikt att vara tillfälligt.\"*\n\n**Praktisk signifikans** handlar om om resultatet faktiskt spelar någon roll i verkligheten — storleken på effekten, kostnaden, nyttan.\n\n### Varför kan statistisk signifikans vara praktiskt meningslös?\n\n1. **Stora urvalster** — Med tusentals deltagare kan tiny, ovidkommande skillnader b",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret förklarar korrekt skillnaden mellan statistisk och praktisk signifikans och nämner stora urval och effektstorlek, men saknar explicit omnämnande av formella effektstorleksmått som Cohen's d som facit betonar."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "easy",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr010",
+        "question": "If 'all ravens are black' is equivalent to 'all non-black things are non-ravens', does observing a green apple constitute evidence that ravens are black? Explain the paradox.",
+        "brain_region": "frontal",
+        "condition": "rag",
+        "answer": "## Hempel's Raven Paradox\n\n**The core claim:** \"All ravens are black\" is logically equivalent to its contrapositive: \"All non-black things are non-ravens.\"\n\n**The problem:**\n1. A green apple is a **non-black thing** that is a **non-raven**\n2. Therefore, by the equivalence, a green apple *confirms* \"all non-black things are non-ravens\"\n3. Hence it should also confirm \"all ravens are black\"\n\n**Why this feels paradoxical:** Intuitively, observing a green apple seems completely irrelevant to whether",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret identifierar korrekt paradoxen och nämner både logisk ekvivalens och Bayesianska metoder, men är ofullständigt eftersom det inte förklarar den specifika Bayesianska mekanismen – att den höga priori-sannolikheten för icke-svarta icke-ravnar gör att ett grönt äpple ger försumbart bevisvärde."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "counterfactual"
+      },
+      {
+        "id": "rr011",
+        "question": "How does a feedback loop in a thermostat maintain temperature stability, and what happens when the feedback gain is too high or too low?",
+        "brain_region": "parietal",
+        "condition": "rag",
+        "answer": "A thermostat works as a **negative feedback loop** (se *Feedback loop [systemteori]*). It measures the current temperature, subtracts this from the desired set‑point to obtain an **error signal**, and then drives a heater or cooler in proportion to that error. The **feedback gain** is the factor that scales the error before it is applied to the actuator.\n\n- **Too high gain** – the corrective action becomes excessive. Small errors produce large heating/cooling pulses, causing the temperature to o",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är korrekt och fullständigt med rätt koncept (negativ feedback, gain, oscillation, homeostasis) och förklarar tydligt konsekvenserna av för hög och för låg gain samt balansen mellan hastighet och stabilitet."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "easy",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr012",
+        "question": "In a causal DAG (directed acyclic graph) where X→M→Y, what does it mean to 'control for' the mediator M, and why does this block the causal effect of X on Y?",
+        "brain_region": "parietal",
+        "condition": "rag",
+        "answer": "",
+        "judge": {
+          "score": 0,
+          "confidence_calibrated": 0,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Inga svar angavs alls."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr013",
+        "question": "Why does a spinning gyroscope resist changes to its orientation? Connect this to both angular momentum conservation and the concept of precession.",
+        "brain_region": "parietal",
+        "condition": "rag",
+        "answer": "A spinning gyroscope resists changes to its orientation because of **angular momentum conservation**. A spinning object possesses angular momentum **L = Iω**, a vector pointing along its spin axis. This direction cannot change without an applied torque.\n\nWhen you try to tilt the axis, you apply torque perpendicular to the spin direction. Rather than immediately changing the spin axis, this torque causes **precession**—a slow, conical rotation of the axis around the vertical. The gyroscope \"prece",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret förklarar korrekt hur bevarad vinkelmoment (L = Iω) ger stabilitet, och kopplar specifikt samman hur vinkelrätt vridmoment inte tippar axeln utan orsakar precession — vilket direkt matchar facit-hintens beskrivning."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr014",
+        "question": "What structural property makes a scale-free network resilient to random failures but vulnerable to targeted attacks? How does this differ from a random network?",
+        "brain_region": "parietal",
+        "condition": "rag",
+        "answer": "[ERROR: Server error '503 Service Unavailable' for url 'http://localhost:11434/api/chat'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503]",
+        "judge": {
+          "score": 0,
+          "confidence_calibrated": 0,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är ett serverfel (503 Service Unavailable) och innehåller ingen faktisk information som besvarar frågan."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr015",
+        "question": "How does the Yerkes-Dodson law explain why moderate stress improves performance but extreme stress degrades it? What neural mechanism underlies this inverted-U curve?",
+        "brain_region": "parietal",
+        "condition": "rag",
+        "answer": "## Yerkes-Dodson Law and Its Neural Basis\n\nThe Yerkes-Dodson law describes an **inverted-U relationship** between arousal/stress and performance: too little arousal produces flat performance; moderate arousal optimizes it; extreme arousal degrades it.\n\n### Neural Mechanism\n\nThe key mechanism lies in how stress hormones affect the **prefrontal cortex (PFC)**:\n\n1. **Moderate stress** → optimal norepinephrine and dopamine release in the PFC → enhanced working memory, attention, and executive functi",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret förklarar Yerkes-Dodson-lagen och den inverterade U-kurvan korrekt med prefrontal cortex som central mekanism, men ignorerar den specificerade hjälpRegionen (parietal) och nämner inte explicit signal-brus-förhållandet som finns i facit-hinten."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr016",
+        "question": "Why can't you comb a hairy sphere flat without creating a cowlick? What topological theorem explains this, and what does it imply about vector fields on spheres?",
+        "brain_region": "parietal",
+        "condition": "rag",
+        "answer": "## The Hairy Ball Theorem\n\nThis is described by the **Hairy Ball Theorem** (a consequence of the Poincaré-Hopf Theorem).\n\n**Why it fails:** You cannot comb a sphere flat because the sphere's Euler characteristic is χ(S²) = 2, a nonzero value. The Poincaré-Hopf theorem states that the sum of indices at isolated zeros of any continuous vector field on a closed surface equals its Euler characteristic.\n\n**Key implication for vector fields:** Every continuous tangent vector field on S² must have at l",
+        "judge": {
+          "score": 2,
+          "confidence_calibrated": 0,
+          "hallucination": 1,
+          "cross_domain": 1,
+          "reason": "Svaret nämner rätt koncept (hairy ball theorem, Euler characteristic χ(S²)=2) men innehåller en allvarlig hallucination: påståendet att udda-dimensionella sfärer S^(2n+1) accepterar icke-försvinnande vektorfält är felaktigt — endast S⁰ och S¹ gör det, inte S³, S⁵ etc."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr017",
+        "question": "What is the relationship between emergence and reductionism? Can a system's emergent properties always be predicted from its components' properties?",
+        "brain_region": "parietal",
+        "condition": "rag",
+        "answer": "The provided source snippets do not contain relevant information on emergence and reductionism—they appear to be metadata labels unrelated to this philosophical topic. I can answer based on general knowledge:\n\n**Relationship:** Emergence and reductionism represent opposing but complementary perspectives. Reductionism holds that complex phenomena can be fully explained by analyzing component parts. Emergence argues that some system-level properties cannot be derived solely from components (e.g., ",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret förklarar korrekt relationen mellan emergence och reductionism, och skiljer precist mellan svag emergence (teoretiskt härledbar, t.ex. trafikflöde) och stark emergence (principiellt oförutsägbar, t.ex. medvetande), vilket överensstämmer med facit-koncepten."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "counterfactual"
+      },
+      {
+        "id": "rr018",
+        "question": "How does the concept of percolation in graph theory relate to the spread of information in social networks? At what threshold does information percolate through the entire network?",
+        "brain_region": "parietal",
+        "condition": "rag",
+        "answer": "The provided snippets do not contain information about percolation theory in social networks. The relevant passages reference \"the information\" in abstract contexts (consciousness philosophy and neuroscience) but don't discuss graph theory or network dynamics.\n\nHowever, I can address your question directly:\n\n**Percolation in Social Networks** is a phase transition model where edges (or nodes) are activated probabilistically. As information spreads through social ties, the key question is: when d",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret förklarar korrekt relationen mellan perkolation och informationsspridning, nämner giant component, ger en korrekt tröskelformel (p_c ≈ 1/(k−1)) som är konsistent med facits p_c ~ 1/⟨k⟩, och beskriver fasövergången below/above threshold med bra resonemang."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr019",
+        "question": "In what way is the Navier-Stokes existence and smoothness problem related to the physical behavior of turbulence? Why is this a Millennium Prize problem?",
+        "brain_region": "parietal",
+        "condition": "rag",
+        "answer": "The provided relevant text sections do not contain information about Navier-Stokes or turbulence. However, I can answer based on established knowledge:\n\n## Relation to Turbulence\n\nThe Navier-Stokes equations govern fluid dynamics, and turbulence is a ubiquitous physical behavior in fluids at high Reynolds numbers. The **existence and smoothness problem** asks whether, given any initial smooth configuration, mathematically \"nice\" (smooth, finite-energy) solutions exist for all time — or can devel",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 1,
+          "reason": "Svaret är korrekt och nämner rätt koncept (Navier-Stokes, existens/smoothness, turbulence, Millennium Prize) samt kopplar ihop singularities med turbulent flödesbildning, men saknar den specifika teoretiska slutsatsen från facit-hinten om huruvida turbulence är 'fundamentally limited' eller 'always regularizable' om singularityer existerar eller inte."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "counterfactual"
+      },
+      {
+        "id": "rr020",
+        "question": "Explain how power laws appear in both city size distributions and earthquake magnitudes. What common mechanism produces scale-free distributions in these very different systems?",
+        "brain_region": "parietal",
+        "condition": "rag",
+        "answer": "## Power Laws in City Sizes and Earthquake Magnitudes\n\nBoth city size distributions (Zipf's law) and earthquake magnitudes (Gutenberg-Richter law) follow power laws of the form **P(X > x) ∝ x^(-α)**. There are many small cities/earthquakes and few large ones, but the mathematical relationship holds across all scales.\n\n### Common Mechanism: Preferential Attachment + Threshold Dynamics\n\nThe scale-free behavior emerges from a shared generative process:\n\n1. **Positive feedback loops**: \"The rich get",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 1,
+          "reason": "Svaret identifierar korrekt både power laws, preferential attachment och självorganiserad kritikalitet, samt kopplar ihop stads Tillväxt och jordbävningar som domäner; det får 3 eftersom det inte tydligt differentierar att preferential attachment är den primära mekanismen för städer medan självorganiserad kritikalitet är det för jordbävningar."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      }
+    ],
+    "nous": [
+      {
+        "id": "rr001",
+        "question": "If all A are B, and some B are C, can we conclude that some A are C? Explain why or why not.",
+        "brain_region": "frontal",
+        "condition": "nous",
+        "answer": "## Slutsatsen är inte giltig\n\nMed ledtrådarna:\n- **All A är B** betyder att A-kategorin är helt inom B.\n- **Några B är C** betyder att det finns minst ett element som är både B och C.\n\n**Vad som krävs för \"Några A är C\":** Ett element som tillhör både A och C.\n\n**Varför det inte följer:** Det B som är C behöver inte vara ett A. Det räcker att B-elementet som är C ligger *vid sidan om* A-området.\n\n**Motexempel:**\n| A | B | C |\n|---|---|---|\n| Katter | Djur | Hundar |\n\nAlla katter är djur ✓ — *men",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är korrekt och välgrundat med ett bra motexempel och tydlig förklaring av varför slutsatsen inte följer, men nämner inte explicit de formella termerna 'syllogism' eller 'subset relation' från facit-konceptet."
+        },
+        "requires_cross_domain": false,
+        "difficulty": "easy",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr002",
+        "question": "If Sweden introduces a carbon tax and emissions decrease by 15%, can we conclude the tax caused the reduction? What additional evidence would strengthen this causal claim?",
+        "brain_region": "frontal",
+        "condition": "nous",
+        "answer": "# Causal Inference: Swedish Carbon Tax\n\n**Nej, vi kan inte dra slutsatsen enbart från 15% minskning.** Ett ensamt observerat fall av korrelation bevisar inte kausalitet. Detta är grundläggande för kausalforskning.\n\n## Varför det är problematiskt\n- **Confounders**: Ekonomi, teknologi, utländska regleringar kan samtidigt påverka utsläppen\n- **Ingen kontrafaktisk enhet**: Vi kan inte observera Sverige utan skatten\n\n## Bevis som skulle stärka kausaliteten\nEnligt etablerade kausala ramverk (som **Bra",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 1,
+          "reason": "Svaret är korrekt och nämner både confounders och kontrafaktisk princip, men saknar explicit omnämnande av difference-in-differences och instrumental variable-metoderna som nämns i facit-hinten, och nämner istället mer allmänna kriterier som Bradford Hills."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr003",
+        "question": "A doctor must choose between a treatment that saves 400 of 600 patients (framings: 'saves 400' vs '400 die'). Explain why these framings lead to different choices despite being logically equivalent.",
+        "brain_region": "frontal",
+        "condition": "nous",
+        "answer": "# Framing Effects in Medical Decision-Making\n\nThe knowledge base does not directly cover this topic, but I can explain it from established research.\n\n## Why the Framings Differ\n\nThis is a classic demonstration of **framing effects** (Tversky & Kahneman, 1981), explained by **Prospect Theory**:\n\n| Framing | Domain | Psychological Effect |\n|---------|--------|---------------------|\n| \"Saves 400\" | **Gain domain** | Loss aversion activated → prefer certainty |\n| \"400 die\" | **Loss domain** | Risk-s",
+        "judge": {
+          "score": 2,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret nämner rätt koncept (framing effect, prospect theory, loss aversion) och förklarar mekanismerna korrekt, men innehåller omvända procentsatser (risky/certain-val är bytta) vilket är en viktig detalj som direkt påverkar validiteten i förklaringskraften."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr004",
+        "question": "Can a system of linear equations with more unknowns than equations always be solved? Under what conditions does a unique solution exist?",
+        "brain_region": "frontal",
+        "condition": "nous",
+        "answer": "## Linear Systems with More Unknowns Than Equations\n\n**No, not always solvable.** A system with more unknowns than equations is called *underdetermined*. A unique solution is **impossible** in this case.\n\n### Key points:\n\n1. **Solution existence**: Only if the equations are *consistent* — meaning no row reduces to a contradiction (e.g., `0 = 1`).\n\n2. **Number of solutions**: If consistent, there are **infinitely many solutions** (at least one free variable remains after reduction).\n\n3. **Unique ",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är korrekt och välstrukturerat med rätt resonemang kring konsistens, fria variabler och rankvillkoret, men saknar explicit omnämnande av det specifika facit-begreppet 'linjär oberoende' - istället används 'oberoende ekvationer' vilket är nära men inte tillräckligt specifikt."
+        },
+        "requires_cross_domain": false,
+        "difficulty": "easy",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr005",
+        "question": "A test for a rare disease (prevalence 0.1%) has 99% sensitivity and 95% specificity. If you test positive, what is the probability you actually have the disease? Explain the calculation.",
+        "brain_region": "frontal",
+        "condition": "nous",
+        "answer": "## Probability After a Positive Test\n\nThis is a classic **Bayesian calculation** for **Positive Predictive Value (PPV)**.\n\n### Given\n| Metric | Value |\n|---|---|\n| Prevalence (P Disease) | 0.1% = 0.001 |\n| Sensitivity | 99% = 0.99 |\n| Specificity | 95% = 0.95 |\n\n### Formula\n$$P(\\text{Disease} \\mid \\text{Positive}) = \\frac{P(\\text{Positive} \\mid \\text{Disease}) \\times P(\\text{Disease})}{P(\\text{Positive})}$$\n\n### Step-by-Step\n\n1. **P(Positive | Disease)** = Sensitivity = 0.99 (true positive rate)",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är fullständigt korrekt med korrekt tillämpning av Bayes teorem, exakta beräkningar (≈1.94% ≈ 2%), rätt identifiering av falskt positivt-vs-äkta positiv-förhållande, samt tydlig förklaring av base rate fallacy."
+        },
+        "requires_cross_domain": false,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr006",
+        "question": "What is the difference between mathematical proof by contradiction (reductio ad absurdum) and proof by contrapositive? Give an example where one is more natural than the other.",
+        "brain_region": "frontal",
+        "condition": "nous",
+        "answer": "## Contradiction vs. Contrapositive\n\n**Proof by Contradiction:** Assume the statement is *false*, derive an absurdity (like 1=0 or \"P and not P\"), then conclude the statement must be true.\n\n**Proof by Contrapositive:** To prove \"If P, then Q,\" you instead prove \"If not Q, then not P.\" This exploits the logical equivalence: (P→Q) ≡ (¬Q→¬P).\n\n---\n\n## When Contradiction Feels Natural\n\n**√2 is irrational:**\n\n1. Assume √2 *is* rational → √2 = a/b with coprime integers\n2. Derive a² = 2b² → a is even →",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret definierar korrekt båda bevismetoderna med deras logiska relation, ger väl valda och korrekta exempel för varje metod, och innehåller en träffsäker jämförelse av när respektive metod är mest naturlig att använda."
+        },
+        "requires_cross_domain": false,
+        "difficulty": "medium",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr007",
+        "question": "Is the statement 'This statement is false' true or false? What does this reveal about self-referential systems?",
+        "brain_region": "frontal",
+        "condition": "nous",
+        "answer": "## The Liar's Paradox\n\nThis is the classic **\"Liar's Paradox\"**:\n\n- **Assume it's true** → It says it's false → Contradiction\n- **Assume it's false** → It says it's false is false → Contradiction\n\nNeither assignment is stable. The statement is **logically unresolvable** in classical binary logic.\n\n---\n\n## What This Reveals About Self-Reference\n\n| Observation | Implication |\n|---|---|\n| Self-reference can produce undecidable propositions | Not all well-formed statements are truth-evaluable |\n| An",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 1,
+          "reason": "Svaret identifierar korrekt Lösjöparadoxen, förklarar självreferensproblem och drar analoger till Gödel respektive Russell, men Kopplingen till att 'system inte kan vara både konsistenta och fullständiga' anges inte explicit i facit-hintens formulering."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "counterfactual"
+      },
+      {
+        "id": "rr008",
+        "question": "In the Monty Hall problem, why does switching doors give you a 2/3 probability of winning, and why is this counterintuitive?",
+        "brain_region": "frontal",
+        "condition": "nous",
+        "answer": "## Monty Hall Problem: Quick Explanation\n\n**Why switching gives 2/3:**\n\n1. Your initial pick: 1/3 chance of winning\n2. The 2/3 chance is *pooled* on the other two doors combined\n3. The host *must* reveal a goat door—he can never show the car\n4. That 2/3 probability \"condenses\" onto the *single* remaining unopened door\n5. Switching captures that 2/3 probability\n\n**Why it's counterintuitive:**\n\nYour brain treats the scenario as \"two doors left = 50/50,\" but the host's deliberate reveal isn't rando",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är korrekt och fångar kärnmekanismen med 1/3 vs 2/3 sannolikhet samt varför Montys icke-slumpmässiga avslöjande är informativt, men använder inte explicit termen conditional probability och är något vagare på den exakta probabilistiska transfers-mekanismen jämfört med facit."
+        },
+        "requires_cross_domain": false,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr009",
+        "question": "What is the difference between statistical significance (p < 0.05) and practical significance? Why can a result be statistically significant but practically meaningless?",
+        "brain_region": "frontal",
+        "condition": "nous",
+        "answer": "## Statistical vs. Practical Significance\n\n**Statistical significance** answers: *\"Is this effect likely real, or just random noise?\"* It relies on p-values, sample size, and arbitrary thresholds like p < 0.05.\n\n**Practical significance** answers: *\"Does this effect actually matter in the real world?\"* It considers effect size, cost, and context.\n\n## Why They Diverge\n\nA result can be statistically significant but practically meaningless due to:\n\n1. **Large sample size** — With huge N, even trivi",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret nämner korrekt alla fyra facit-koncept (statistisk signifikans, praktisk signifikans, effektstorlek, stickprovsstorlek) och förklarar validt hur stora stickprov kan göra triviala skillnader statistiskt signifikanta. Svaret är specifikt och saknar hallucinationer."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "easy",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr010",
+        "question": "If 'all ravens are black' is equivalent to 'all non-black things are non-ravens', does observing a green apple constitute evidence that ravens are black? Explain the paradox.",
+        "brain_region": "frontal",
+        "condition": "nous",
+        "answer": "## Hempels Raven Paradox\n\n**The logical equivalence:** By contraposition, \"all ravens are black\" is equivalent to \"all non-black things are non-ravens.\" This is a valid logical transformation—A→B ≡ ¬B→¬A.\n\n**The paradoxical step:** A green apple is a non-black, non-raven object. Therefore, observing it *directly confirms* \"all non-black things are non-ravens\"—and thus indirectly confirms \"all ravens are black.\"\n\n**Why it feels wrong:** We intuitively expect confirming evidence to be relevant. A ",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 1,
+          "reason": "Svaret identifierar korrekt paradoxen och nämner Bayes teorem som resolution, men förklarar inte specifikt varför den posteriöra sannolikheten knappt påverkas – den avgörande mekanismen att 'den prioriska sannolikheten för icke-svarta icke-kajor är så hög' saknas."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "counterfactual"
+      },
+      {
+        "id": "rr011",
+        "question": "How does a feedback loop in a thermostat maintain temperature stability, and what happens when the feedback gain is too high or too low?",
+        "brain_region": "parietal",
+        "condition": "nous",
+        "answer": "A thermostat maintains temperature through a **negative feedback loop**:\n\n1. **Sensor** measures current temperature\n2. **Compares** to setpoint → calculates error\n3. **Actuator** (heater/cooling) adjusts output to reduce error\n4. **Repeat** continuously\n\n**Effect of gain:**\n\n| Gain | Problem |\n|------|---------|\n| **Too high** | Overshooting, oscillations, instability—temperature cycles above and below setpoint |\n| **Too low** | Sluggish response, never reaches setpoint, poor disturbance reject",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret förklarar negativa feedback-loopen korrekt och beskriver gain-effekter väl, men saknar explicit omnämnande av homeostasis vilket är ett kärnkoncept i facit."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "easy",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr012",
+        "question": "In a causal DAG (directed acyclic graph) where X→M→Y, what does it mean to 'control for' the mediator M, and why does this block the causal effect of X on Y?",
+        "brain_region": "parietal",
+        "condition": "nous",
+        "answer": "# Controlling for a Mediator in a Causal DAG\n\nIn the DAG **X→M→Y**, controlling for M means **conditioning on** M in your analysis — essentially, stratifying or adjusting for the mediator's value.\n\n## Why This Blocks the Causal Effect\n\nThe total effect of X on Y flows through the indirect path X→M→Y. When you control for M:\n\n1. **You hold M constant** — any change in X cannot longer propagate through M to affect Y\n2. **The mechanism is severed** — X influences M, but that influence on Y is block",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är korrekt och välstrukturerat med rätt förståelse av mediatorer och mekanismblockering, men nämner inte explicit d-separation trots att det är ett facit-koncept, och använder inte den formella terminologin för villkorlig oberoende som hade höjt poängen."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr013",
+        "question": "Why does a spinning gyroscope resist changes to its orientation? Connect this to both angular momentum conservation and the concept of precession.",
+        "brain_region": "parietal",
+        "condition": "nous",
+        "answer": "## Why a Gyroscope Resists Orientation Changes\n\nA spinning gyroscope possesses **angular momentum L = Iω** (moment of inertia × angular velocity). According to conservation of angular momentum, L's magnitude and direction remain constant unless a torque is applied.\n\nWhen you try to tip a spinning gyroscope, you're applying force perpendicular to its angular momentum vector. To change L's direction, a **net torque is required** — and the gyroscope \"fights back\" because you're not providing enough",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret förklarar korrekt sambandet mellan rörelsemängdsmoment, vridmoment och presession, med en korrekt presessionsformel och koppling till praktiska tillämpningar."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr014",
+        "question": "What structural property makes a scale-free network resilient to random failures but vulnerable to targeted attacks? How does this differ from a random network?",
+        "brain_region": "parietal",
+        "condition": "nous",
+        "answer": "## Degree Distribution: The Key Structural Difference\n\n**Scale-free networks** exhibit a **power-law degree distribution** — a few nodes (hubs) have extremely high connectivity, while most nodes have very few connections. **Random networks** (e.g., Erdős–Rényi) have a roughly bell-shaped degree distribution where most nodes have similar connectivity.\n\n### Why Scale-Free Networks Behave This Way:\n\n| Attack Type | Why Scale-Free Fares | Why Random Fares |\n|---|---|---|\n| **Random failure** | Likel",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret identifierar korrekt power-law-gradfördelningen som den strukturella egenskapen, förklarar mekanismen bakom båda attacktyperna (låggradiga noder är redundanta vid slumpmässiga fel; hubs är kritiska för nätverkssammanhållning vid riktade attacker), och jämför tydligt med slumpmässiga nätverks homogenare struktur."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr015",
+        "question": "How does the Yerkes-Dodson law explain why moderate stress improves performance but extreme stress degrades it? What neural mechanism underlies this inverted-U curve?",
+        "brain_region": "parietal",
+        "condition": "nous",
+        "answer": "# Yerkes-Dodson Law: Neural Mechanisms\n\n## The Inverted-U Explained\n\nThe Yerkes-Dodson law describes performance as a quadratic function of arousal/stress: too low = under-stimulation, too high = cognitive overload. Moderate stress mobilizes the **sympathetic nervous system**, releasing norepinephrine and cortisol that sharpen attention and decision-making.\n\n## Key Neural Mechanisms\n\n| **Stress Level** | **Dominant Effect** | **Neural Drivers** |\n|---|---|---|\n| **Low** | Under-stimulation | Bas",
+        "judge": {
+          "score": 2,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är i huvudsak korrekt men saknar den specifika signal-to-noise ratio-mekanismen och nämner inte heller hjärnregionen parietal som angavs i frågan, samt behandlar inte explicit skiftet till amygdala-drivna vanebeteenden."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr016",
+        "question": "Why can't you comb a hairy sphere flat without creating a cowlick? What topological theorem explains this, and what does it imply about vector fields on spheres?",
+        "brain_region": "parietal",
+        "condition": "nous",
+        "answer": "# The Hairy Ball Theorem\n\nThis is the **Hairy Ball Theorem** (a consequence of the Brouwer Fixed Point Theorem).\n\n## The Statement\n\nOn any sphere, any continuous tangent vector field must have at least one zero. You can't comb all the hair flat—there will always be at least one cowlick (where hair stands straight up) or bald spot (where vectors vanish).\n\n## What It Implies\n\n- **No continuous, nowhere-vanishing vector field exists on S²** (the 2-sphere)\n- The theorem connects to the **Euler chara",
+        "judge": {
+          "score": 4,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret nämner korrekt hairy ball theorem, Euler-characteristic χ(S²)=2, och continuous tangent vector fields med en zero point — alla facit-koncept finns med och relateras korrekt."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "factual"
+      },
+      {
+        "id": "rr017",
+        "question": "What is the relationship between emergence and reductionism? Can a system's emergent properties always be predicted from its components' properties?",
+        "brain_region": "parietal",
+        "condition": "nous",
+        "answer": "My knowledge memory doesn't cover emergence/reductionism directly — I'll answer from general knowledge.\n\n## Relationship\n\nEmergence and reductionism are often framed as opposing strategies for understanding complexity:\n\n- **Reductionism** = explain the whole by analyzing parts (bottom-up)\n- **Emergence** = the whole exhibits properties irreducible to its parts\n\nThey're complementary rather than strictly contradictory. Most sciences use both: reduce to components *and* study how they interact to ",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är korrekt och nämner rätt koncept (reductionism, emergence, weak vs strong emergence, computational irreducibility) med lämplig relation men saknar supervenience och det specifika väderexemplet från facit."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "counterfactual"
+      },
+      {
+        "id": "rr018",
+        "question": "How does the concept of percolation in graph theory relate to the spread of information in social networks? At what threshold does information percolate through the entire network?",
+        "brain_region": "parietal",
+        "condition": "nous",
+        "answer": "## Kunskapsminnet & Perkolationsfrågan\n\nMitt strukturerade kunskapsminne täcker **inte** percolation theory eller dess tillämpning på sociala nätverk. De fem relaterade koncepten (\"Integrated Information Theory\", \"the information\", etc.) är fragment utan koppling till ämnet.\n\n## Vad jag kan säga från allmän kunskap\n\nPerkolations­teori modellerar hur information sprids i nätverk via noder/kanter som \"öppnas\" slumpmässigt. Det finns en **kritisk tröskel** (percolation threshold) där information öv",
+        "judge": {
+          "score": 2,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret nämner korrekt formeln ~1/(genomsnittlig grad) och kritiska tröskeln, men saknar nyckelbegreppen giant component och information cascade vilket gör resonemanget ofullständigt."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      },
+      {
+        "id": "rr019",
+        "question": "In what way is the Navier-Stokes existence and smoothness problem related to the physical behavior of turbulence? Why is this a Millennium Prize problem?",
+        "brain_region": "parietal",
+        "condition": "nous",
+        "answer": "## Navier-Stokes, Turbulence & the Millennium Prize\n\n**What the problem asks:**\nThe Millennium Prize formulation asks whether, given any smooth initial velocity field for an incompressible fluid in 3D, there *always* exists a solution that stays globally smooth — no blow-up or singularity in finite time.\n\n**Relation to turbulence:**\nTurbulence is the dominant regime of fluid flow in nature (atmospheric, oceanic, engineering flows). The Navier-Stokes equations are the correct governing equations,",
+        "judge": {
+          "score": 3,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 0,
+          "reason": "Svaret är korrekt och nämner rätt koncept inklusive existens/smoothness-frågan, turbulence, Kolmogorov och Millennium Prize-motivering, men det kopplar inte explicit till facit-hintens dikotomi: att singulariteter skulle göra turbulensmodellering fundamentalt begränsad, medan frånvaro av singulariteter skulle innebära att turbulens alltid är regulariserbar."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "hard",
+        "confidence_type": "counterfactual"
+      },
+      {
+        "id": "rr020",
+        "question": "Explain how power laws appear in both city size distributions and earthquake magnitudes. What common mechanism produces scale-free distributions in these very different systems?",
+        "brain_region": "parietal",
+        "condition": "nous",
+        "answer": "# Power Laws in Cities and Earthquakes\n\n**My knowledge memory** doesn't directly cover city size distributions or earthquake magnitudes, so I'll draw on general understanding.\n\n## What the Patterns Show\n\n**City sizes** follow *Zipf's law*: the n-th largest city is approximately 1/n the size of the largest. **Earthquake magnitudes** follow the *Gutenberg-Richter law*: for each magnitude increase, earthquakes become ~10× rarer.\n\nBoth are **power laws** — meaning frequency ∝ size^(-α), where α is a",
+        "judge": {
+          "score": 2,
+          "confidence_calibrated": 1,
+          "hallucination": 0,
+          "cross_domain": 1,
+          "reason": "Svaret nämner korrekta koncept (Zipf, Gutenberg-Richter, power law, preferential attachment, SOC) men presenterar dem felaktigt som delar av en gemensam mekanism snarare än två separata mekanismer; påståendet att 'larger faults accumulate more stress' är felaktig analogi som inte fångar SOC-mekanismen, och 'multiplicative stochastic processes' är inte heller korrekt för dessa system."
+        },
+        "requires_cross_domain": true,
+        "difficulty": "medium",
+        "confidence_type": "inferential"
+      }
+    ]
+  },
+  "metrics": {
+    "bare": {
+      "accuracy_mean": 3.7,
+      "accuracy_3plus": 1.0,
+      "hallucination_rate": 0.0,
+      "cross_domain_accuracy": 0.13333333333333333,
+      "calibration_mean": 0.95,
+      "n_questions": 20,
+      "region_breakdown": {
+        "frontal": {
+          "mean": 3.6,
+          "n": 10
+        },
+        "parietal": {
+          "mean": 3.8,
+          "n": 10
+        }
+      }
+    },
+    "rag": {
+      "accuracy_mean": 3.1,
+      "accuracy_3plus": 0.85,
+      "hallucination_rate": 0.05,
+      "cross_domain_accuracy": 0.2,
+      "calibration_mean": 0.85,
+      "n_questions": 20,
+      "region_breakdown": {
+        "frontal": {
+          "mean": 3.5,
+          "n": 10
+        },
+        "parietal": {
+          "mean": 2.7,
+          "n": 10
+        }
+      }
+    },
+    "nous": {
+      "accuracy_mean": 3.1,
+      "accuracy_3plus": 0.8,
+      "hallucination_rate": 0.0,
+      "cross_domain_accuracy": 0.26666666666666666,
+      "calibration_mean": 1.0,
+      "n_questions": 20,
+      "region_breakdown": {
+        "frontal": {
+          "mean": 3.2,
+          "n": 10
+        },
+        "parietal": {
+          "mean": 3.0,
+          "n": 10
+        }
+      }
+    }
+  }
+}

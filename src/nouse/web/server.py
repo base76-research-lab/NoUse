@@ -336,6 +336,12 @@ def _capability_route_plan(
         dedup_tools.append(clean)
 
     route_plan = dict(route_plan)
+    route_plan.setdefault("skill", "")
+    route_plan.setdefault("skill_score", 0.0)
+    route_plan.setdefault("skill_reasons", [])
+    route_plan.setdefault("workload", "chat")
+    route_plan.setdefault("provider", "auto")
+    route_plan.setdefault("governance", "default")
     route_plan["intent"] = raw_query
     route_plan["state"] = state
     route_plan["preferred_skill"] = resolved_preferred_skill
@@ -3678,7 +3684,15 @@ def _extract_explicit_skill_request(query: str) -> tuple[str, str]:
 
         resolved = resolve_skill_name(token)
     except Exception:
-        resolved = ""
+        aliases = {
+            "rescue": "operator.rescue",
+            "capture": "memory.capture",
+            "tri": "research.triangulate",
+            "triangulate": "research.triangulate",
+            "time": "temporal.grounding",
+            "clock": "temporal.grounding",
+        }
+        resolved = aliases.get(token.strip().lower(), "")
     return str(resolved or token).strip(), remainder
 
 
@@ -5559,22 +5573,15 @@ def _identity_answer_from_graph(field: FieldSurface) -> str | None:
         else:
             rel_lines.append(target)
 
-    if _is_personal_runtime_mode():
-        parts = [f"Jag känner dig här som {best_name}."]
-        if summary:
-            parts.append(summary)
-        if rel_lines:
+    parts = [f"Jag känner dig här som {best_name}."]
+    if not _is_personal_runtime_mode() and best_domain:
+        parts.append(f"I grafen ligger profilen under domän: {best_domain}.")
+    if summary:
+        parts.append(summary)
+    if rel_lines:
+        if _is_personal_runtime_mode():
             parts.append(f"Jag har också kopplingar som: {', '.join(rel_lines)}.")
-        elif best_domain:
-            parts.append(f"I systemet ligger det just nu under {best_domain}.")
-    else:
-        if best_domain:
-            parts = [f"I grafen är du registrerad som {best_name} (domän: {best_domain})."]
         else:
-            parts = [f"I grafen är du registrerad som {best_name}."]
-        if summary:
-            parts.append(summary)
-        if rel_lines:
             parts.append(f"Kopplingar: {', '.join(rel_lines)}.")
     return " ".join(parts)
 

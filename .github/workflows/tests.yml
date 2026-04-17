@@ -32,7 +32,7 @@ jobs:
           echo "PYTHONPATH=$(pwd)/src" >> $GITHUB_ENV
 
       - name: Run tests
-        run: pytest tests/ -v --ignore=tests/mcp_gateway --ignore=tests/test_inject_attach.py -x
+        run: pytest tests/ -v --ignore=tests/test_inject_attach.py -x
         env:
           PYTHONPATH: ${{ env.PYTHONPATH }}
 

@@ -1,0 +1,66 @@
+{
+  "summary": {
+    "label": "nous",
+    "model": "kimi-k2.5:cloud",
+    "engine_depth": 2,
+    "engine_elo_approx": 900,
+    "games": 3,
+    "wins": 0,
+    "losses": 3,
+    "draws": 0,
+    "final_elo": 766.9,
+    "elo_history": [
+      800.0,
+      788.5,
+      777.4,
+      766.9
+    ],
+    "elo_delta": -33.1,
+    "avg_llm_failure_rate": 0.86,
+    "nous_context_available": 0,
+    "fnc_lpi_proxy": 0.0,
+    "fnc_gdp_proxy": 0.14,
+    "timestamp": "2026-04-17T02:56:45.140239"
+  },
+  "games": [
+    {
+      "game": 1,
+      "result": "0-1",
+      "white_score": 0.0,
+      "moves": 31,
+      "llm_moves": 30,
+      "llm_failures": 28,
+      "failure_rate": 0.9333333333333333,
+      "nous_used": true,
+      "nous_had_context": false,
+      "pgn": "[Event \"?\"]\n[Site \"?\"]\n[Date \"2026.04.17\"]\n[Round \"?\"]\n[White \"Nous+LLM (kimi-k2.5:cloud)\"]\n[Black \"Minimax-d2\"]\n[Result \"*\"]\n\n1. e4 e5 2. Nf3 d5 3. Bd3 dxe4 4. Nxe5 exd3 5. b3 dxc2 6. Nd7 cxd1=Q+ 7. Kxd1 Nxd7 8. Rf1 a6 9. f3 Nb6 10. Ke2 Qe7+ 11. Kf2 Qh4+ 12. g3 Qxh2+ 13. Ke1 Qxg3+ 14. Ke2 Qe5+ 15. Kd1 Qxa1 16. Na3 Bxa3 17. d3 Qxc1+ 18. Ke2 Qb2+ 19. Kd1 Qxa2 20. Rh1 Qxb3+ 21. Kd2 Qa2+ 22. Kd1 Qb3+ 23. Ke1 Qc3+ 24. Kd1 Qxd3+ 25. Ke1 Bb4+ 26. Kf2 Qc2+ 27. Kg3 Qg6+ 28. Kf4 Qd6+ 29. Kg5 Qg3+ 30. Kh5 Nf6# *",
+      "elapsed_s": 623.9
+    },
+    {
+      "game": 2,
+      "result": "0-1",
+      "white_score": 0.0,
+      "moves": 13,
+      "llm_moves": 12,
+      "llm_failures": 10,
+      "failure_rate": 0.8333333333333334,
+      "nous_used": true,
+      "nous_had_context": false,
+      "pgn": "[Event \"?\"]\n[Site \"?\"]\n[Date \"2026.04.17\"]\n[Round \"?\"]\n[White \"Nous+LLM (kimi-k2.5:cloud)\"]\n[Black \"Minimax-d2\"]\n[Result \"*\"]\n\n1. e4 e5 2. Nf3 d5 3. Nh4 Qxh4 4. c3 Qxe4+ 5. Be2 Qxg2 6. Qc2 Qxh1+ 7. Bf1 Qxh2 8. Ba6 Nxa6 9. Na3 Qg1+ 10. Ke2 Bg4+ 11. Kd3 Qxf2 12. Qd1 Bf5# *",
+      "elapsed_s": 240.5
+    },
+    {
+      "game": 3,
+      "result": "0-1",
+      "white_score": 0.0,
+      "moves": 17,
+      "llm_moves": 16,
+      "llm_failures": 13,
+      "failure_rate": 0.8125,
+      "nous_used": true,
+      "nous_had_context": false,
+      "pgn": "[Event \"?\"]\n[Site \"?\"]\n[Date \"2026.04.17\"]\n[Round \"?\"]\n[White \"Nous+LLM (kimi-k2.5:cloud)\"]\n[Black \"Minimax-d2\"]\n[Result \"*\"]\n\n1. e4 e5 2. Nf3 d5 3. exd5 Qxd5 4. c3 Qe4+ 5. Be2 Ne7 6. Ng5 Qxg2 7. Bf1 Qxh1 8. h3 h6 9. Qf3 Qxf3 10. c4 hxg5 11. Be2 Qxh3 12. Na3 Qh1+ 13. Bf1 Qe4+ 14. Kd1 Qg4+ 15. Ke1 Qe4+ 16. Be2 Rh1# *",
+      "elapsed_s": 319.6
+    }
+  ]
+}
