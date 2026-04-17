@@ -57,8 +57,8 @@ try:
     import brian2 as _b2
     _BRIAN2_AVAILABLE = True
     _log.info("Brian2 %s tillgängligt — STDP aktiverat", _b2.__version__)
-except ImportError:
-    _log.warning("Brian2 ej installerat — STDP använder Python-fallback")
+except (ImportError, AttributeError, Exception) as _brian2_err:
+    _log.warning("Brian2 ej tillgängligt (%s) — STDP använder Python-fallback", type(_brian2_err).__name__)
 
 
 # ── Spiketidregister ──────────────────────────────────────────────────────────
