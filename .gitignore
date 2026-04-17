@@ -15,3 +15,15 @@ eval/results/run_20260402_*.json
 .env.pypi
 .env.personal
 *.env.personal
+arxiv_cache/
+Nous.wiki/
+research/revenue-hypothesis-test/
+research/revenue-hypothesis-test-v2/
+research/revenue-hypothesis-test-v3/
+research/research-thesis-test/
+research/nouse-smoke-research-2026-04-09/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
