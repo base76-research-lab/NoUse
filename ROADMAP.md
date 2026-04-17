@@ -81,8 +81,7 @@ Created `src/nouse/persona.py` stub with sensible defaults:
 
 ## Frontier Plan (external positioning)
 
-- [ ] Fas 0: System ready — `pytest tests/` passes clean
-  - blocker: persona import errors, 8 collection errors
+- [x] Fas 0: System ready — `pytest tests/` passes clean (285 passed, 2026-04-18)
 - [x] Fas 1: Intellectual priority — Larynx Problem published
   - ✅ Zenodo: https://zenodo.org/records/19413234
   - ✅ PhilPapers: https://philpapers.org/rec/WIKTLP
