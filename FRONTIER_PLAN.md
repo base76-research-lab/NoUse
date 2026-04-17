@@ -50,6 +50,7 @@ Allt annat (ESA, konferens, HuggingFace) är amplifiering. Dessa tre är grunden
 **KLART (2026-04-18)**
 - Zenodo: https://zenodo.org/records/19413234
 - PhilPapers: https://philpapers.org/rec/WIKTLP
+- Academia.edu: https://www.academia.edu/165520754/The_Larynx_Problem_Why_Large_Language_Models_Are_Not_Artificial_Intelligence
 
 ### 1a-original. Publicera "The Larynx Problem" via Zenodo + Academia.edu + PhilPapers
 
