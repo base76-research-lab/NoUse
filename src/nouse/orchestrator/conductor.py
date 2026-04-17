@@ -343,6 +343,22 @@ class CognitiveConductor:
 		log.debug(f"Retrieval: {len(episodes)} episoder funna")
 
 		# ── Steg 3: TDA på episodvektorer ───────────────────────────────────
+		# Auto-embed om anroparen inte skickade med vektorer.
+		if not vectors:
+			try:
+				from nouse.embeddings.chunking import chunk_text
+				from nouse.embeddings.model import embed_batch
+				chunks = chunk_text(episode_text, max_chars=400, overlap_chars=50)
+				if len(chunks) < 2:
+					# Splitta på mening om texten är för kort för chunk
+					import re as _re
+					chunks = [s.strip() for s in _re.split(r"[.!?\n]+", episode_text) if s.strip()]
+				if len(chunks) >= 2:
+					vectors = embed_batch(chunks)
+					log.debug("Auto-embed: %d chunks → %d vektorer", len(chunks), len(vectors))
+			except Exception as _exc:
+				log.warning("Auto-embed misslyckades: %s", _exc)
+
 		h0_a, h1_a, h0_b, h1_b = 1, 0, 1, 0
 		topo_sim = 0.5
 
@@ -364,9 +380,30 @@ class CognitiveConductor:
 		# ── Steg 3.5: CCNode — semantisk prediktion på TDA-kontext ──────────
 		# LLM som instrument: strukturell kontext in, semantisk prediktion ut.
 		# Resultatet kristalliseras till episodminnet före limbisk cykel.
+		#
+		# Grounding-loop: living_core laddas varje cykel och skickas med som
+		# self_context — CCNode vet vem NoUse är och vad den bryr sig om.
 		cc_prediction = ""
 		cc_confidence = 0.0
 		if vectors and len(vectors) >= 2:
+			# Bygg minimal self_context från living_core (ladda färskt varje cykel)
+			try:
+				_lc = load_living_core()
+				_id = _lc.get("identity", {})
+				_drives = _lc.get("drives", {})
+				_recent = _lc.get("identity", {}).get("memories", [])
+				self_context = {
+					"name": _id.get("name", ""),
+					"mission": _id.get("mission", ""),
+					"values": _id.get("values", [])[:5],
+					"active_drive": _drives.get("active", ""),
+					"drive_goals": _drives.get("goals", [])[:3],
+					"recent_note": _recent[-1].get("note", "") if _recent else "",
+				}
+			except Exception as _exc:
+				log.debug("living_core laddning misslyckades (ej kritisk): %s", _exc)
+				self_context = {}
+
 			cc_context = {
 				"episode": episode_text[:400],
 				"domain": domain,
@@ -375,6 +412,7 @@ class CognitiveConductor:
 					"h0_b": h0_b, "h1_b": h1_b,
 					"topo_sim": round(topo_sim, 3),
 				},
+				"self": self_context,
 			}
 			cc_prediction, cc_confidence = await self.cc.predict(
 				structural_context=cc_context,
