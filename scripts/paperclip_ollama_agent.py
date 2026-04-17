@@ -1,25 +1,46 @@
 #!/usr/bin/env python3
 """
-scripts/paperclip_ollama_agent.py — Paperclip process-adapter som kör via Ollama.
+scripts/paperclip_ollama_agent.py — Paperclip process-adapter via Ollama.
 
-Paperclip sätter miljövariabler:
-  PAPERCLIP_TASK_CONTEXT  — JSON med issue/task/goals
-  PAPERCLIP_API_URL       — Paperclip API endpoint
-  PAPERCLIP_API_KEY       — API-nyckel
-  PAPERCLIP_TASK_ID       — task-ID att uppdatera
+Paperclip sätter:
+  PAPERCLIP_AGENT_ID   — agent-ID
+  PAPERCLIP_COMPANY_ID — company-ID
+  PAPERCLIP_API_URL    — Paperclip API endpoint (http://127.0.0.1:3100)
 """
 from __future__ import annotations
-import json, os, sys, httpx
+import json, os, sys
+import httpx
 
 OLLAMA_BASE = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 MODEL = os.getenv("PAPERCLIP_OLLAMA_MODEL", "kimi-k2.5:cloud")
-API_URL = os.getenv("PAPERCLIP_API_URL", "")
-API_KEY = os.getenv("PAPERCLIP_API_KEY", "")
+API_URL = os.getenv("PAPERCLIP_API_URL", "http://127.0.0.1:3100")
+AGENT_ID = os.getenv("PAPERCLIP_AGENT_ID", "")
+COMPANY_ID = os.getenv("PAPERCLIP_COMPANY_ID", "")
 
-SYSTEM = """You are an AI research engineer working on the Nous project —
-a persistent epistemic substrate (plastic brain) for LLMs.
-You have access to the codebase at /home/bjorn/projects/nouse.
-Complete the assigned task, then post your findings back to Paperclip."""
+SYSTEM = """You are an AI research engineer on the Nous project —
+a persistent epistemic substrate (plastic brain) for LLMs at /home/bjorn/projects/nouse.
+Complete the assigned task thoroughly and post findings back via Paperclip API."""
+
+
+def api_get(path: str) -> dict | list:
+    with httpx.Client(timeout=15.0) as c:
+        r = c.get(f"{API_URL}/api{path}")
+        r.raise_for_status()
+        return r.json()
+
+
+def api_post(path: str, body: dict) -> dict:
+    with httpx.Client(timeout=15.0) as c:
+        r = c.post(f"{API_URL}/api{path}", json=body)
+        r.raise_for_status()
+        return r.json()
+
+
+def api_patch(path: str, body: dict) -> dict:
+    with httpx.Client(timeout=15.0) as c:
+        r = c.patch(f"{API_URL}/api{path}", json=body)
+        r.raise_for_status()
+        return r.json()
 
 
 def call_ollama(prompt: str) -> str:
@@ -36,42 +57,69 @@ def call_ollama(prompt: str) -> str:
         return r.json().get("message", {}).get("content", "").strip()
 
 
-def post_comment(task_id: str, body: str) -> None:
-    if not API_URL or not API_KEY or not task_id:
-        return
+def get_my_issues() -> list[dict]:
     try:
-        with httpx.Client(timeout=15.0) as c:
-            c.post(
-                f"{API_URL}/api/issues/{task_id}/comments",
-                headers={"Authorization": f"Bearer {API_KEY}"},
-                json={"body": body},
-            )
+        all_issues = api_get(f"/companies/{COMPANY_ID}/issues?assigneeAgentId={AGENT_ID}&limit=10")
+        items = all_issues if isinstance(all_issues, list) else all_issues.get("items", all_issues.get("issues", []))
+        active = [i for i in items if i.get("status") in ("todo", "in_progress", "blocked")]
+        return active[:3]
     except Exception as e:
-        print(f"[warn] Kunde inte posta kommentar: {e}", file=sys.stderr)
+        print(f"[warn] Kunde inte hämta issues: {e}", file=sys.stderr)
+        return []
+
+
+def get_issue_context(issue_id: str) -> str:
+    try:
+        ctx = api_get(f"/issues/{issue_id}/heartbeat-context")
+        return json.dumps(ctx, ensure_ascii=False, indent=2)[:4000]
+    except Exception:
+        return ""
+
+
+def post_comment(issue_id: str, body: str) -> None:
+    try:
+        api_post(f"/issues/{issue_id}/comments", {"body": body})
+    except Exception as e:
+        print(f"[warn] Kommentar misslyckades: {e}", file=sys.stderr)
+
+
+def mark_done(issue_id: str, comment: str) -> None:
+    try:
+        api_patch(f"/issues/{issue_id}", {"status": "done", "comment": comment})
+    except Exception as e:
+        print(f"[warn] mark_done misslyckades: {e}", file=sys.stderr)
 
 
 def main() -> None:
-    raw = os.getenv("PAPERCLIP_TASK_CONTEXT", "{}")
-    try:
-        ctx = json.loads(raw)
-    except json.JSONDecodeError:
-        ctx = {"raw": raw}
+    print(f"[agent] ID={AGENT_ID[:8]}... | Model={MODEL}", flush=True)
 
-    task_id = os.getenv("PAPERCLIP_TASK_ID", "")
-    title = ctx.get("issue", {}).get("title", ctx.get("title", ""))
-    body = ctx.get("issue", {}).get("body", ctx.get("body", ""))
+    issues = get_my_issues()
+    if not issues:
+        print("[agent] Inga tilldelade issues.", flush=True)
+        return
 
-    prompt = f"""# Task\n{title}\n\n{body}\n\nFull context:\n{json.dumps(ctx, indent=2, ensure_ascii=False)[:3000]}"""
+    issue = issues[0]
+    issue_id = issue.get("id", "")
+    title = issue.get("title", "")
+    desc = issue.get("body") or issue.get("description") or ""
+    identifier = issue.get("identifier", "")
 
-    print(f"[dispatch] Model: {MODEL}", flush=True)
-    print(f"[dispatch] Task: {title[:80]}", flush=True)
+    print(f"[agent] {identifier}: {title[:70]}", flush=True)
+
+    ctx = get_issue_context(issue_id)
+    prompt = (
+        f"# Issue: {identifier} — {title}\n\n{desc}\n\n"
+        f"## Context\n{ctx}\n\n"
+        "Complete this task. You have access to /home/bjorn/projects/nouse. "
+        "Provide detailed, actionable findings."
+    )
 
     result = call_ollama(prompt)
-    print(result, flush=True)
+    print(result[:300], flush=True)
 
-    if task_id:
-        post_comment(task_id, f"## Ollama Agent Result\n\nModel: `{MODEL}`\n\n{result}")
-        print(f"[dispatch] Resultat postat till issue {task_id}", flush=True)
+    post_comment(issue_id, f"## Ollama Agent ({MODEL})\n\n{result}")
+    mark_done(issue_id, f"Done by {MODEL}")
+    print(f"[agent] {identifier} klar.", flush=True)
 
 
 if __name__ == "__main__":

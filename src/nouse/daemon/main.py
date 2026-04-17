@@ -1385,6 +1385,16 @@ async def brain_loop(
                     except Exception:
                         pass
 
+                    # ── 8c2: Paperclip bridge — Nous goals → Paperclip issues ────
+                    if cycle % 12 == 0:
+                        try:
+                            from nouse.daemon.paperclip_bridge import sync_goals_to_paperclip
+                            n_created = sync_goals_to_paperclip(field, cycle, max_goals=3)
+                            if n_created:
+                                log.info(f"  Paperclip bridge: +{n_created} issues skapade från Nous-mål")
+                        except Exception as pb_err:
+                            log.debug(f"  Paperclip bridge (non-fatal): {pb_err}")
+
                     # ── 8d: Sweet spot calibration (every 12th cycle) ────────────
                     # Nervbana axion density + rigidity + Yerkes-Dodson curve.
                     if cycle % 12 == 0:
